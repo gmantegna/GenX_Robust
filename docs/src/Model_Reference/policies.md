@@ -9,6 +9,14 @@ GenX.cap_reserve_margin!
 GenX.co2_cap!
 ```
 
+## Expected Non-Served Energy Budget
+```@docs
+GenX.nse_budget!
+GenX.nse_budget_planning!
+GenX.nse_budget_subperiod!
+GenX.mes_require_feasible_point!
+```
+
 ## Energy Share Requirement
 ```@docs
 GenX.load_energy_share_requirement!

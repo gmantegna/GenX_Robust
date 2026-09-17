@@ -175,6 +175,11 @@ function planning_model!(EP::Model, setup::Dict, inputs::Dict)
         co2_cap_planning!(EP, inputs, setup)
     end
 
+    # Benders-only planning-phase expected-NSE budget (per-subperiod budgets and their cap)
+    if get(setup, "NSEBudget", 0) == 1 && setup["Benders"] == 1
+        nse_budget_planning!(EP, inputs, setup)
+    end
+
     # Benders-only planning-phase energy share requirement constraints
     if setup["EnergyShareRequirement"] >= 1 && setup["Benders"] == 1
         energy_share_requirement_planning!(EP, inputs, setup)
@@ -353,6 +358,16 @@ function operation_model!(EP::Model, setup::Dict, inputs::Dict)
             co2_cap_subperiod!(EP, inputs, setup)
         else
             co2_cap!(EP, inputs, setup)
+        end
+    end
+
+    # Hard cap on expected non-served energy
+    if get(setup, "NSEBudget", 0) == 1
+        if setup["Benders"] == 1
+            # Benders: subproblem w is held to the budget vNSEbudget[w] set by the planning problem
+            nse_budget_subperiod!(EP, inputs, setup)
+        else
+            nse_budget!(EP, inputs, setup)
         end
     end
 

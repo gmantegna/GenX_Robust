@@ -216,6 +216,28 @@ function run_genx_case_multistage!(case::AbstractString, mysetup::Dict, optimize
     write_multi_stage_outputs(mystats_d, outpath, mysetup, inputs_dict)
 end
 
+# check_benders_gap(results::NamedTuple, setup::Dict)
+#
+# Error if Benders ended with a negative gap beyond the convergence tolerance, i.e.
+# `(UB - LB) / |LB| < -ConvTol` (MES's gap definition). A valid lower bound cannot exceed a valid
+# upper bound, so such a run has added an invalid cut (or accepted an infeasible point) and its
+# incumbent must not be written as a result. A negative gap within the tolerance is solver noise
+# at convergence: warning only.
+function check_benders_gap(results::NamedTuple, setup::Dict)
+    UB, LB = results.UB_hist[end], results.LB_hist[end]
+    gap = (UB - LB) / abs(LB)
+    tol = get(setup, :ConvTol, 1e-3)
+    if gap < -tol
+        error("Benders ended with a negative gap: LB = $LB > UB = $UB (gap = $gap, tolerance " *
+              "$tol, status \"$(results.termination_status)\"). An invalid cut was added or an " *
+              "infeasible subproblem was taken for solved (see GenX.mes_require_feasible_point!); " *
+              "the incumbent is not a solution. No outputs written.")
+    elseif gap < 0
+        @warn "Benders ended with a negative gap within the tolerance (gap = $gap, tolerance $tol)."
+    end
+    return nothing
+end
+
 function run_genx_case_benders!(case::AbstractString, mysetup::Dict, optimizer::Any = HiGHS.Optimizer)
     settings_path = get_settings_path(case)    
     ### Cluster time series inputs if necessary and if specified by the user
@@ -245,11 +267,24 @@ function run_genx_case_benders!(case::AbstractString, mysetup::Dict, optimizer::
     planning_variables_sub = benders_inputs["planning_variables_sub"]
     subproblems = benders_inputs["subproblems"]
 
-    results  = MacroEnergySolvers.benders(planning_problem, subproblems, planning_variables_sub, mysetup)
+    if !MES_FEASIBLE_POINT_SHIM_APPLIED[] && get(mysetup, :ExpectFeasibleSubproblems, false) == false
+        @warn "MacroEnergySolvers is not patched (see GenX.mes_require_feasible_point!): with " *
+              "HiGHS, infeasible subproblems can produce invalid cuts and a negative gap."
+    end
+
+    # invokelatest: MES methods may have been replaced after this call chain started
+    # (mes_require_feasible_point! called late); harmless otherwise.
+    results = Base.invokelatest(MacroEnergySolvers.benders, planning_problem, subproblems,
+        planning_variables_sub, mysetup)
+
+    # A lower bound above the upper bound means that an invalid cut was added: the incumbent
+    # is not a solution. Stop before anything is written.
+    check_benders_gap(results, mysetup)
 
     myinputs["solve_time"] = results.cpu_time[end]
 
-    subop_sol = MacroEnergySolvers.solve_subproblems(subproblems, results.planning_sol, true)
+    subop_sol = Base.invokelatest(MacroEnergySolvers.solve_subproblems, subproblems,
+        results.planning_sol, true)
     
     results = (; results..., subop_sol = subop_sol)
 

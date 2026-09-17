@@ -15,156 +15,7 @@ module TestNSEBudget
 # Units: with ParameterScale = 1 the model works in GW / GWh / M$. All quantities named
 # `*_mwh` below are converted to MWh; objectives are left in model units (M$).
 
-using Test
-using GenX
-using JuMP, HiGHS
-using Logging
-
-const MES = GenX.MacroEnergySolvers
-
-const CASE = joinpath(@__DIR__, "benders", "1_three_zones")
-const SETTINGS = joinpath(CASE, "settings")
-
-# $/MWh. Scaled down from the case's 50000 $/MWh; see header. Measured on this case (single
-# segment, HiGHS): E* = 0 at VoLL = 200, 300, 500, 1000, 2000 $/MWh; E* = 263966 MWh/yr
-# (0.23% of demand) at 100 $/MWh. The case is 24 modelled hours with cheap energy.
-const VOLL_TEST = 100.0
-
-# Same tolerance as test_benders_vs_monolithic.jl
-const OBJECTIVE_RTOL = 1e-3
-# Monolithic-vs-monolithic identities are LP-exact up to solver tolerance.
-const LP_RTOL = 1e-6
-
-# Known monolithic optimum of the UNMODIFIED case (from test_benders_vs_monolithic.jl).
-const KNOWN_OPTIMUM_CASE1 = 4975.3803
-
-quiet(f) = redirect_stdout(() -> with_logger(f, ConsoleLogger(stderr, Logging.Warn)), devnull)
-
-function case_setup(overrides::Dict = Dict())
-    setup = quiet() do
-        GenX.configure_settings(joinpath(SETTINGS, "genx_settings.yml"),
-            joinpath(SETTINGS, "output_settings.yml"))
-    end
-    setup["PrintModel"] = 0
-    merge!(setup, overrides)
-    return setup
-end
-
-scale(setup) = setup["ParameterScale"] == 1 ? GenX.ModelScalingFactor : 1.0
-
-"Load the case; optionally collapse to one curtailment segment priced at `voll` (\$/MWh)."
-function case_inputs(setup; single_segment::Bool = true, voll::Float64 = VOLL_TEST)
-    inputs = quiet(() -> GenX.load_inputs(setup, CASE))
-    if single_segment
-        inputs["SEG"] = 1
-        inputs["pC_D_Curtail"] = [voll / scale(setup)]
-        inputs["pMax_D_Curtail"] = [1.0]
-        inputs["Voll"] = [voll / scale(setup)]
-    end
-    return inputs
-end
-
-"Expected annual shed in MWh: sum_t omega[t] * sum_{s,z} vNSE[s,t,z]."
-function expected_shed_mwh(EP, inputs, setup)
-    nse = value.(EP[:vNSE])
-    om = inputs["omega"]
-    return scale(setup) *
-           sum(om[t] * nse[s, t, z] for s in axes(nse, 1), t in axes(nse, 2), z in axes(nse, 3))
-end
-
-function solve_monolithic(setup, inputs)
-    s = copy(setup)
-    s["Benders"] = 0
-    s["EnableJuMPStringNames"] = 1   # tests look variables up by name
-    EP = quiet() do
-        OPT = GenX.configure_solver(SETTINGS, HiGHS.Optimizer)
-        EP = GenX.generate_model(s, inputs, OPT)
-        set_silent(EP)
-        optimize!(EP)
-        EP
-    end
-    @assert termination_status(EP) == MOI.OPTIMAL
-    return EP
-end
-
-"Logger that counts MES's feasibility-cut messages and swallows everything below Warn."
-mutable struct FeasCutCounter <: AbstractLogger
-    n::Int
-end
-Logging.min_enabled_level(::FeasCutCounter) = Logging.Info
-Logging.shouldlog(::FeasCutCounter, args...) = true
-function Logging.handle_message(l::FeasCutCounter, level, message, args...; kwargs...)
-    if occursin("generating feasibility cut", string(message))
-        l.n += 1
-    end
-    if level >= Logging.Warn
-        println(stderr, "[$level] $message")
-    end
-end
-
-function benders_setup(setup; convtol = 1e-4)
-    s = copy(setup)
-    s["Benders"] = 1
-    sb = redirect_stdout(() -> GenX.configure_benders(joinpath(SETTINGS, "benders_settings.yml")), devnull)
-    s = merge(s, sb)
-    s["settings_path"] = SETTINGS
-    s[:ConvTol] = convtol
-    s[:ExpectFeasibleSubproblems] = false
-    s[:Distributed] = false
-    return s
-end
-
-function build_benders(s, inputs)
-    redirect_stdout(devnull) do
-        with_logger(ConsoleLogger(stderr, Logging.Warn)) do
-            decomp = GenX.separate_inputs_subperiods(inputs)
-            GenX.generate_benders_inputs(s, inputs, decomp, HiGHS.Optimizer)
-        end
-    end
-end
-
-"""
-Run MES Benders on the in-memory case. Returns (results, n_feasibility_cuts,
-initial budget allocation, expected shed in MWh at the incumbent, benders inputs).
-"""
-function solve_benders(setup, inputs; convtol = 1e-4)
-    s = benders_setup(setup; convtol)
-    bi = build_benders(s, inputs)
-    pp, subs, lvs = bi["planning_problem"], bi["subproblems"], bi["planning_variables_sub"]
-    counter = FeasCutCounter(0)
-    results = redirect_stdout(devnull) do
-        with_logger(counter) do
-            MES.benders(pp, subs, lvs, s)
-        end
-    end
-    # Initial master iterate of the budget variables (first column of the history).
-    names_all = name.(all_variables(pp))
-    W = inputs["REP_PERIOD"]
-    q0 = Float64[]
-    if s["NSEBudget"] == 1
-        for w in 1:W
-            i = findfirst(==("vNSEbudget[$w]"), names_all)
-            push!(q0, results.planning_sol_hist[i, 1])
-        end
-    end
-    # Re-solve the subproblems at the incumbent (what run_genx_case_benders! does) and
-    # measure the expected shed of the accepted solution.
-    redirect_stdout(devnull) do
-        with_logger(ConsoleLogger(stderr, Logging.Warn)) do
-            MES.solve_subproblems(subs, results.planning_sol, true)
-        end
-    end
-    shed = 0.0
-    for sp in subs
-        w = sp[:subproblem_index]
-        nse = value.(sp[:model][:vNSE])
-        Tw = ((w - 1) * inputs["hours_per_subperiod"] + 1):(w * inputs["hours_per_subperiod"])
-        om = inputs["omega"][Tw]
-        shed += sum(om[t] * nse[sg, t, z]
-        for sg in axes(nse, 1), t in axes(nse, 2), z in axes(nse, 3))
-    end
-    return results, counter.n, q0, scale(setup) * shed, bi
-end
+include(joinpath(@__DIR__, "nse_budget_helpers.jl"))
 
 # ---------------------------------------------------------------------------
 # Shared VoLL-form reference (single segment, VOLL_TEST): z_VoLL and E*
@@ -175,9 +26,6 @@ const EP_VOLL = solve_monolithic(SETUP_OFF, INPUTS)
 const Z_VOLL = objective_value(EP_VOLL)
 const ESTAR_MWH = expected_shed_mwh(EP_VOLL, INPUTS, SETUP_OFF)
 println("NSEBudget tests: VoLL form (VoLL=$(VOLL_TEST) \$/MWh, 1 segment): z_VoLL = $Z_VOLL, E* = $ESTAR_MWH MWh")
-
-budget_setup(target_mwh; remove_voll = 1) = case_setup(Dict("NSEBudget" => 1,
-    "NSEBudgetTargetMWh" => target_mwh, "NSEBudgetRemoveVoLL" => remove_voll))
 
 @testset "NSE budget" begin
     @testset "T1 budget off: nothing changes" begin
@@ -250,31 +98,116 @@ budget_setup(target_mwh; remove_voll = 1) = case_setup(Dict("NSEBudget" => 1,
         end
     end
 
-    @testset "T3 stock MES 0.2.2 + HiGHS: infeasible subproblem taken for solved" begin
-        # Documents the MES defect that GenX.mes_require_feasible_point!() works around (see its
-        # docstring). Must run BEFORE the shim is applied. If MES is fixed these turn into
-        # "unexpected pass" errors: then delete the shim and this testset.
+    @testset "T3 planning cap: plain sum, all coefficients one" begin
+        # vNSEbudget[w] already carries Sub_Weights[w] (weighted convention), so the cap must
+        # NOT be weighted again: sum_w 1 * vNSEbudget[w] <= target / scale.
         target = 0.5 * ESTAR_MWH
-        s = budget_setup(target)
-        z_mono = objective_value(solve_monolithic(s, INPUTS))
-        results, nfeas, _, _, _ = solve_benders(s, INPUTS)
-        println("T3 stock MES: z_mono = $z_mono | UB = $(results.UB_hist[end]) LB = $(results.LB_hist[end]) iters = $(length(results.UB_hist)) status = $(results.termination_status) | feasibility cuts = $nfeas")
-        @test_broken results.termination_status == "OPTIMAL"
-        @test_broken results.LB_hist[end] <= z_mono * (1 + LP_RTOL)
+        s = benders_setup(budget_setup(target))
+        pp = build_benders(s, INPUTS)["planning_problem"]
+        W = INPUTS["REP_PERIOD"]
+        @test length(unique(INPUTS["Weights"])) > 1      # a pi_w-weighted cap would show
+        cap = pp[:cNSEBudget_planning]
+        @test length(pp[:vNSEbudget]) == W
+        for w in 1:W
+            @test normalized_coefficient(cap, pp[:vNSEbudget][w]) == 1.0
+            @test lower_bound(pp[:vNSEbudget][w]) == 0.0
+        end
+        f = constraint_object(cap).func
+        @test length(f.terms) == W                        # no other variable in the row
+        @test all(==(1.0), values(f.terms))
+        @test constraint_object(cap).set == MOI.LessThan(target / scale(s))
+        @test normalized_rhs(cap) ≈ target / scale(s)
+    end
+
+    @testset "T5 settings validation" begin
+        msg(f) =
+            try
+                f()
+                "no error"
+            catch e
+                e isa ErrorException ? e.msg : "not an ErrorException: $(typeof(e))"
+            end
+        # target is mandatory, numeric and non-negative when the budget is on
+        @test_throws ErrorException solve_monolithic(case_setup(Dict("NSEBudget" => 1)), INPUTS)
+        @test occursin("NSEBudgetTargetMWh (expected annual unserved energy cap, MWh) is not set",
+            msg(() -> solve_monolithic(case_setup(Dict("NSEBudget" => 1)), INPUTS)))
+        @test_throws ErrorException solve_monolithic(budget_setup(-1.0), INPUTS)
+        @test occursin("NSEBudgetTargetMWh must be a non-negative number (got -1.0)",
+            msg(() -> solve_monolithic(budget_setup(-1.0), INPUTS)))
+        @test occursin("NSEBudgetTargetMWh must be a non-negative number (got abc)",
+            msg(() -> solve_monolithic(budget_setup("abc"), INPUTS)))
+        # Benders: complete recourse does not hold, so ExpectFeasibleSubproblems: true is an error
+        sb = benders_setup(budget_setup(0.5 * ESTAR_MWH))
+        sb[:ExpectFeasibleSubproblems] = true
+        @test_throws ErrorException build_benders(sb, INPUTS)
+        @test occursin("NSEBudget = 1 requires ExpectFeasibleSubproblems: false",
+            msg(() -> build_benders(sb, INPUTS)))
+        # ... and without the budget the same setting is accepted
+        sb_off = benders_setup(SETUP_OFF)
+        sb_off[:ExpectFeasibleSubproblems] = true
+        @test build_benders(sb_off, INPUTS) isa Dict
     end
 end
 
-# World age: the shim redefines a MES method, so it has to be applied in its own top-level
-# statement, between testsets, for the redefinition to be visible to the tests below.
-GenX.mes_require_feasible_point!()
+@testset "MES patch: status test, gap check, guards" begin
+    MOIU = MOI.Utilities
+    # (termination status, primal status) -> does the subproblem count as solved?
+    function solved(ts, ps)
+        m = Model(() -> MOIU.MockOptimizer(MOIU.Model{Float64}()); add_bridges = false)
+        @variable(m, x >= 0)
+        MOIU.attach_optimizer(m)
+        MOIU.set_mock_optimize!(unsafe_backend(m), mo -> MOIU.mock_optimize!(mo, ts, (ps, [0.0])))
+        optimize!(m)
+        @assert termination_status(m) == ts && primal_status(m) == ps
+        return with_logger(() -> GenX.mes_has_feasible_point(m), NullLogger())
+    end
+    @test solved(MOI.OPTIMAL, MOI.FEASIBLE_POINT)
+    @test !solved(MOI.INFEASIBLE, MOI.INFEASIBLE_POINT)          # the HiGHS warm-start case
+    @test !solved(MOI.INFEASIBLE, MOI.NO_SOLUTION)
+    @test !solved(MOI.INFEASIBLE_OR_UNBOUNDED, MOI.FEASIBLE_POINT)
+    @test !solved(MOI.OTHER_ERROR, MOI.NO_SOLUTION)
+    @test !solved(MOI.OPTIMAL, MOI.INFEASIBLE_POINT)
+    @test solved(MOI.OPTIMAL, MOI.NEARLY_FEASIBLE_POINT)         # accepted, as stock MES does
+    @test solved(MOI.ALMOST_OPTIMAL, MOI.NEARLY_FEASIBLE_POINT)
+    @test solved(MOI.TIME_LIMIT, MOI.FEASIBLE_POINT)             # accepted, as stock MES does
 
-@testset "NSE budget, Benders (MES feasible-point shim applied)" begin
+    # negative gap beyond ConvTol is an error, within it a warning, positive gap is silent
+    res(ub, lb) = (UB_hist = [Inf, ub], LB_hist = [0.0, lb], termination_status = "NEGATIVE GAP")
+    @test_throws ErrorException GenX.check_benders_gap(res(5125.04, 6246.34), Dict(:ConvTol => 1e-3))
+    @test_logs (:warn, r"negative gap within the tolerance") GenX.check_benders_gap(
+        res(100.0, 100.0 + 1e-6), Dict(:ConvTol => 1e-3))
+    @test_logs GenX.check_benders_gap(res(100.05, 100.0), Dict(:ConvTol => 1e-3))
+
+    # load-time patch: in place, from GenX's file, replacing (not adding) the MES method
+    @test get(ENV, "GENX_DISABLE_MES_PATCH", "") != "1"
+    @test GenX.MES_FEASIBLE_POINT_SHIM_APPLIED[]
+    @test pkgversion(MES) == GenX.MES_PATCHED_VERSION
+    @test GenX.mes_source_has_defect()      # false once MES is fixed upstream: delete the patch
+    meth = which(MES.solve_subproblem, (Model, NamedTuple, Vector{String}, Bool))
+    @test basename(string(meth.file)) == "mes_feasible_point_shim.jl"
+    @test length(methods(MES.solve_subproblem)) == 1
+    @test GenX.mes_require_feasible_point!() === true    # idempotent public guard
+end
+
+# World age. MacroEnergySolvers 0.2.2 is patched by GenX at load time (GenX.__init__), so the
+# patch is visible to every call made after `using GenX`, including calls made from inside a
+# function. `guarded_benders` is the regression test of that: it calls the public guard and
+# MES.benders within ONE function call, and it is the FIRST Benders solve of this process.
+# (With the opt-in runtime shim of the first version of this PR the same call ran stock MES
+# and ended with NEGATIVE GAP while the flag said the shim was applied.)
+function guarded_benders(s, inputs)
+    GenX.mes_require_feasible_point!()
+    return solve_benders(s, inputs)
+end
+
+@testset "NSE budget, Benders (MES 0.2.2 patched at GenX load)" begin
     @testset "T3 Benders vs monolithic parity, budget mode" begin
         target = 0.5 * ESTAR_MWH
         s = budget_setup(target)
         EP = solve_monolithic(s, INPUTS)
         z_mono = objective_value(EP)
-        results, nfeas, q0, shed_bd, _ = solve_benders(s, INPUTS)
+        @test GenX.MES_FEASIBLE_POINT_SHIM_APPLIED[]
+        results, nfeas, q0, shed_bd, _ = guarded_benders(s, INPUTS)   # guard + solve in one function
         ub, lb = results.UB_hist[end], results.LB_hist[end]
         println("T3: z_mono = $z_mono | Benders UB = $ub LB = $lb iters = $(length(results.UB_hist)) status = $(results.termination_status) | feasibility cuts = $nfeas | q0 = $q0 | incumbent shed = $shed_bd MWh (target $target)")
         @test results.termination_status == "OPTIMAL"
@@ -368,10 +301,58 @@ GenX.mes_require_feasible_point!()
         @test shed_bd <= ESTAR_MWH * (1 + 1e-5)
     end
 
-    @testset "T5 settings validation" begin
-        # target is mandatory and non-negative when the budget is on
-        @test_throws Exception solve_monolithic(case_setup(Dict("NSEBudget" => 1)), INPUTS)
-        @test_throws Exception solve_monolithic(budget_setup(-1.0), INPUTS)
+    @testset "T6 run_genx_case! end to end (Benders, HiGHS, unmodified case)" begin
+        # 4 segments, VoLL 50000 removed by the budget; target E2E_TARGET_MWH.
+        s = budget_setup(E2E_TARGET_MWH)
+        inputs_raw = case_inputs(s; single_segment = false)
+        EP = with_logger(() -> solve_monolithic(s, inputs_raw), ConsoleLogger(stderr, Logging.Error))
+        z_mono = objective_value(EP)
+        @test z_mono≈4964.456 rtol=1e-6            # value measured by the reviewer of PR 9
+        case = e2e_benders_case()
+        redirect_stdout(devnull) do
+            with_logger(ConsoleLogger(stderr, Logging.Error)) do
+                GenX.run_genx_case!(case, HiGHS.Optimizer)
+            end
+        end
+        out = joinpath(case, "results_benders")
+        @test isdir(out)
+        nse = CSV.read(joinpath(out, "nse.csv"), DataFrame; header = false)
+        @test nse[3, 1] == "AnnualSum"
+        nse_total = parse(Float64, string(nse[3, end]))
+        nse_sum = sum(parse(Float64, string(x)) for x in nse[3, 2:(end - 1)])
+        status = CSV.read(joinpath(out, "benders_convergence.csv"), DataFrame)
+        ub = status[end, :UB]
+        lb = status[end, :LB]
+        println("T6 e2e: z_mono = $z_mono | results_benders: UB = $ub LB = $lb iters = $(nrow(status)) | nse.csv AnnualSum total = $nse_total MWh (sum of columns $nse_sum)")
+        @test nse_total≈E2E_TARGET_MWH rtol=1e-5
+        @test nse_sum≈nse_total rtol=1e-8
+        @test all(parse(Float64, string(x)) >= -1e-6 for x in nse[3, 2:end])
+        @test abs(ub - z_mono) / z_mono <= OBJECTIVE_RTOL
+        @test lb <= z_mono * (1 + LP_RTOL)
+    end
+
+    @testset "T7 stock MES (subprocess, GENX_DISABLE_MES_PATCH=1)" begin
+        # A fresh process with the escape hatch set, i.e. stock MacroEnergySolvers 0.2.2.
+        script = joinpath(@__DIR__, "nse_budget_stock_mes.jl")
+        cmd = addenv(ignorestatus(`$(Base.julia_cmd()) --project=$(Base.active_project()) $script`),
+            "GENX_DISABLE_MES_PATCH" => "1")
+        log = read(pipeline(cmd; stderr = devnull), String)
+        kv = Dict(String(k) => String(v)
+        for (k, v) in (split(l, "="; limit = 2) for l in split(log, '\n') if occursin("=", l)))
+        for k in sort(collect(keys(kv)))
+            println("T7 stock MES: $k = $(kv[k])")
+        end
+        @test occursin("STOCK DONE", log)
+        @test get(kv, "PATCH_APPLIED", "") == "false"     # the escape hatch works
+        # (a) The defect is still in MES. If these two become "unexpected pass", MES has been
+        # fixed: delete src/benders/mes_feasible_point_shim.jl and this testset.
+        @test_broken get(kv, "STOCK_STATUS", "") == "OPTIMAL"
+        @test_broken parse(Float64, kv["STOCK_LB"]) <=
+                     parse(Float64, kv["STOCK_ZMONO"]) * (1 + LP_RTOL)
+        # (b) run_genx_case! must fail on a negative gap BEFORE writing any output
+        @test startswith(get(kv, "RUNNER_ERROR", ""), "ErrorException")
+        @test occursin("negative gap", lowercase(get(kv, "RUNNER_ERROR", "")))
+        @test get(kv, "RUNNER_RESULTS_WRITTEN", "") == "false"
     end
 end
 

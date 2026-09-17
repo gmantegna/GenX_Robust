@@ -75,6 +75,10 @@ function __init__()
                 "with Gurobi. Add `using Gurobi` before calling `run_genx_case!`.")
         end
     end
+    # MacroEnergySolvers 0.2.2 takes an infeasible subproblem that returns a point for a solved
+    # one. Patched here, at load time, so that every later call sees it (no world-age trap).
+    # See `mes_require_feasible_point!`.
+    apply_mes_patch!()
     return nothing
 end
 

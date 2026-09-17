@@ -67,10 +67,16 @@ function non_served_energy!(EP::Model, inputs::Dict, setup::Dict)
 
     ## Objective Function Expressions ##
 
-    # Cost of non-served energy/curtailed demand at hour "t" in zone "z"
+    # Cost of non-served energy/curtailed demand at hour "t" in zone "z".
+    # Budget form of the NSE budget policy (NSEBudget = 1, NSEBudgetRemoveVoLL = 1): the cost
+    # of every segment is zero, so that the multiplier of the expected-NSE cap is the whole
+    # implied price of unserved energy and not an increment on top of VoLL (see
+    # policies/nse_budget.jl). eCNSE and eTotalCNSE are kept (identically zero) so that the
+    # output writers are unchanged. With the policy off this is the stock expression.
+    pC_D_Curtail = nse_budget_removes_voll(setup) ? zeros(SEG) : inputs["pC_D_Curtail"]
     @expression(EP,
         eCNSE[s = 1:SEG, t = 1:T, z = 1:Z],
-        (inputs["omega"][t]*inputs["pC_D_Curtail"][s]*vNSE[s, t, z]))
+        (inputs["omega"][t]*pC_D_Curtail[s]*vNSE[s, t, z]))
 
     # Sum individual demand segment contributions to non-served energy costs to get total non-served energy costs
     # Julia is fastest when summing over one row one column at a time

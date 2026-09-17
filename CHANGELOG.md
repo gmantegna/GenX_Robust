@@ -18,6 +18,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Benders test suite: `test/test_benders_vs_monolithic.jl` validates that Benders and monolithic solves produce consistent objective values across example systems.
 - Added `Run_benders.jl` entry point scripts to example systems 1–5, 7, 10, and 11, enabling Benders decomposition runs for each of those cases.
 - A generalized hourly matching policy module.
+- Expected non-served energy budget policy (`NSEBudget`, `NSEBudgetTargetMWh`, `NSEBudgetRemoveVoLL`; `src/model/policies/nse_budget.jl`): a hard system-wide cap on $\sum_t \omega_t NSE_t$. Monolithic: one row. Benders: per-period budgets `vNSEbudget[w]` in the planning problem and one budget row per subproblem, on the pattern of the CO2 cap; under-budgeted subproblems return feasibility cuts. By default the NSE cost term is removed from the objective when the budget is on. Off by default; with it off the model is unchanged.
+- `GenX.mes_require_feasible_point!()`: opt-in runtime shim for `MacroEnergySolvers` 0.2.2, which takes an infeasible subproblem for a solved one whenever the solver returns an infeasible point (HiGHS simplex from a warm start) and then adds an invalid optimality cut.
 - Benders decomposition output now writes additional files matching the monolithic solver: `prices.csv`, `reliability.csv`, `storagebal_duals.csv`, `capacityfactor.csv`, `time_weights.csv`, `EnergyRevenue.csv`, `ChargingCost.csv`, `commit.csv`, `start.csv`, `shutdown.csv` (when UCommit≥1), `CO2_prices_and_penalties.csv` (when CO2Cap>0), and `SubsidyRevenue.csv`/`RegSubsidyRevenue.csv` (when MinCap/MinCapReq is active).
 
 ### Changed

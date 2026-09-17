@@ -72,6 +72,11 @@ The following tables summarize the model settings parameters and their default/p
 || 1 = mass-based emission limit constraint|
 || 2 = demand + rate-based emission limit constraint|
 || 3 = generation + rate-based emission limit constraint|
+|NSEBudget | Hard cap on expected annual non-served energy, system-wide (see `nse_budget!`).|
+|| 0 = off (default).|
+|| 1 = on; requires `NSEBudgetTargetMWh`. With `Benders: 1` it requires `ExpectFeasibleSubproblems: false`.|
+|NSEBudgetTargetMWh | The cap, in MWh per year in the weighted convention: a bound on $\sum_t \omega_t \sum_{s,z} NSE_{s,t,z}$, which is expected annual unserved energy when the period weights sum to 8760.|
+|NSEBudgetRemoveVoLL | Only with `NSEBudget: 1`. 1 (default) = the cost of non-served energy is removed from the objective, so the multiplier of the cap is the whole implied price of unserved energy; 0 = segment prices are kept and the multiplier of the cap is an increment on them.|
 |EnergyShareRequirement | Flag for specifying regional renewable portfolio standard (RPS) and clean energy standard policy (CES) related constraints.|
 || Default = 0 (No RPS or CES constraints).|
 || 1 = activate energy share requirement related constraints. |

@@ -7,6 +7,8 @@ function default_settings()
         "EnergyShareRequirement" => 0,
         "CapacityReserveMargin" => 0,
         "CO2Cap" => 0,
+        "NSEBudget" => 0,              # hard expected-unserved-energy cap; 0 = off
+        "NSEBudgetRemoveVoLL" => 1,    # with NSEBudget = 1: 1 = drop the NSE cost term, 0 = keep it
         "StorageLosses" => 1,
         "LDSAdditionalConstraints" => 1,
         "VirtualChargeDischargeCost" => 1,  # $/MWh
@@ -91,6 +93,21 @@ function validate_settings!(settings::Dict{Any, Any})
             :validate_settings!, force = true)
         settings["OperationalReserves"] = settings["Reserves"]
         delete!(settings, "Reserves")
+    end
+
+    if settings["NSEBudget"] ∉ (0, 1)
+        error("NSEBudget must be 0 or 1 (got $(settings["NSEBudget"])).")
+    end
+    if settings["NSEBudget"] == 1
+        if !haskey(settings, "NSEBudgetTargetMWh")
+            error("NSEBudget is 1 but NSEBudgetTargetMWh (expected annual unserved energy cap, MWh) is not set.")
+        end
+        if !(settings["NSEBudgetTargetMWh"] isa Real) || settings["NSEBudgetTargetMWh"] < 0
+            error("NSEBudgetTargetMWh must be a non-negative number (got $(settings["NSEBudgetTargetMWh"])).")
+        end
+        if settings["NSEBudgetRemoveVoLL"] ∉ (0, 1)
+            error("NSEBudgetRemoveVoLL must be 0 or 1 (got $(settings["NSEBudgetRemoveVoLL"])).")
+        end
     end
 
     if settings["EnableJuMPStringNames"] == 0 && settings["ComputeConflicts"] == 1

@@ -68,6 +68,10 @@ end
     include("test_benders_vs_monolithic.jl")
 end
 
+@testset "NSE budget policy" begin
+    include("test_nse_budget.jl")
+end
+
 # Test writing outputs
 @testset "Writing outputs " begin
     for test_file in filter!(x -> endswith(x, ".jl"), readdir("writing_outputs"))

@@ -60,11 +60,22 @@ const GRB_ENV = Ref{Any}(nothing)
 
 Return a Gurobi `OptimizerWithAttributes` for use in Benders sub/planning problems.
 Requires the `Gurobi` package to be loaded (triggers the `GenXGurobiExt` extension).
-Throws an informative error if Gurobi has not been loaded.
+
+GenX only declares the function; its single method lives in `GenXGurobiExt`. Do NOT add a
+fallback method with the same signature here: the extension would overwrite it, and Julia
+refuses to precompile a module that overwrites a method. If Gurobi has not been loaded, the
+resulting `MethodError` carries an informative hint (registered in `__init__`).
 """
-function benders_gurobi_optimizer(attributes::Dict)
-    error("Gurobi must be loaded before running Benders decomposition. " *
-          "Add `using Gurobi` before calling `run_genx_case!`.")
+function benders_gurobi_optimizer end
+
+function __init__()
+    Base.Experimental.register_error_hint(MethodError) do io, exc, argtypes, kwargs
+        if exc.f === benders_gurobi_optimizer && isempty(methods(benders_gurobi_optimizer))
+            print(io, "\nGurobi must be loaded before running Benders decomposition ",
+                "with Gurobi. Add `using Gurobi` before calling `run_genx_case!`.")
+        end
+    end
+    return nothing
 end
 
 """

@@ -59,6 +59,11 @@ end
     end
 end
 
+# Must run before the Benders tests, which may load Gurobi
+@testset "Gurobi extension" begin
+    include("test_gurobi_extension.jl")
+end
+
 @testset "Benders decomposition" begin
     include("test_benders_vs_monolithic.jl")
 end

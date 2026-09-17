@@ -229,6 +229,14 @@ budget_setup(target_mwh; remove_voll = 1) = case_setup(Dict("NSEBudget" => 1,
         s = benders_setup(budget_setup(0.5 * ESTAR_MWH))
         bi = build_benders(s, INPUTS)
         H = INPUTS["hours_per_subperiod"]
+        # Weighted convention: omega[t] = Sub_Weights[w] / H for t in w, and the weights sum to
+        # 8760, so sum_t omega[t]*NSE[t] (the capped quantity) is expected annual MWh.
+        @test sum(INPUTS["Weights"]) ≈ 8760
+        @test sum(INPUTS["omega"]) ≈ 8760
+        @test length(unique(INPUTS["Weights"])) > 1      # unequal weights: a dropped omega shows
+        for w in 1:INPUTS["REP_PERIOD"], t in 1:H
+            @test INPUTS["omega"][(w - 1) * H + t] ≈ INPUTS["Weights"][w] / H
+        end
         for sp in bi["subproblems"]
             w = sp[:subproblem_index]
             m = sp[:model]

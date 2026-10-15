@@ -1,0 +1,19 @@
+# Tiny 1-zone case for the PRM_ELCC tests (test/test_prm_elcc.jl): 1 representative period of
+# 24 h weighted 8760, constant 1000 MW demand, one new-build gas unit (firm, NQC 0.9), 300 MW of
+# fixed existing solar and a new-build 4 h battery on a 2-axis ELCC surface with 2 facets.
+ParameterScale: 1
+UCommit: 0
+TimeDomainReduction: 0
+NetworkExpansion: 0
+Trans_Loss_Segments: 1
+OperationalReserves: 0
+EnergyShareRequirement: 0
+CapacityReserveMargin: 0
+CO2Cap: 0
+MinCapReq: 0
+MaxCapReq: 0
+StorageLosses: 1
+PRM_ELCC: 1
+WriteShadowPrices: 1
+OverwriteResults: 1
+PrintModel: 0

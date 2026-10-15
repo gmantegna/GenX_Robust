@@ -14,6 +14,7 @@ function default_settings()
         "VirtualChargeDischargeCost" => 1,  # $/MWh
         "MinCapReq" => 0,
         "MaxCapReq" => 0,
+        "PRM_ELCC" => 0,               # PRM with ELCC surfaces (fixed TRN); 0 = off
         "ParameterScale" => 0,
         "WriteShadowPrices" => 0,
         "UCommit" => 0,
@@ -110,6 +111,14 @@ function validate_settings!(settings::Dict{Any, Any})
         end
     end
 
+    if settings["PRM_ELCC"] ∉ (0, 1)
+        error("PRM_ELCC must be 0 or 1 (got $(settings["PRM_ELCC"])).")
+    end
+    if settings["PRM_ELCC"] == 1 && settings["Benders"] == 1
+        error("PRM_ELCC is a planning-level constraint; Benders support not implemented " *
+              "(set Benders: 0, or PRM_ELCC: 0).")
+    end
+
     if settings["EnableJuMPStringNames"] == 0 && settings["ComputeConflicts"] == 1
         @warn """EnableJuMPStringNames is turned off but ComputeConflicts is on. Computing 
         conflicts requires JuMP string names. Resetting EnableJuMPStringNames to 1 """
@@ -141,6 +150,7 @@ function default_writeoutput()
         "WriteMaintenance" => true,
         "WriteMaxCapReq" => true,
         "WriteMinCapReq" => true,
+        "WritePRMELCC" => true,
         "WriteNetRevenue" => true,
         "WriteNSE" => true,
         "WriteNWExpansion" => true,

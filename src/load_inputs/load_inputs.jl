@@ -58,6 +58,11 @@ function load_inputs(setup::Dict, path::AbstractString)
         load_maximum_capacity_requirement!(policies_path, inputs, setup)
     end
 
+    if get(setup, "PRM_ELCC", 0) == 1
+        load_prm_elcc!(setup, policies_path,
+            joinpath(resources_path, setup["ResourcePoliciesFolder"]), inputs)
+    end
+
     if setup["EnergyShareRequirement"] == 1
         load_energy_share_requirement!(setup, policies_path, inputs)
     end

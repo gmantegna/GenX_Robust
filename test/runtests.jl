@@ -72,6 +72,10 @@ end
     include("test_nse_budget.jl")
 end
 
+@testset "PRM_ELCC policy" begin
+    include("test_prm_elcc.jl")
+end
+
 # Test writing outputs
 @testset "Writing outputs " begin
     for test_file in filter!(x -> endswith(x, ".jl"), readdir("writing_outputs"))

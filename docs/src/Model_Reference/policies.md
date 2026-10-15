@@ -17,6 +17,13 @@ GenX.nse_budget_subperiod!
 GenX.mes_require_feasible_point!
 ```
 
+## Planning Reserve Margin with ELCC Surfaces
+```@docs
+GenX.load_prm_elcc!
+GenX.prm_elcc!
+GenX.write_prm_elcc
+```
+
 ## Energy Share Requirement
 ```@docs
 GenX.load_energy_share_requirement!

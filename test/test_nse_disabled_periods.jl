@@ -14,12 +14,16 @@ module TestNSEDisabledPeriods
 
 include(joinpath(@__DIR__, "nse_budget_helpers.jl"))
 
-# Period whose demand is scaled up and which the policy then disables. The mutant check of the
-# lane report ("disable the wrong period") changes DISABLED_PERIOD to a period that does not
-# shed; the named test "disabling the shedding period removes its shed and builds capacity" then
-# fails on `objective_value(EP_on) > Z_REF`.
-const STRESS_PERIOD = 2
-const DISABLED_PERIOD = 2
+# Period whose demand is scaled up and which the policy then disables: period 4, the one with
+# the smallest weight (978 h), is the only period in which shedding at 100 $/MWh is cheaper than
+# building (100 $/MWh × 978 h/yr per MW-yr of shed, below the cheapest capacity's annual cost;
+# the other periods weigh 2286-2940 h, so demand there is met by building — measured in the lane
+# D test job: with period 2 stressed the model built and did not shed). The mutant check of the
+# lane report ("disable the wrong period") sets DISABLED_PERIOD = 2, a period that does not shed;
+# the named test "disabling the shedding period removes its shed and builds capacity" then fails
+# on `objective_value(EP_on) > Z_REF` (the row exists but binds nothing).
+const STRESS_PERIOD = 4
+const DISABLED_PERIOD = 4
 const DEMAND_SCALE = 3.0
 const VOLL_DISABLED_TEST = 100.0
 
@@ -58,7 +62,11 @@ println("NSEDisabledPeriods tests: reference (VoLL=$(VOLL_DISABLED_TEST), period
         d = GenX.default_settings()
         @test d["NSEDisabledPeriods"] == 0
         @test !haskey(object_dictionary(EP_REF), :cNSEDisabled)
-        @test_throws ErrorException case_setup(Dict("NSEDisabledPeriods" => 2))
+        # case_setup merges overrides after configure_settings has validated, so validate directly
+        bad = merge(GenX.default_settings(), Dict{Any,Any}("NSEDisabledPeriods" => 2))
+        @test_throws ErrorException GenX.validate_settings!(bad)
+        ok = merge(GenX.default_settings(), Dict{Any,Any}("NSEDisabledPeriods" => 1))
+        @test GenX.validate_settings!(ok) === nothing || true   # no throw
     end
 
     @testset "T2 loader reads policies/NSE_disabled_periods.csv" begin

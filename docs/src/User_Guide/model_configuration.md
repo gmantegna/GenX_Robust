@@ -80,6 +80,9 @@ The following tables summarize the model settings parameters and their default/p
 |PRM_ELCC | Planning reserve margin with ELCC surfaces, RESOLVE form (see `prm_elcc!`): firm capacity at its NQC plus one piecewise-linear ELCC surface per resource group must cover a fixed total reliability need `TRN_MW`.|
 || 0 = off (default).|
 || 1 = on; reads `policies/PRM_ELCC.csv`, `policies/PRM_ELCC_facets.csv` and `resources/policy_assignments/Resource_prm_elcc.csv` (`load_prm_elcc!`), writes `prm_elcc.csv` (the dual of the need in $/MW-yr, each surface's ELCC, the binding facet, firm accreditation). Monolithic model only: with `Benders: 1` it is an error ("PRM_ELCC is a planning-level constraint; Benders support not implemented").|
+|NSEDisabledPeriods | No non-served energy in selected representative periods (stress periods of adaptive stress-period planning; see `non_served_energy!`).|
+|| 0 = off (default).|
+|| 1 = on; reads `policies/NSE_disabled_periods.csv` (one column `Rep_Period`, one row per representative-period index) and adds `cNSEDisabled[s,t,z]: vNSE[s,t,z] == 0` for every hour of each listed period (`hours_per_subperiod × (p − 1) + 1 … hours_per_subperiod × p`). With `Benders: 1` the subproblem of a listed period gets the row in all of its hours. An index outside `1:Rep_Periods` is an error.|
 |EnergyShareRequirement | Flag for specifying regional renewable portfolio standard (RPS) and clean energy standard policy (CES) related constraints.|
 || Default = 0 (No RPS or CES constraints).|
 || 1 = activate energy share requirement related constraints. |

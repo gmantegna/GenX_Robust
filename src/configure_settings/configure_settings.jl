@@ -9,6 +9,7 @@ function default_settings()
         "CO2Cap" => 0,
         "NSEBudget" => 0,              # hard expected-unserved-energy cap; 0 = off
         "NSEBudgetRemoveVoLL" => 1,    # with NSEBudget = 1: 1 = drop the NSE cost term, 0 = keep it
+        "NSEDisabledPeriods" => 0,     # 1 = no non-served energy in the periods listed in policies/NSE_disabled_periods.csv
         "StorageLosses" => 1,
         "LDSAdditionalConstraints" => 1,
         "VirtualChargeDischargeCost" => 1,  # $/MWh
@@ -117,6 +118,9 @@ function validate_settings!(settings::Dict{Any, Any})
     if settings["PRM_ELCC"] == 1 && settings["Benders"] == 1
         error("PRM_ELCC is a planning-level constraint; Benders support not implemented " *
               "(set Benders: 0, or PRM_ELCC: 0).")
+    end
+    if settings["NSEDisabledPeriods"] ∉ (0, 1)
+        error("NSEDisabledPeriods must be 0 or 1 (got $(settings["NSEDisabledPeriods"])).")
     end
 
     if settings["EnableJuMPStringNames"] == 0 && settings["ComputeConflicts"] == 1

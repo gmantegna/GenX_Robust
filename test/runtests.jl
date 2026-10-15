@@ -68,6 +68,10 @@ end
     include("test_benders_vs_monolithic.jl")
 end
 
+@testset "NSE disabled periods" begin
+    include("test_nse_disabled_periods.jl")
+end
+
 @testset "NSE budget policy" begin
     include("test_nse_budget.jl")
 end

@@ -115,4 +115,15 @@ function non_served_energy!(EP::Model, inputs::Dict, setup::Dict)
     @constraint(EP,
         cMaxNSE[t = 1:T, z = 1:Z],
         sum(vNSE[s, t, z] for s in 1:SEG)<=inputs["pD"][t, z])
+
+    # No non-served energy in the representative periods listed in policies/NSE_disabled_periods.csv
+    # (NSEDisabledPeriods = 1; stress periods of adaptive stress-period planning, reimagining-ra #50).
+    # Every hour of a listed period gets vNSE[s,t,z] == 0; see load_nse_disabled_periods.jl for the
+    # hour mapping (monolithic hours, or all hours of a Benders subproblem whose period is listed).
+    if get(setup, "NSEDisabledPeriods", 0) == 1
+        disabled_hours = nse_disabled_hours(inputs)
+        @constraint(EP,
+            cNSEDisabled[s = 1:SEG, t in disabled_hours, z = 1:Z],
+            vNSE[s, t, z]==0)
+    end
 end

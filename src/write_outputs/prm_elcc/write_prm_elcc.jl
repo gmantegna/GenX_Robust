@@ -14,7 +14,7 @@ columns `Item,Surface,Facet,Axis,Resource,Value,Unit`, one row per item:
 | `SurfaceELCC` | Surface | `vELCC[s]`, MW |
 | `FacetValue` | Surface, Facet | the facet's right-hand side at the solution, MW |
 | `FacetSlack` | Surface, Facet | right-hand side minus `vELCC[s]`, MW (0 = tight) |
-| `FacetDual` | Surface, Facet | the facet's dual, \$/MW-yr |
+| `FacetDual` | Surface, Facet | the facet's shadow price (minus JuMP's dual of the `<=` row, so >= 0), \$/MW-yr |
 | `BindingFacet` | Surface, Facet | the facet with the smallest slack (the lowest plane at the portfolio); Value = its slack |
 
 Capacities and MW quantities are multiplied by `ModelScalingFactor` when `ParameterScale: 1`
@@ -61,7 +61,10 @@ function write_prm_elcc(path::AbstractString, inputs::Dict, setup::Dict, EP::Mod
             add!("FacetValue", rhs * scale_factor, "MW"; surface = s, facet = f)
             add!("FacetSlack", slacks[f] * scale_factor, "MW"; surface = s, facet = f)
             if duals
-                add!("FacetDual", dual(EP[:cELCCFacet][s, f]) * scale_factor, "\$/MW-yr";
+                # JuMP's dual of a <= row in a minimization is <= 0; report the shadow price of
+                # relaxing the facet (lifting the plane by 1 MW) as a positive $/MW-yr, like
+                # the dual of the >= need above.
+                add!("FacetDual", -dual(EP[:cELCCFacet][s, f]) * scale_factor, "\$/MW-yr";
                     surface = s, facet = f)
             end
         end

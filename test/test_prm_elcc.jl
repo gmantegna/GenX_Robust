@@ -130,8 +130,11 @@ end
             nse = CSV.read(joinpath(out, "nse.csv"), DataFrame; header = false)
             @test nse[3, 1] == "AnnualSum"
             @test abs(parse(Float64, string(nse[3, end]))) < 1e-6
-            curt = CSV.read(joinpath(out, "curtail.csv"), DataFrame; header = false)
-            @test all(abs(parse(Float64, string(x))) < 1e-6 for x in curt[3, 2:end])
+            # no curtailment: solar's annual output is its full availability, 300 x 7.8 x 365 MWh
+            pw = CSV.read(joinpath(out, "power.csv"), DataFrame; header = false)
+            @test pw[3, 1] == "AnnualSum"
+            jsolar = findfirst(==("solar_pv"), string.(collect(pw[1, :])))
+            @test parse(Float64, string(pw[3, jsolar]))≈300.0 * 7.8 * 365 rtol=1e-6
             ch = CSV.read(joinpath(out, "charge.csv"), DataFrame; header = false)
             @test all(abs(parse(Float64, string(x))) < 1e-6 for x in ch[3, 2:end])
 
@@ -217,16 +220,27 @@ end
         @test normalized_rhs(c2) ≈ 200.0 / GenX.ModelScalingFactor + 0.1 * 300.0 / GenX.ModelScalingFactor
         # storage counts by POWER capacity: the energy variable has no coefficient
         @test normalized_coefficient(c2, EP[:vCAPENERGY][inputs["STOR_ALL"][1]]) == 0.0
-        # Benders is refused, with a clear message
-        sb = copy(setup)
-        sb["Benders"] = 1
+        # Benders is refused, with a clear message, at settings validation (the first thing
+        # run_genx_case! does) ...
+        dirb = scratch_case(overrides = Dict("Benders" => 1))
         err = try
-            GenX.generate_model(sb, inputs, HiGHS.Optimizer)
+            quiet(() -> GenX.configure_settings(joinpath(dirb, "settings", "genx_settings.yml"),
+                joinpath(dirb, "settings", "output_settings.yml")))
             "no error"
         catch e
             e isa ErrorException ? e.msg : "not an ErrorException: $(typeof(e))"
         end
         @test occursin("PRM_ELCC is a planning-level constraint; Benders support not implemented", err)
+        # ... and again in planning_model! for a programmatic setup that skips validation
+        sb = copy(setup)
+        sb["Benders"] = 1
+        err2 = try
+            quiet(() -> GenX.planning_model!(Model(), sb, inputs))
+            "no error"
+        catch e
+            e isa ErrorException ? e.msg : "not an ErrorException: $(typeof(e)): $(sprint(showerror, e))"
+        end
+        @test occursin("PRM_ELCC is a planning-level constraint; Benders support not implemented", err2)
         # a resource missing from Resource_prm_elcc.csv contributes nothing, with a warning
         dir = scratch_case()
         rf = joinpath(dir, "resources", "policy_assignments", "Resource_prm_elcc.csv")

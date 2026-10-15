@@ -117,6 +117,12 @@ end
 # original monolithic generate_model, just with investment calls grouped here.
 function planning_model!(EP::Model, setup::Dict, inputs::Dict)
 
+    # PRM with ELCC surfaces is implemented for the monolithic model only (fail before building)
+    if get(setup, "PRM_ELCC", 0) == 1 && setup["Benders"] == 1
+        error("PRM_ELCC is a planning-level constraint; Benders support not implemented " *
+              "(set Benders: 0, or PRM_ELCC: 0).")
+    end
+
     if setup["MinCapReq"] == 1
         create_empty_expression!(EP, :eMinCapRes, inputs["NumberOfMinCapReqs"])
     end
@@ -170,12 +176,8 @@ function planning_model!(EP::Model, setup::Dict, inputs::Dict)
         maximum_capacity_requirement!(EP, inputs, setup)
     end
 
-    # PRM with ELCC surfaces: a constraint on total capacities only (monolithic model only)
+    # PRM with ELCC surfaces: a constraint on total capacities only (monolithic; guarded above)
     if get(setup, "PRM_ELCC", 0) == 1
-        if setup["Benders"] == 1
-            error("PRM_ELCC is a planning-level constraint; Benders support not implemented " *
-                  "(set Benders: 0, or PRM_ELCC: 0).")
-        end
         prm_elcc!(EP, inputs, setup)
     end
 

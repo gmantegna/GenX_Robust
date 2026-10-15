@@ -1,0 +1,4 @@
+Resource,PRM_ELCC_NQC,PRM_ELCC_Axis,PRM_ELCC_Axis_Multiplier
+gas_ct,0.9,,
+solar_pv,,solar,1.0
+battery_4h,,storage,1.0

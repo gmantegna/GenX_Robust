@@ -476,6 +476,12 @@ function write_outputs(EP::Model, path::AbstractString, setup::Dict, inputs::Dic
             println(elapsed_time_max_cap_req)
         end
 
+        if get(setup, "PRM_ELCC", 0) == 1 && output_settings_d["WritePRMELCC"]
+            elapsed_time_prm_elcc = @elapsed write_prm_elcc(path, inputs, setup, EP)
+            println("Time elapsed for writing PRM_ELCC is")
+            println(elapsed_time_prm_elcc)
+        end
+
         if setup["HydrogenMinimumProduction"] == 1 && has_duals(EP)
             if output_settings_d["WriteHydrogenPrices"]
                 elapsed_time_hydrogen_prices = @elapsed write_hydrogen_prices(path,

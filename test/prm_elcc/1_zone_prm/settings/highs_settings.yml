@@ -1,0 +1,6 @@
+# Tight tolerances and simplex so the LP optimum compares with the hand solution to 1e-6.
+Feasib_Tol: 1.0e-9
+Optimal_Tol: 1.0e-9
+Pre_Solve: choose
+Method: simplex
+TimeLimit: 1.0e23

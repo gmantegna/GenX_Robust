@@ -1,0 +1,7 @@
+Surface,Facet,Axis,Coefficient
+sol_stor,f1,intercept,0
+sol_stor,f1,solar,0.5
+sol_stor,f1,storage,1.0
+sol_stor,f2,intercept,200
+sol_stor,f2,solar,0.1
+sol_stor,f2,storage,0.75

@@ -170,6 +170,15 @@ function planning_model!(EP::Model, setup::Dict, inputs::Dict)
         maximum_capacity_requirement!(EP, inputs, setup)
     end
 
+    # PRM with ELCC surfaces: a constraint on total capacities only (monolithic model only)
+    if get(setup, "PRM_ELCC", 0) == 1
+        if setup["Benders"] == 1
+            error("PRM_ELCC is a planning-level constraint; Benders support not implemented " *
+                  "(set Benders: 0, or PRM_ELCC: 0).")
+        end
+        prm_elcc!(EP, inputs, setup)
+    end
+
     # Benders-only planning-phase CO2 cap constraints (annual budget on investment)
     if setup["CO2Cap"] > 0 && setup["Benders"] == 1
         co2_cap_planning!(EP, inputs, setup)

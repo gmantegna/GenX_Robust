@@ -873,4 +873,4 @@ An axis name is global: every surface whose facets name the same axis uses the s
 |PRM\_ELCC\_Axis | For a surface resource: the axis it belongs to. Blank for a firm resource.|
 |PRM\_ELCC\_Axis\_Multiplier | For a surface resource: its multiplier on the axis capacity (blank = 1).|
 
-Capacity here is the total power capacity of the resource, existing plus new build (storage counts by its discharge power, never by energy; for a `VRE_STOR` resource the inverter MW). A resource of the model that is missing from this file contributes nothing (a warning names it); a row for a resource that is not in the model is ignored with a warning.
+Capacity here is the total power capacity of the resource, existing plus new build (storage counts by its discharge power, never by energy; for a co-located `VRE_STOR` resource the AC grid-connection MW (`Existing_Cap_MW`; not the inverter `eTotalCap_DC`, nor the solar/wind/storage components)). A resource of the model that is missing from this file contributes nothing (a warning names it); a row for a resource that is not in the model is ignored with a warning.

@@ -175,7 +175,7 @@ Written when `PRM_ELCC: 1` (and `WritePRMELCC` in `output_settings.yml`, on by d
 |FacetDual | Surface, Facet | shadow price of the facet (non-negative) [USD/MW-yr] |
 |BindingFacet | Surface, Facet | the facet with the smallest slack, the lowest plane at the portfolio; Value = its slack |
 
-Dual rows are written only when the solver returns duals (`WriteShadowPrices` and an LP).
+Dual rows are written only when the model has duals (`has_duals`, i.e. an LP solved with duals); otherwise they are omitted.
 
 ## 3. Resources-specific outputs
 

@@ -45,9 +45,10 @@ Two things to know when writing the inputs:
   same MW are accredited twice (once per surface). Give each resource group its own axis name
   unless that double count is intended.
 - $\Delta^{\text{total}}_r$ is `eTotalCap[r]`, the one total-capacity expression of the resource.
-  For a co-located `VRE_STOR` resource it is the inverter (grid-connection) MW, not the DC solar,
-  wind or storage components, which have their own expressions (`eTotalCap_SOLAR`, ...). An NQC or
-  axis multiplier on such a resource applies to its inverter MW.
+  For a co-located `VRE_STOR` resource it is the AC grid-connection MW (`Existing_Cap_MW`), not the
+  inverter (`eTotalCap_DC`) nor the solar, wind or storage components, which have their own
+  expressions (`eTotalCap_SOLAR`, ...). An NQC or axis multiplier on such a resource applies to
+  that grid-connection MW.
 
 This is a planning-level constraint on capacities only; it is implemented for the monolithic
 model. With `Benders: 1` the model build stops with an error (it would belong in the planning

@@ -5,7 +5,14 @@ Read `NSE_disabled_periods.csv` from the policies folder (`NSEDisabledPeriods: 1
 `Rep_Period`, one row per representative-period index in which non-served energy is forbidden
 (every hour of the period gets `vNSE[s,t,z] == 0`, see `non_served_energy!`). Stores the sorted,
 de-duplicated indices as `inputs["NSE_DISABLED_PERIODS"]`. An index outside
-`1:inputs["REP_PERIOD"]` is an error.
+`1:inputs["REP_PERIOD"]` (including 0) is an error.
+
+`Rep_Period` is the index `1:REP_PERIOD` of the representative period as the model numbers it,
+not the chronological period id of `Period_map.csv`.
+
+With `Benders: 1` a listed period's subproblem loses complete recourse: with `vNSE` fixed to zero
+it can be infeasible for a given investment plan, so Benders has to be able to return feasibility
+cuts (`ExpectFeasibleSubproblems` must not be `true`).
 """
 function load_nse_disabled_periods!(setup::Dict, path::AbstractString, inputs::Dict)
     filename = "NSE_disabled_periods.csv"

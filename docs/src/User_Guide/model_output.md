@@ -158,6 +158,25 @@ This file includes the renewable/clean credit revenue earned by each generator l
 
 This file includes subsidy revenue earned if a generator specified Min\_Cap is provided in the input file. GenX will print this file only the shadow price can be obtained form the solver. Do not confuse this with the Minimum Capacity Carveout constraint, which is for a subset of generators, and a separate revenue term will be calculated in other files. The unit is USD.
 
+### 2.9 prm\_elcc.csv
+
+Written when `PRM_ELCC: 1` (and `WritePRMELCC` in `output_settings.yml`, on by default). Long format, columns `Item,Surface,Facet,Axis,Resource,Value,Unit`, one row per item; see `write_prm_elcc` for the formulas.
+
+|**Item** | **Keyed by** | **Value** |
+| :------------ | :----------- | :----------- |
+|TRN | | the reliability need [MW] |
+|Dual | | the dual of the need, i.e. the capacity price [USD/MW-yr]; 0 when the need does not bind |
+|TotalAccredited | | firm accreditation plus the surfaces' ELCC [MW] |
+|FirmAccredited | Resource | NQC times total power capacity of each firm resource [MW] |
+|AxisCapacity | Axis | sum over the axis's resources of multiplier times total power capacity [MW] |
+|SurfaceELCC | Surface | the ELCC of the surface at the solution [MW] |
+|FacetValue | Surface, Facet | right-hand side of the facet at the solution [MW] |
+|FacetSlack | Surface, Facet | facet value minus the surface ELCC [MW]; 0 = tight |
+|FacetDual | Surface, Facet | shadow price of the facet (non-negative) [USD/MW-yr] |
+|BindingFacet | Surface, Facet | the facet with the smallest slack, the lowest plane at the portfolio; Value = its slack |
+
+Dual rows are written only when the model has duals (`has_duals`, i.e. an LP solved with duals); otherwise they are omitted.
+
 ## 3. Resources-specific outputs
 
 This section includes the output files related to specific resource types.

@@ -14,6 +14,8 @@ module TestPRMELCC
 # Surface `sol_stor`, two facets:  f1: ELCC <= 0   + 0.5 solar + 1.00 storage
 #                                  f2: ELCC <= 200 + 0.1 solar + 0.75 storage
 # TRN = 1700 MW.
+# In the base case gas_ct has no existing capacity and every axis multiplier is 1.0; testset T6
+# runs a variant with 200 MW of EXISTING gas_ct and a solar multiplier of 0.5 (see there).
 #
 # Hand solution. Energy: at night solar is 0 and the battery is useless for energy (shaving 1 MW
 # of gas capacity over the 12 night hours would burn 12/0.09 MWh of gas a day, 1.46 M$/MW-yr >>
@@ -56,7 +58,8 @@ Copy of the case in a temporary folder, with settings `overrides` merged into ge
 `trn` written to policies/PRM_ELCC.csv and the facets restricted to `facets` (nothing = all).
 The repo's case folder is never written to.
 """
-function scratch_case(; overrides::Dict = Dict(), trn = TRN_MW, facets = nothing)
+function scratch_case(; overrides::Dict = Dict(), trn = TRN_MW, facets = nothing,
+        gas_existing_mw = nothing, solar_mult = nothing)
     dir = joinpath(mktempdir(), "case")
     cp(CASE, dir)
     for d in filter(startswith("results"), readdir(dir))
@@ -70,6 +73,17 @@ function scratch_case(; overrides::Dict = Dict(), trn = TRN_MW, facets = nothing
     if facets !== nothing
         df = CSV.read(joinpath(dir, "policies", "PRM_ELCC_facets.csv"), DataFrame)
         CSV.write(joinpath(dir, "policies", "PRM_ELCC_facets.csv"), df[in.(df.Facet, Ref(facets)), :])
+    end
+    if gas_existing_mw !== nothing
+        tf = joinpath(dir, "resources", "Thermal.csv")
+        th = CSV.read(tf, DataFrame)
+        th.Existing_Cap_MW = fill(gas_existing_mw, nrow(th))
+        CSV.write(tf, th)
+    end
+    if solar_mult !== nothing
+        write(joinpath(dir, "resources", "policy_assignments", "Resource_prm_elcc.csv"),
+            "Resource,PRM_ELCC_NQC,PRM_ELCC_Axis,PRM_ELCC_Axis_Multiplier\n" *
+            "gas_ct,0.9,,\nsolar_pv,,solar,$solar_mult\nbattery_4h,,storage,1.0\n")
     end
     return dir
 end
@@ -249,6 +263,40 @@ end
         s2 = quiet(() -> GenX.configure_settings(joinpath(dir, "settings", "genx_settings.yml"),
             joinpath(dir, "settings", "output_settings.yml")))
         @test_logs (:warn, r"gas_ct") match_mode=:any redirect_stdout(() -> GenX.load_inputs(s2, dir), devnull)
+    end
+
+    # T6. The base case cannot tell "firm capacity = TOTAL capacity" from "= new build only", nor
+    # "axis capacity = multiplier x total" from "= total": gas_ct has no existing capacity and all
+    # multipliers are 1. Variant: 200 MW of EXISTING gas_ct (still buildable) and solar multiplier
+    # 0.5 on its 300 MW. Hand solution (same logic as the header):
+    #   gas total stays 1000 MW (night demand; 200 existing + 800 new), firm = 0.9 x 1000 = 900,
+    #   so the surface must deliver E = 800. Solar axis = 0.5 x 300 = 150:
+    #   f1 = 0.5 x 150 + x_b = 75 + x_b ; f2 = 200 + 0.1 x 150 + 0.75 x_b = 215 + 0.75 x_b
+    #   E = 800 on f2 -> x_b = 585/0.75 = 780 MW (f1 = 855 > 800: slack 55).
+    #   cost: gas inv 80000 x 800 = 64,000,000 + gas FOM 20000 x 1000 = 20,000,000 + gas variable
+    #   237,177,000 + solar FOM 3,000,000 + battery 60000 x 780 = 46,800,000 = 370,977,000 $/yr.
+    # Mutant "firm term counts new-build only": firm 0.9 x 800 = 720, E = 980, x_b = 1020.
+    # Mutant "axis multiplier ignored": solar axis 300, x_b = 760, 369,777,000 $/yr.
+    @testset "T6 existing firm capacity and axis multiplier != 1" begin
+        obj, cap, out = run_case(scratch_case(gas_existing_mw = 200.0, solar_mult = 0.5))
+        println("T6: objective = $obj, gas = $(endcap(cap, "gas_ct")) (new $(cap.NewCap[cap.Resource .== "gas_ct"][1])), " *
+                "battery = $(endcap(cap, "battery_4h"))")
+        prm = read_prm(out)
+        @test endcap(cap, "gas_ct")≈1000.0 rtol=RTOL
+        @testset "firm term counts EXISTING capacity (not new build only)" begin
+            @test item(prm, "FirmAccredited"; resource = "gas_ct").Value[1]≈0.9 * 1000.0 rtol=RTOL
+            @test item(prm, "SurfaceELCC"; surface = "sol_stor").Value[1]≈TRN_MW - 0.9 * 1000.0 rtol=RTOL
+            @test endcap(cap, "battery_4h")≈780.0 rtol=RTOL
+        end
+        @testset "axis multiplier applies to the existing solar capacity" begin
+            @test item(prm, "AxisCapacity"; axis = "solar").Value[1]≈0.5 * 300.0 rtol=RTOL
+            @test item(prm, "AxisCapacity"; axis = "storage").Value[1]≈780.0 rtol=RTOL
+            @test item(prm, "FacetValue"; facet = "f1").Value[1]≈855.0 rtol=RTOL
+            @test item(prm, "FacetValue"; facet = "f2").Value[1]≈800.0 rtol=RTOL
+        end
+        @test item(prm, "BindingFacet"; surface = "sol_stor").Facet[1] == "f2"
+        @test item(prm, "Dual").Value[1]≈LAMBDA_HAND rtol=RTOL
+        @test obj≈370_977_000.0 rtol=RTOL
     end
 end
 

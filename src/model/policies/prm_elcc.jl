@@ -37,6 +37,18 @@ Expressions written for the output (`prm_elcc.csv`, [`write_prm_elcc`](@ref)):
 ($\sum_{\mathcal G_a} m_r \Delta_r$) and `ePRM_ELCC_FacetRHS[s,f]` (the right-hand side of each
 facet).
 
+Two things to know when writing the inputs:
+
+- An axis is a global name: a facet row of ANY surface that names axis `a` takes the same
+  $\sum_{r \in \mathcal{G}_a} m_r \Delta^{\text{total}}_r$, so a resource's capacity counts in
+  every surface that uses its axis. Nothing warns about it: if two surfaces share an axis name the
+  same MW are accredited twice (once per surface). Give each resource group its own axis name
+  unless that double count is intended.
+- $\Delta^{\text{total}}_r$ is `eTotalCap[r]`, the one total-capacity expression of the resource.
+  For a co-located `VRE_STOR` resource it is the inverter (grid-connection) MW, not the DC solar,
+  wind or storage components, which have their own expressions (`eTotalCap_SOLAR`, ...). An NQC or
+  axis multiplier on such a resource applies to its inverter MW.
+
 This is a planning-level constraint on capacities only; it is implemented for the monolithic
 model. With `Benders: 1` the model build stops with an error (it would belong in the planning
 problem, where it is a constraint on linking variables only, but that path is not implemented).

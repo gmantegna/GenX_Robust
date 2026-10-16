@@ -842,3 +842,35 @@ This file contains inputs specifying regional hydrogen production requirements. 
 |Constraint\_Description| Names of hydrogen demand constraints; not to be read by model, but used as a helpful notation to the model user. |
 |Hydrogen\_Demand\_kt| Hydrogen production requirements in 1,000 tons|
 |PriceCap| Price of hydrogen per metric ton (USD/t)|
+
+### 2.9 PRM\_ELCC inputs (planning reserve margin with ELCC surfaces)
+
+Needed when `PRM_ELCC: 1` in `genx_settings.yml` (see `prm_elcc!`). Three files, read by `load_prm_elcc!`; the output is described in the output files section (`prm_elcc.csv`). Monolithic model only.
+
+###### Table 30a: policies/PRM\_ELCC.csv (one row)
+---
+|**Column Name** | **Description**|
+| :------------ | :-----------|
+|TRN\_MW | The fixed total reliability need [MW]: firm accredited capacity plus the surfaces' ELCC must be at least this. Non-negative.|
+
+###### Table 30b: policies/PRM\_ELCC\_facets.csv (long format, one row per surface, facet and axis)
+---
+|**Column Name** | **Description**|
+| :------------ | :-----------|
+|Surface | Name of the ELCC surface (one free ELCC variable per surface).|
+|Facet | Name of the facet, unique within its surface. The ELCC of the surface is held below every one of its facets (the lower envelope).|
+|Axis | `intercept` for the facet's constant, otherwise the name of an axis (a group of resources, see below).|
+|Coefficient | For `intercept`: the constant [MW of ELCC]. For an axis: the slope [MW of ELCC per MW of axis capacity].|
+
+An axis name is global: every surface whose facets name the same axis uses the same axis capacity, so a resource is accredited in each of them (see `prm_elcc!`).
+
+###### Table 30c: resources/policy\_assignments/Resource\_prm\_elcc.csv
+---
+|**Column Name** | **Description**|
+| :------------ | :-----------|
+|Resource | Resource name, as in the resource files.|
+|PRM\_ELCC\_NQC | For a firm resource: the fraction of its power capacity that counts (net qualifying capacity). Blank for a surface resource.|
+|PRM\_ELCC\_Axis | For a surface resource: the axis it belongs to. Blank for a firm resource.|
+|PRM\_ELCC\_Axis\_Multiplier | For a surface resource: its multiplier on the axis capacity (blank = 1).|
+
+Capacity here is the total power capacity of the resource, existing plus new build (storage counts by its discharge power, never by energy; for a `VRE_STOR` resource the inverter MW). A resource of the model that is missing from this file contributes nothing (a warning names it); a row for a resource that is not in the model is ignored with a warning.

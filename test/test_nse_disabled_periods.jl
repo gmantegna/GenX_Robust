@@ -87,6 +87,12 @@ println("NSEDisabledPeriods tests: reference (VoLL=$(VOLL_DISABLED_TEST), period
         # out-of-range index is an error
         write(pol, "Rep_Period\n$(inp["REP_PERIOD"] + 1)\n")
         @test_throws ErrorException quiet(() -> GenX.load_inputs(s, joinpath(tmp, "case")))
+        # the index is 1-based: 0 (and a negative index) is an error too. Kills the mutant that
+        # loosens the loader's lower bound from `1 <= p` to `0 <= p`.
+        write(pol, "Rep_Period\n0\n")
+        @test_throws ErrorException quiet(() -> GenX.load_inputs(s, joinpath(tmp, "case")))
+        write(pol, "Rep_Period\n-1\n")
+        @test_throws ErrorException quiet(() -> GenX.load_inputs(s, joinpath(tmp, "case")))
         rm(tmp; recursive = true, force = true)
     end
 
@@ -118,6 +124,32 @@ println("NSEDisabledPeriods tests: reference (VoLL=$(VOLL_DISABLED_TEST), period
             in_disabled = (DISABLED_PERIOD - 1) * H < t <= DISABLED_PERIOD * H
             @test (t in axes(EP_on[:cNSEDisabled], 2)) == in_disabled
         end
+    end
+
+    # SEG > 1. The case above has ONE segment, so a row built over `s = 1:1` instead of
+    # `s = 1:SEG` passes every check there. Here two equally priced segments (each up to half of
+    # the demand): with the row on segment 1 only, segment 2 would still shed in the listed period.
+    @testset "every curtailment segment is disabled (SEG = 2)" begin
+        s = case_setup(Dict("NSEDisabledPeriods" => 1))
+        inp2 = copy(INPUTS_REF)
+        inp2["SEG"] = 2
+        inp2["pC_D_Curtail"] = fill(VOLL_DISABLED_TEST / scale(s), 2)
+        inp2["pMax_D_Curtail"] = [0.5, 0.5]
+        inp2["Voll"] = fill(VOLL_DISABLED_TEST / scale(s), 2)
+        EP_off2 = solve_monolithic(s, inp2)
+        @test shed_by_period(EP_off2, inp2, s)[DISABLED_PERIOD] > 1.0   # non-vacuous: it sheds
+        inp2_on = copy(inp2)
+        inp2_on["NSE_DISABLED_PERIODS"] = [DISABLED_PERIOD]
+        EP_on2 = solve_monolithic(s, inp2_on)
+        H = inp2_on["hours_per_subperiod"]
+        @test length(axes(EP_on2[:cNSEDisabled], 1)) == inp2_on["SEG"]
+        @test length(EP_on2[:cNSEDisabled]) == inp2_on["SEG"] * H * inp2_on["Z"]
+        nse2 = value.(EP_on2[:vNSE])
+        Td = ((DISABLED_PERIOD - 1) * H + 1):(DISABLED_PERIOD * H)
+        for seg in 1:2
+            @test maximum(abs, nse2[seg, Td, :]) ≈ 0.0 atol = 1e-6
+        end
+        @test shed_by_period(EP_on2, inp2_on, s)[DISABLED_PERIOD] ≈ 0.0 atol = 1e-6
     end
 end
 

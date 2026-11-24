@@ -76,8 +76,16 @@ end
     include("test_nse_budget.jl")
 end
 
+@testset "NSE budget zones" begin
+    include("test_nse_budget_zones.jl")
+end
+
 @testset "PRM_ELCC policy" begin
     include("test_prm_elcc.jl")
+end
+
+@testset "Simultaneous flow and directional line ratings" begin
+    include("test_simultaneous_flow.jl")
 end
 
 # Test writing outputs

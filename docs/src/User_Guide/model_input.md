@@ -82,6 +82,9 @@ This input file contains input parameters related to: 1) definition of model zon
 || -1 = the transmission line is eligible for the capacity reserve margin constraint and the designated direction of the transmission line is **inbound** to locational deliverability area (LDA) modeled by the capacity reserve margin constraint.|
 || 1 = the transmission line is eligible for the capacity reserve margin constraint and the designated direction of the transmission line is **outbound** from the locational deliverability area (LDA) modeled by the capacity reserve margin constraint.|
 |DerateCapRes\_* | [0,1] value represents the derating of the firm transmission capacity for the capacity reserve margin constraint. * represents the number of the capacity reserve margin constraint.|
+|**Optional: directional ratings**||
+|Profile\_Forward | [0,1], fraction of the line's available capacity (existing plus new) that the forward component of the flow (start to end zone) may use in every hour. Read only if the column is present (absent = no directional rows). Refused: the column without `Profile_Reverse`; not exactly one value per line; a value outside [0, 1] or not finite; `Trans_Loss_Segments` other than 1; a value below 1 on a line with `Line_Loss_Percentage` 0 (not a loss line).|
+|Profile\_Reverse | [0,1], the same for the reverse component of the flow (end to start zone). Refused under the same conditions as `Profile_Forward` (the two columns are given together).|
 |**MultiStage == 1**|
 |Capital\_Recovery\_Period  |Capital recovery period (in years) used for determining overnight capital costs from annualized investment costs for network transmission line expansion.  |
 |Line\_Max\_Flow\_Possible\_MW  |Maximum possible line flow in the current model period. Overrides Line\_Max\_Reinforcement\_MW, which is not used when performing multi-stage modeling.  |
@@ -874,3 +877,21 @@ An axis name is global: every surface whose facets name the same axis uses the s
 |PRM\_ELCC\_Axis\_Multiplier | For a surface resource: its multiplier on the axis capacity (blank = 1).|
 
 Capacity here is the total power capacity of the resource, existing plus new build (storage counts by its discharge power, never by energy; for a co-located `VRE_STOR` resource the AC grid-connection MW (`Existing_Cap_MW`; not the inverter `eTotalCap_DC`, nor the solar/wind/storage components)). A resource of the model that is missing from this file contributes nothing (a warning names it); a row for a resource that is not in the model is ignored with a warning.
+
+### 2.10 Simultaneous\_Flow\_Constraints.csv (simultaneous-flow groups)
+
+Optional file in the `system` folder, read by `load_simultaneous_flow_groups!` when it is present (absent = no rows, the model is unchanged). One row per (group, line, direction). For each group and each hour, the model adds the row `cSimFlow<group>[t]`: the sum of the listed directional flow components is at most the group's limit. The rows are built by `transmission!` (in the Benders subproblems when `Benders: 1`).
+
+A simultaneous-flow row bounds the sum of the listed directional flow components (the forward or the reverse component of each listed line, including a line's simultaneous forward and reverse components), not a net interface flow: a counter-flow on another line of the group does not offset the sum. The limit is a constant and does not grow with transmission expansion; the directional ratings scale with the line's available capacity, including expansion.
+
+###### Table 31: Structure of the Simultaneous\_Flow\_Constraints.csv file
+---
+|**Column Name** | **Description**|
+| :------------ | :-----------|
+|Simultaneous Flow Group | Name of the group; the rows of a group are those with the same name. Refused: more than one distinct `limit_MW` in a group.|
+|Transmission Path | Label only; not read by the model.|
+|Line\_Number | Index of a line of `Network.csv`. Refused: a number outside 1..L; a line with `Line_Loss_Percentage` 0 (not a loss line); the same line with the same `Direction` twice in one group.|
+|Direction | `forward` (flow from the line's start zone to its end zone) or `reverse` (end to start). Refused: any other value.|
+|limit\_MW | The group's limit in MW (the same on every row of the group); divided by the ParameterScale factor, as `Line_Max_Flow_MW` is. Refused: a negative or non-finite value.|
+
+The file is refused if one of the columns `Simultaneous Flow Group`, `Line_Number`, `Direction`, `limit_MW` is missing, or if `Trans_Loss_Segments` is not 1.

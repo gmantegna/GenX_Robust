@@ -84,6 +84,10 @@ end
     include("test_prm_elcc.jl")
 end
 
+@testset "Simultaneous flow and directional line ratings" begin
+    include("test_simultaneous_flow.jl")
+end
+
 # Test writing outputs
 @testset "Writing outputs " begin
     for test_file in filter!(x -> endswith(x, ".jl"), readdir("writing_outputs"))

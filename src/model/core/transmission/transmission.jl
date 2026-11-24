@@ -196,6 +196,28 @@ function transmission!(EP::Model, inputs::Dict, setup::Dict)
                 vTAUX_POS[l, t] + vTAUX_NEG[l, t] <= EP[:eAvail_Trans_Cap][l]
             end)
 
+        # Optional directional ratings (Network.csv Profile_Forward/Profile_Reverse; absent = no rows)
+        if haskey(inputs, "Profile_Forward")
+            @constraints(EP,
+                begin
+                    cTAuxPosProfile[l in LOSS_LINES, t = 1:T],
+                    vTAUX_POS[l, t] <= EP[:eAvail_Trans_Cap][l] * inputs["Profile_Forward"][l]
+                    cTAuxNegProfile[l in LOSS_LINES, t = 1:T],
+                    vTAUX_NEG[l, t] <= EP[:eAvail_Trans_Cap][l] * inputs["Profile_Reverse"][l]
+                end)
+        end
+
+        # Optional simultaneous-flow groups (system/Simultaneous_Flow_Constraints.csv; absent = no rows):
+        # for each group g and hour t, sum of the listed directional flows <= limit_g
+        if haskey(inputs, "SimFlowGroups")
+            for g in inputs["SimFlowGroups"]
+                @constraint(EP, [t = 1:T],
+                    sum((g.forward[i] ? vTAUX_POS[g.lines[i], t] : vTAUX_NEG[g.lines[i], t])
+                    for i in eachindex(g.lines)) <= g.limit,
+                    base_name = "cSimFlow" * g.name)
+            end
+        end
+
         if UCommit == 1
             # Constraints to limit phantom losses that can occur to avoid discrete cycling costs/opportunity costs due to min down
             @constraints(EP,

@@ -1,8 +1,10 @@
 @doc raw"""
 	nse_budget!(EP::Model, inputs::Dict, setup::Dict)
 
-Hard cap on expected annual non-served energy (expected unserved energy, EUE), system-wide.
-Activated by `NSEBudget: 1` in `genx_settings.yml`; the cap $\bar{E}$ is `NSEBudgetTargetMWh`
+Hard cap on expected annual non-served energy (expected unserved energy, EUE), system-wide, or
+over the zones listed in `NSEBudgetZones` ([`nse_budget_zones`](@ref); the sums over
+$\mathcal{Z}$ below then run over that set only, and with `NSEBudgetRemoveVoLL: 1` only those
+zones lose their NSE cost). Activated by `NSEBudget: 1` in `genx_settings.yml`; the cap $\bar{E}$ is `NSEBudgetTargetMWh`
 (MWh per year; divided by `ModelScalingFactor` internally when `ParameterScale: 1`).
 
 **Monolithic model** (this function). One row over all segments, hours and zones:
@@ -69,7 +71,7 @@ function nse_budget!(EP::Model, inputs::Dict, setup::Dict)
     target = nse_budget_target(inputs, setup)
 
     # Expected NSE over the whole horizon, weighted convention (MWh, or GWh if ParameterScale = 1)
-    @expression(EP, eNSEBudgetExpectedNSE, nse_budget_expected_nse(EP, inputs))
+    @expression(EP, eNSEBudgetExpectedNSE, nse_budget_expected_nse(EP, inputs, setup))
 
     @constraint(EP, cNSEBudget, eNSEBudgetExpectedNSE<=target)
 end
@@ -120,20 +122,43 @@ function nse_budget_subperiod!(EP::Model, inputs::Dict, setup::Dict)
     # Weighted convention on both sides: omega[t] (= pi_w for scenario-years) multiplies NSE,
     # and vNSEbudget[w] is pi_w * (annual shed budget of w). The subproblem objective carries the
     # same omega[t], so the dual of this row is a price per MWh (times ObjScale).
-    @expression(EP, eNSEBudgetExpectedNSE, nse_budget_expected_nse(EP, inputs))
+    @expression(EP, eNSEBudgetExpectedNSE, nse_budget_expected_nse(EP, inputs, setup))
 
     @constraint(EP, cNSEBudget, eNSEBudgetExpectedNSE<=vNSEbudget[w])
 end
 
-# sum_t omega[t] * sum_{s,z} vNSE[s,t,z] over the time steps of `inputs` (the whole horizon in
-# the monolithic model, one representative period in a Benders subproblem). Weighted convention.
-function nse_budget_expected_nse(EP::Model, inputs::Dict)
+# sum_t omega[t] * sum_{s, z in budget zones} vNSE[s,t,z] over the time steps of `inputs` (the whole
+# horizon in the monolithic model, one representative period in a Benders subproblem). Weighted
+# convention. The zone set is `nse_budget_zones` (every zone when `NSEBudgetZones` is absent).
+function nse_budget_expected_nse(EP::Model, inputs::Dict, setup::Dict)
     T = inputs["T"]
     Z = inputs["Z"]
     SEG = inputs["SEG"]
     @assert size(EP[:vNSE]) == (SEG, T, Z) "NSE budget: vNSE does not span (SEG, T, Z)"
-    # System-wide cap: every zone counts. Zonal prices would need zonal caps.
-    return sum(inputs["omega"][t] * EP[:vNSE][s, t, z] for s in 1:SEG, t in 1:T, z in 1:Z)
+    # One cap over the budget zones (all zones by default). Zonal prices would need zonal caps.
+    zones = nse_budget_zones(inputs, setup)
+    return sum(inputs["omega"][t] * EP[:vNSE][s, t, z] for s in 1:SEG, t in 1:T, z in zones)
+end
+
+@doc raw"""
+	nse_budget_zones(inputs::Dict, setup::Dict) -> Vector{Int}
+
+Zones whose non-served energy the expected-NSE budget counts, sorted: `NSEBudgetZones` (a list of
+zone ids, `genx_settings.yml`), or every zone `1:Z` when the setting is absent (the system-wide
+budget). With `NSEBudgetRemoveVoLL: 1` these are also the zones whose NSE cost is removed from the
+objective; NSE in any other zone keeps its segment prices and is not counted by the budget.
+Errors unless the setting is a non-empty list of distinct integer zone ids in `1:Z`.
+"""
+function nse_budget_zones(inputs::Dict, setup::Dict)
+    Z = inputs["Z"]
+    haskey(setup, "NSEBudgetZones") || return collect(1:Z)
+    v = setup["NSEBudgetZones"]
+    ok = v isa AbstractVector && !isempty(v) && all(x -> x isa Integer && !(x isa Bool), v)
+    ok || error("NSEBudgetZones must be a non-empty list of integer zone ids (got $(repr(v))).")
+    zones = Int.(v)
+    allunique(zones) || error("NSEBudgetZones lists a zone twice (got $(repr(v))).")
+    all(z -> 1 <= z <= Z, zones) || error("NSEBudgetZones must be zone ids in 1:$Z (got $(repr(v))).")
+    return sort(zones)
 end
 
 # The cap in model units: NSEBudgetTargetMWh is MWh per year; the model's energy unit is GWh

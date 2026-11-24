@@ -7,7 +7,7 @@ $\mathcal{Z}$ below then run over that set only, and with `NSEBudgetRemoveVoLL: 
 zones lose their NSE cost). Activated by `NSEBudget: 1` in `genx_settings.yml`; the cap $\bar{E}$ is `NSEBudgetTargetMWh`
 (MWh per year; divided by `ModelScalingFactor` internally when `ParameterScale: 1`).
 
-**Monolithic model** (this function). One row over all segments, hours and zones:
+**Monolithic model** (this function). One row over all segments, hours and the budget zones (`NSEBudgetZones`; absent = every zone):
 
 ```math
 \begin{aligned}

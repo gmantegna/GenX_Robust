@@ -69,6 +69,24 @@ end
 cname_count(EP, prefix) = count(c -> startswith(name(c), prefix),
     all_constraints(EP; include_variable_in_set_constraints = false))
 
+"The row named `nm` as built: (number of terms, [coefficient of each variable in `vars`], rhs); printed."
+function row_terms(EP, nm, vars)
+    c = constraint_by_name(EP, nm)
+    c === nothing && return (-1, fill(NaN, length(vars)), NaN)
+    f = constraint_object(c).func
+    println("row $nm : $f <= $(normalized_rhs(c))")
+    return (length(f.terms), [normalized_coefficient(c, v) for v in vars], normalized_rhs(c))
+end
+
+"The message of the error thrown by `f()`, or \"\" if it throws none."
+errmsg(f) =
+    try
+        f()
+        ""
+    catch e
+        sprint(showerror, e)
+    end
+
 const SETUP = case_setup()
 const SC = scale(SETUP)
 const BASE_DIR = sf_case()
@@ -165,6 +183,22 @@ println("SimFlow tests: base objective $Z_BASE; max fwd flow per line (MW) ",
         bad("G,MA_to_CT,0,forward,100\n")                                # line < 1
         bad("G,MA_to_CT,1,forward,100\nG,MA_to_ME,2,forward,200\n")      # two limits in one group
         bad("G,MA_to_ME,2,forward,100\n"; loss_override = (2, "0"))      # not a loss line
+        # the same (line, direction) twice in one group: the loader's message
+        msg = errmsg(() -> load_case(
+            sf_case(simflow = "G,MA_to_CT,1,forward,100\nG,MA_to_CT,1,forward,100\n"), SETUP))
+        @test occursin("Simultaneous_Flow_Constraints.csv: group G lists line 1 forward twice", msg)
+        # Trans_Loss_Segments other than 1 (0 here: no Ohms/kV columns needed) with a profile
+        # column or with a group file
+        s0 = copy(SETUP)
+        s0["Trans_Loss_Segments"] = 0
+        msg = errmsg(() -> load_case(sf_case(profiles = [(1.0, 1.0), (1.0, 1.0)]), s0))
+        @test occursin(
+            "Network.csv: Profile_Forward/Profile_Reverse are implemented for Trans_Loss_Segments = 1 only",
+            msg)
+        msg = errmsg(() -> load_case(sf_case(simflow = "G,MA_to_CT,1,forward,100\n"), s0))
+        @test occursin(
+            "Simultaneous_Flow_Constraints.csv: simultaneous-flow groups are implemented for Trans_Loss_Segments = 1 only",
+            msg)
     end
 
     @testset "S4 Benders: rows in the subproblems only, bounds bracket the monolith" begin
@@ -198,6 +232,122 @@ println("SimFlow tests: base objective $Z_BASE; max fwd flow per line (MW) ",
         @test lb <= z_mono * (1 + 1e-6)
         @test ub >= z_mono * (1 - 1e-6)
         @test abs(ub - z_mono) / abs(z_mono) <= OBJECTIVE_RTOL
+    end
+
+    # S5 and S6 use FIXED (hard-coded) directions. Line 2 = MA_to_ME, Start_Zone 1, End_Zone 3:
+    # its forward component vTAUX_POS[2,t] is flow from zone 1 to zone 3. Line 1 = MA_to_CT,
+    # zones 1 -> 2: its reverse component vTAUX_NEG[1,t] is flow from zone 2 to zone 1.
+    # Unconstrained solution of this case (printed at the top; della jobs 18302937, 18273509):
+    # peak forward flow on line 2 = 1035.7 MW, peak reverse flow on line 1 = 5900 MW
+    # (= 2950 existing + 2950 maximum reinforcement), peak forward flow on line 1 = 0.
+    # The tests assert the parts of this that they rely on.
+
+    @testset "S5 forward directional rating (line 2): row as built, binds, 0 closes" begin
+        @test maximum(P_BASE[2, :]) * SC > 1000.0
+        prof = [(0.5, 1.0), (0.25, 1.0)]
+        inputs = load_case(sf_case(profiles = prof), SETUP)
+        EP = solve_monolithic(SETUP, inputs)
+        T = inputs["T"]
+        # (i) rows by name. ParameterScale 1: the model is in GW. eAvail_Trans_Cap[l] =
+        # Line_Max_Flow_MW/1000 + vNEW_TRANS_CAP[l]; the row vTAUX_POS <= Profile_Forward * eAvail
+        # is stored as vTAUX_POS - pf * vNEW_TRANS_CAP <= pf * existing:
+        #   line 1: 2950 MW = 2.95 GW, pf 0.5:  vTAUX_POS[1,1] - 0.5 vNEW_TRANS_CAP[1]  <= 0.5 * 2.95 = 1.475
+        #   line 2: 2000 MW = 2.0 GW,  pf 0.25: vTAUX_POS[2,1] - 0.25 vNEW_TRANS_CAP[2] <= 0.25 * 2.0 = 0.5
+        # and the reverse rows with pr 1.0: vTAUX_NEG[2,1] - vNEW_TRANS_CAP[2] <= 2.0
+        n, a, rhs = row_terms(EP, "cTAuxPosProfile[1,1]",
+            [EP[:vTAUX_POS][1, 1], EP[:vNEW_TRANS_CAP][1]])
+        @test n == 2
+        @test a == [1.0, -0.5]
+        @test rhs ≈ 1.475 atol = 1e-12
+        n, a, rhs = row_terms(EP, "cTAuxPosProfile[2,1]",
+            [EP[:vTAUX_POS][2, 1], EP[:vNEW_TRANS_CAP][2]])
+        @test n == 2
+        @test a == [1.0, -0.25]
+        @test rhs ≈ 0.5 atol = 1e-12
+        n, a, rhs = row_terms(EP, "cTAuxNegProfile[2,1]",
+            [EP[:vTAUX_NEG][2, 1], EP[:vNEW_TRANS_CAP][2]])
+        @test n == 2
+        @test a == [1.0, -1.0]
+        @test rhs ≈ 2.0 atol = 1e-12
+        @test cname_count(EP, "cTAuxPosProfile") == 2 * T
+        # (ii) the rating binds. Line 2's available capacity is at most 2000 + 2000 (maximum
+        # reinforcement) = 4000 MW, so its forward cap is at most 0.25 * 4000 = 1000 MW, below the
+        # unconstrained peak of 1035.7 MW: the cap cuts the unconstrained flow, and the forward
+        # flow sits at 0.25 * capacity in at least one hour.
+        P, N = directional(EP)
+        cap2 = value(EP[:eAvail_Trans_Cap][2])
+        println("S5: line 2 capacity $(cap2 * SC) MW; forward cap $(0.25 * cap2 * SC) MW; peak forward ",
+            "$(maximum(P[2, :]) * SC) MW (unconstrained $(maximum(P_BASE[2, :]) * SC) MW); objective ",
+            "$(objective_value(EP)) vs base $Z_BASE")
+        @test cap2 <= 4.0 + 1e-9
+        @test maximum(P_BASE[2, :]) > 0.25 * cap2 * (1 + 1e-6)
+        @test all(P[2, :] .<= 0.25 * cap2 * (1 + 1e-7) + 1e-9)
+        @test maximum(P[2, :])≈0.25 * cap2 rtol=1e-6
+        @test objective_value(EP) > Z_BASE * (1 + 1e-7)
+        # (iii) a forward rating of 0 on line 2: no forward flow on line 2 in any hour
+        EP0 = solve_monolithic(SETUP, load_case(sf_case(profiles = [(1.0, 1.0), (0.0, 1.0)]), SETUP))
+        P0, N0 = directional(EP0)
+        @test maximum(P0[2, :]) * SC <= 1e-6
+        @test maximum(value.(EP0[:vFLOW])[2, :]) * SC <= 1e-6
+        @test objective_value(EP0) > Z_BASE * (1 + 1e-7)
+    end
+
+    @testset "S6 hard-coded forward group and mixed group: rows, binding, terms add" begin
+        T = INPUTS_BASE["T"]
+        # Group Fwd: one forward term, line 2, 600 MW. Group Mixed: line 2 forward + line 1
+        # reverse, 3000 MW. ParameterScale 1: limits 600/1000 = 0.6 GW and 3000/1000 = 3.0 GW.
+        #   cSimFlowFwd[t]:   vTAUX_POS[2,t]                  <= 0.6
+        #   cSimFlowMixed[t]: vTAUX_POS[2,t] + vTAUX_NEG[1,t] <= 3.0
+        # (i) both rows as built, from one case holding both groups
+        both = "Fwd,MA_to_ME,2,forward,600\nMixed,MA_to_ME,2,forward,3000\nMixed,MA_to_CT,1,reverse,3000\n"
+        inputs = load_case(sf_case(simflow = both), SETUP)
+        EPb = solve_monolithic(SETUP, inputs)
+        @test cname_count(EPb, "cSimFlowFwd") == T
+        @test cname_count(EPb, "cSimFlowMixed") == T
+        for t in (1, T)
+            n, a, rhs = row_terms(EPb, "cSimFlowFwd[$t]", [EPb[:vTAUX_POS][2, t]])
+            @test n == 1
+            @test a == [1.0]
+            @test rhs ≈ 0.6 atol = 1e-12
+            n, a, rhs = row_terms(EPb, "cSimFlowMixed[$t]",
+                [EPb[:vTAUX_POS][2, t], EPb[:vTAUX_NEG][1, t]])
+            @test n == 2
+            @test a == [1.0, 1.0]
+            @test rhs ≈ 3.0 atol = 1e-12
+        end
+
+        # (ii) the forward limit binds (group Fwd alone): unconstrained peak 1035.7 MW > 600 MW
+        @test maximum(P_BASE[2, :]) * SC > 600
+        EPf = solve_monolithic(SETUP, load_case(sf_case(simflow = "Fwd,MA_to_ME,2,forward,600\n"), SETUP))
+        Pf, Nf = directional(EPf)
+        println("S6 Fwd: peak forward flow on line 2 $(maximum(Pf[2, :]) * SC) MW (limit 600; unconstrained ",
+            "$(maximum(P_BASE[2, :]) * SC)); hours at the limit $(count(x -> x * SC >= 600 - 1e-4, Pf[2, :])) of $T")
+        @test all(Pf[2, :] .* SC .<= 600 + 1e-4)
+        @test maximum(Pf[2, :]) * SC≈600 rtol=1e-6
+        @test objective_value(EPf) > Z_BASE * (1 + 1e-7)
+
+        # (iii) group Mixed alone: the two gross components ADD.
+        # Unconstrained: peak line-1 reverse 5900 MW, peak line-2 forward 1035.7 MW.
+        # Gross form (as built): P2 + N1 <= 3000 in every hour, so N1 <= 3000 - P2 <= 3000 MW:
+        #   the line-1 reverse peak must fall from 5900 MW to at most 3000 MW.
+        # A net form (P2 - N1 <= 3000, a reverse flow offsetting the forward flow) would be slack
+        #   at the unconstrained solution in every hour (P2 - N1 <= P2 <= 1035.7 < 3000), leaving
+        #   the line-1 reverse peak at 5900 MW and the objective at the base value.
+        @test maximum(P_BASE[2, :]) * SC < 3000
+        @test maximum(N_BASE[1, :]) * SC > 3000
+        EPm = solve_monolithic(SETUP,
+            load_case(sf_case(simflow = "Mixed,MA_to_ME,2,forward,3000\nMixed,MA_to_CT,1,reverse,3000\n"), SETUP))
+        Pm, Nm = directional(EPm)
+        gsum = (Pm[2, :] .+ Nm[1, :]) .* SC
+        tb = argmax(gsum)
+        println("S6 Mixed: peak gross sum $(gsum[tb]) MW at hour $tb (line-2 forward $(Pm[2, tb] * SC) + line-1 ",
+            "reverse $(Nm[1, tb] * SC)); peak line-1 reverse $(maximum(Nm[1, :]) * SC) MW; hours with both ",
+            "components > 1 MW: $(count(t -> Pm[2, t] * SC > 1 && Nm[1, t] * SC > 1, 1:T)); objective ",
+            "$(objective_value(EPm)) vs base $Z_BASE")
+        @test all(gsum .<= 3000 + 1e-4)
+        @test gsum[tb]≈3000 rtol=1e-6
+        @test maximum(Nm[1, :]) * SC <= 3000 + 1e-4
+        @test objective_value(EPm) > Z_BASE * (1 + 1e-7)
     end
 end
 

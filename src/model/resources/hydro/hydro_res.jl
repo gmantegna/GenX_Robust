@@ -182,6 +182,12 @@ function hydro_res!(EP::AbstractModel, inputs::Dict, setup::Dict)
             # EP[:vP][y, t] <= EP[:vS_HYDRO][y, hoursbefore(p, t, 1)]
         end)
 
+    # Hourly maximum output: pP_Max (Generators_variability.csv) x capacity, off unless HydroHourlyMax == 1
+    if get(setup, "HydroHourlyMax", 0) == 1
+        @constraint(EP, cHydroMaxPowerProfile[y in HYDRO_RES, t in 1:T],
+            EP[:vP][y, t] <= inputs["pP_Max"][y, t] * EP[:eTotalCap][y])
+    end
+
     # ### Constraints to limit maximum energy in storage based on known limits on reservoir energy capacity (only for HYDRO_RES_KNOWN_CAP)
     # # Maximum energy stored in reservoir must be less than energy capacity in all hours - only applied to HYDRO_RES_KNOWN_CAP
     # @constraint(EP,

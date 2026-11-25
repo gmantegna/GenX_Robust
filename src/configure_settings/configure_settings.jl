@@ -37,7 +37,8 @@ function default_settings()
         "SystemFolder" => "system",
         "PoliciesFolder" => "policies",
         "ObjScale" => 1,
-        "ARO" => 0
+        "ARO" => 0,
+        "HydroHourlyMax" => 0  # 1: hydro output <= hourly pP_Max x capacity (cHydroMaxPowerProfile)
     )
 end
 

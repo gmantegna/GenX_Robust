@@ -3,9 +3,10 @@
 # `include` this file; it is not a test file.
 #
 # `ops_case` writes a tiny case to a fresh temporary folder. Conventions of the spec's tests
-# (mwe/specs/base_ops_port.md section 9): omega_t = 1 (Sub_Weights = hours per period), one demand
-# segment priced at VOLL = 1000 $/MWh, ParameterScale 0, UCommit 0, ObjScale 1, every resource
-# existing (New_Build 0, Can_Retire 0), so the objective is operating cost only.
+# (mwe/specs/base_ops_port.md section 9): omega_t = 1 (Sub_Weights = hours per period; the
+# `weights` keyword overrides it), one demand segment priced at VOLL = 1000 $/MWh, ParameterScale
+# 0, UCommit 0, ObjScale 1, every resource existing (New_Build 0, Can_Retire 0), so the objective
+# is operating cost only.
 # Resource names must not parse as Booleans or numbers in CSV.jl ("T" is read as `true`).
 
 using Test
@@ -41,20 +42,23 @@ stor_row(name, zone, mw, mwh; lds = 0, model = 1, eff = 1, mind = mwh / mw, maxd
         mind, maxd, 0, 0, 0, 0, "z$zone", 1])
 
 """
-    ops_case(; T, demand, periods = 1, thermal = [], vre = [], hydro = [], storage = [],
-             stor_group = nothing, variability = Dict(), pmin = nothing, budget = nothing,
-             network = nothing, settings = Dict())
+    ops_case(; T, demand, periods = 1, weights = nothing, thermal = [], vre = [], hydro = [],
+             storage = [], stor_group = nothing, variability = Dict(), pmin = nothing,
+             budget = nothing, network = nothing, settings = Dict())
 
 Write a case and return its folder. `demand`: Vector (1 zone) or Vector of Vectors (one per zone).
+`weights`: the `Sub_Weights` of the `periods` representative periods (default: hours per period
+each, i.e. omega = 1); GenX sets omega_t = weight of t's period / hours per period.
 `thermal`/`vre`/`hydro`/`storage`: Vectors of resource rows (strings from the *_row helpers).
 `stor_group`: Vector of group labels, one per storage row (adds a `Stor_Op_Group` column).
 `variability`, `pmin`, `budget`: Dict(resource name => length-T Vector); `pmin`/`budget` =
 `nothing` writes no file. `network`: (header, rows) of `Network.csv`. `settings` are merged into
 genx_settings.yml.
 """
-function ops_case(; T::Int, demand, periods::Int = 1, thermal = String[], vre = String[],
-        hydro = String[], storage = String[], stor_group = nothing, variability = Dict(),
-        pmin = nothing, budget = nothing, network = nothing, settings = Dict())
+function ops_case(; T::Int, demand, periods::Int = 1, weights = nothing, thermal = String[],
+        vre = String[], hydro = String[], storage = String[], stor_group = nothing,
+        variability = Dict(), pmin = nothing, budget = nothing, network = nothing,
+        settings = Dict())
     dir = joinpath(mktempdir(), "case")
     for d in ("settings", "system", "resources", "policies")
         mkpath(joinpath(dir, d))
@@ -62,13 +66,15 @@ function ops_case(; T::Int, demand, periods::Int = 1, thermal = String[], vre = 
     dem = demand isa Vector{<:Vector} ? demand : [demand]
     Z = length(dem)
     H = div(T, periods)
+    wts = weights === nothing ? fill(H, periods) : weights
+    length(wts) == periods || error("ops_case: weights needs one value per period")
     open(joinpath(dir, "system", "Demand_data.csv"), "w") do io
         println(io, "Voll,Demand_Segment,Cost_of_Demand_Curtailment_per_MW,Max_Demand_Curtailment,",
             "Rep_Periods,Timesteps_per_Rep_Period,Sub_Weights,Time_Index,",
             join(["Demand_MW_z$z" for z in 1:Z], ","))
         for t in 1:T
-            lead = t == 1 ? "$(Int(VOLL)),1,1,1,$periods,$H,$H" : ",,,,,,"
-            lead = (t > 1 && t <= periods) ? ",,,,,,$H" : lead
+            lead = t == 1 ? "$(Int(VOLL)),1,1,1,$periods,$H,$(wts[1])" : ",,,,,,"
+            lead = (t > 1 && t <= periods) ? ",,,,,,$(wts[t])" : lead
             println(io, lead, ",", t, ",", join([dem[z][t] for z in 1:Z], ","))
         end
     end

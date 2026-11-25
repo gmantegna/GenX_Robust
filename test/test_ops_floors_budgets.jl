@@ -127,6 +127,83 @@ end
         @test objective_value(EP)≈1_200 atol=ATOL
     end
 
+    @testset "W1 two periods of unequal weight, hourly-varying Pmin and hydro maximum" begin
+        # Review of GenX_Robust PR 14, finding 2: every other test has omega = 1 and profiles
+        # constant within a period. Here T = 4, two periods of H = 2 h, Sub_Weights 4 and 12, so
+        # omega = 4/2 = 2 in hours 1-2 and 12/2 = 6 in hours 3-4.
+        # Zone 1: G (VRE 100 MW, cost 0, availability 1), demand 0. Zone 2: TH (thermal 100 MW,
+        # 10 $/MWh, availability 1, 1, 1, 0.25), Hy (hydro 100 MW, budget column), demand 100 MW.
+        # Line 1 -> 2: 100 MW, Line_Loss_Percentage 0.001 (half the loss at each end, so zone 2
+        # receives 0.9995 of the sent flow), hurdle 5 $/MWh forward, 7 reverse.
+        net_hdr = ",Network_zones,Network_Lines,Start_Zone,End_Zone,Line_Max_Flow_MW," *
+                  "transmission_path_name,distance_mile,Line_Loss_Percentage," *
+                  "Line_Max_Reinforcement_MW,Line_Reinforcement_Cost_per_MWyr," *
+                  "Hurdle_Rate_Forward,Hurdle_Rate_Reverse"
+        net_rows = [csvrow(["z1", "z1", 1, 1, 2, 100, "L12", 0, 0.001, 0, 0, 5.0, 7.0]),
+            "z2,z2" * repeat(",", 11)]
+        P = 2_000.0
+        dir = ops_case(; T = 4, periods = 2, weights = [4, 12],
+            demand = [[0.0, 0.0, 0.0, 0.0], [100.0, 100.0, 100.0, 100.0]],
+            vre = [vre_row("G", 1, 100)], thermal = [thermal_row("TH", 2, 100, 10)],
+            hydro = [hydro_row("Hy", 2, 100)],
+            variability = Dict("TH" => [1.0, 1.0, 1.0, 0.25], "Hy" => [0.5, 0.2, 0.4, 0.1]),
+            pmin = Dict("TH" => [0.1, 0.2, 0.3, 0.4]),
+            budget = Dict("Hy" => [0.3, 0.3, 0.25, 0.25]),
+            network = (net_hdr, net_rows))
+        EP, inputs = ops_solve(dir; overrides = Dict("Hourly_Pmin" => 1,
+            "HydroBudgetMaxProfile" => 1, "OperationalFloorPenalty" => P))
+        @test termination_status(EP) == MOI.OPTIMAL
+        @test inputs["omega"] == [2.0, 2.0, 6.0, 6.0]
+        gT = findfirst(==("TH"), inputs["RESOURCE_NAMES"])
+        gH = findfirst(==("Hy"), inputs["RESOURCE_NAMES"])
+        obj = objective_function(EP)
+
+        # Pmin rows: rhs = pi_t x 100 MW; hours 2, 3, 4: 0.2 x 100 = 20, 0.3 x 100 = 30,
+        # 0.4 x 100 = 40 (hour 1: 0.1 x 100 = 10)
+        @test normalized_rhs(EP[:cHourlyPmin][gT, 1])≈10 atol=ATOL
+        @test normalized_rhs(EP[:cHourlyPmin][gT, 2])≈20 atol=ATOL
+        @test normalized_rhs(EP[:cHourlyPmin][gT, 3])≈30 atol=ATOL
+        @test normalized_rhs(EP[:cHourlyPmin][gT, 4])≈40 atol=ATOL
+        # Hydro maximum rows: rhs = rho_t x 100 MW; hours 2, 3, 4: 0.2 x 100 = 20,
+        # 0.4 x 100 = 40, 0.1 x 100 = 10 (hour 1: 0.5 x 100 = 50)
+        @test normalized_rhs(EP[:cHydroBudgetMaxProfile][gH, 2])≈20 atol=ATOL
+        @test normalized_rhs(EP[:cHydroBudgetMaxProfile][gH, 3])≈40 atol=ATOL
+        @test normalized_rhs(EP[:cHydroBudgetMaxProfile][gH, 4])≈10 atol=ATOL
+
+        # Objective coefficients. Floor slack: P x omega_t = 2,000 x 2 = 4,000 in hour 2,
+        # 2,000 x 6 = 12,000 in hour 4. Hurdle: rate x omega_t = 5 x 2 = 10 forward in hour 2,
+        # 5 x 6 = 30 forward and 7 x 6 = 42 reverse in hour 3.
+        @test coefficient(obj, EP[:vFloorSlack][gT, 2])≈4_000 atol=ATOL
+        @test coefficient(obj, EP[:vFloorSlack][gT, 4])≈12_000 atol=ATOL
+        @test coefficient(obj, EP[:vTAUX_POS][1, 2])≈10 atol=ATOL
+        @test coefficient(obj, EP[:vTAUX_POS][1, 3])≈30 atol=ATOL
+        @test coefficient(obj, EP[:vTAUX_NEG][1, 3])≈42 atol=ATOL
+
+        # Solution. Import costs 5 / 0.9995 = 5.0025 $/MWh delivered < 10 (TH), so TH runs at
+        # its floor where it can: TH = 10, 20, 30 in hours 1-3; hour 4: floor 0.4 x 100 = 40,
+        # availability 0.25 x 100 = 25, so TH = 25 and the floor slack u = 40 - 25 = 15.
+        @test vp(EP, inputs, "TH")≈[10, 20, 30, 25] atol=ATOL
+        @test value(EP[:vFloorSlack][gT, 4])≈15 atol=ATOL
+        @test sum(value.(EP[:vFloorSlack]))≈15 atol=ATOL
+        # Floor-slack cost: P x omega_4 x u = 2,000 x 6 x 15 = 180,000
+        # (without the weight: 2,000 x 15 = 30,000)
+        @test value(EP[:eTotalCFloorSlack])≈180_000 atol=1e-4
+        # Hydro, period 2: budget (0.25 + 0.25) x 100 = 50 MWh = the maxima 40 + 10, so
+        # Hy = 40 in hour 3 and 10 in hour 4. Period 1: budget (0.3 + 0.3) x 100 = 60 MWh.
+        @test vp(EP, inputs, "Hy")[3:4]≈[40, 10] atol=ATOL
+        @test sum(vp(EP, inputs, "Hy")[1:2])≈60 atol=ATOL
+        @test sum(value.(EP[:vBudgetSpill]))≈0 atol=ATOL
+        @test nse_mwh(EP)≈0 atol=ATOL
+        # Delivered import = demand - TH - Hy: period 1: 200 - 30 - 60 = 110 MWh; hour 3:
+        # 100 - 30 - 40 = 30; hour 4: 100 - 25 - 10 = 65. Weighted: 2 x 110 + 6 x (30 + 65) = 790.
+        # Hurdle cost: 5 x 790 / 0.9995 = 3,951.97598799 (without the weight:
+        # 5 x 205 / 0.9995 = 1,025.51275638)
+        @test value(EP[:eTotalCHurdle])≈5 * 790 / 0.9995 atol=1e-6
+        # Objective: TH 10 x (2 x (10 + 20) + 6 x (30 + 25)) = 3,900, + floor slack 180,000,
+        # + hurdle 3,951.97598799 = 187,851.97598799
+        @test objective_value(EP)≈3_900 + 180_000 + 5 * 790 / 0.9995 atol=1e-4
+    end
+
     @testset "T11 Benders subproblem rows of period 2 read the sliced floor and budget" begin
         prof = [fill(0.3, 24); fill(0.6, 24)]
         dir = ops_case(; T = 48, periods = 2, demand = fill(50.0, 48),

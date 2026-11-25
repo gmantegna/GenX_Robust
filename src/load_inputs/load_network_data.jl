@@ -102,6 +102,7 @@ function load_network_data!(setup::Dict, path::AbstractString, inputs_nw::Dict)
     end
 
     load_directional_ratings!(network_var, inputs_nw, setup)
+    load_hurdle_rates!(network_var, inputs_nw, setup)
 
     println(filename * " Successfully Read!")
 
@@ -144,6 +145,40 @@ function load_directional_ratings!(network_var::DataFrame, inputs_nw::Dict, setu
     end
     inputs_nw["Profile_Forward"] = pf
     inputs_nw["Profile_Reverse"] = pr
+    return nothing
+end
+
+@doc raw"""
+    load_hurdle_rates!(network_var::DataFrame, inputs_nw::Dict, setup::Dict)
+
+Optional `Hurdle_Rate_Forward` / `Hurdle_Rate_Reverse` columns of Network.csv ($/MWh of
+start->end and end->start flow; ported from the chair's fork). Absent: nothing is stored and the
+objective has no hurdle term. Present: both columns, one finite value per line; a line with a
+nonzero hurdle must be a loss line (the term reads `vTAUX_POS`/`vTAUX_NEG`, which exist only for
+loss lines); `Trans_Loss_Segments` must be 1; `ParameterScale: 1` is refused (not scaled).
+"""
+function load_hurdle_rates!(network_var::DataFrame, inputs_nw::Dict, setup::Dict)
+    has_f = hasproperty(network_var, :Hurdle_Rate_Forward)
+    has_r = hasproperty(network_var, :Hurdle_Rate_Reverse)
+    (has_f || has_r) || return nothing
+    (has_f && has_r) ||
+        error("Network.csv: Hurdle_Rate_Forward and Hurdle_Rate_Reverse must be given together")
+    L = inputs_nw["L"]
+    hf = convert(Array{Float64}, collect(skipmissing(network_var[!, :Hurdle_Rate_Forward])))
+    hr = convert(Array{Float64}, collect(skipmissing(network_var[!, :Hurdle_Rate_Reverse])))
+    (length(hf) == L && length(hr) == L && all(isfinite, hf) && all(isfinite, hr)) ||
+        error("Network.csv: Hurdle_Rate_Forward/Hurdle_Rate_Reverse need one finite value per line ($L lines)")
+    setup["Trans_Loss_Segments"] == 1 ||
+        error("Network.csv: hurdle rates are implemented for Trans_Loss_Segments = 1 only")
+    setup["ParameterScale"] == 1 &&
+        error("Network.csv: hurdle rates are not supported with ParameterScale: 1 (not scaled)")
+    for l in 1:L
+        if (hf[l] != 0 || hr[l] != 0) && !(l in inputs_nw["LOSS_LINES"])
+            error("Network.csv: line $l has a nonzero hurdle rate but is not a loss line (Line_Loss_Percentage 0)")
+        end
+    end
+    inputs_nw["Hurdle_Rate_Forward"] = hf
+    inputs_nw["Hurdle_Rate_Reverse"] = hr
     return nothing
 end
 

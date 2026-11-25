@@ -905,3 +905,7 @@ Rows (`resolve_operations!`, also in each Benders subproblem): `cHourlyPmin[g,t]
 ### 2.12 Stor\_Op\_Group column of Storage.csv (storage operational groups)
 
 Optional column. Storage resources with the same value other than `None` or empty form a group. The member with the lowest R\_ID (the representative) carries the group's discharge, charge and state of charge, bounded by the sum of the members' power and energy capacities; the other members keep their own capacity variables and costs and have no dispatch. The members must share zone, `Min_Duration`, `Max_Duration`, `Eff_Up`, `Eff_Down`, `Self_Disch` and LDS flag, must be symmetric, and must have `Min_Duration` = `Max_Duration`; a group with LDS members is refused with `Benders: 1`. Costs and reserve fractions of the members are not compared; the representative's apply to the group's dispatch. With `StorageDischargeDerate: 1` the representative's `Generators_variability.csv` column applies to the group; the other members' columns are not read.
+
+### 2.13 Hurdle\_Rate\_Forward and Hurdle\_Rate\_Reverse columns of Network.csv
+
+Optional columns, given together, one value per line in $/MWh: the cost of flow from the line's start zone to its end zone (`vTAUX_POS`) and from end to start (`vTAUX_NEG`), weighted by the hour's weight and added to the objective as `eTotalCHurdle`. A nonzero rate is refused on a line with `Line_Loss_Percentage` 0, and the columns are refused unless `Trans_Loss_Segments` is 1 and `ParameterScale` is 0. `costs.csv` has no hurdle row.

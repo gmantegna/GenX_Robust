@@ -100,6 +100,10 @@ end
     include("test_ops_storage_groups.jl")
 end
 
+@testset "Operational rows: hurdle rates" begin
+    include("test_ops_hurdle.jl")
+end
+
 # Test writing outputs
 @testset "Writing outputs " begin
     for test_file in filter!(x -> endswith(x, ".jl"), readdir("writing_outputs"))

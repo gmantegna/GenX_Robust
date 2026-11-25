@@ -16,7 +16,7 @@ function storage_symmetric!(EP::Model, inputs::Dict, setup::Dict)
     T = inputs["T"]     # Number of time steps (hours)
 
     SYMMETRIC = inputs["STOR_SYMMETRIC"]
-    eTotalCap = EP[:eTotalCap]
+    eTotalCap = stor_cap_power(EP)   # group capacity if operational groups exist
     vP = EP[:vP]
     vCHARGE = EP[:vCHARGE]
 

@@ -27,7 +27,7 @@ function storage_all!(EP::Model, inputs::Dict, setup::Dict)
     hours_per_subperiod = inputs["hours_per_subperiod"] #total number of hours per subperiod
     weight = inputs["omega"]
 
-    eTotalCapEnergy = EP[:eTotalCapEnergy]
+    eTotalCapEnergy = stor_cap_energy(EP)   # group energy capacity if operational groups exist
     vP = EP[:vP]
 
     ### Variables ###
@@ -144,10 +144,12 @@ function storage_all!(EP::Model, inputs::Dict, setup::Dict)
         add_similar_to_expression!(EP[:eHM], eHMCharge)
     end
     ## Patrick Bryant's suggestion implementation - Start
-    # Maximum charging rate must be less than available storage capacity                                                                                                                                                                                                                           
-    @constraint(EP,
-        [y in STOR_ALL, t in 1:T],
-        efficiency_up(gen[y]) * vCHARGE[y, t] <= eTotalCapEnergy[y] - vS[y, hoursbefore(hours_per_subperiod, t, 1)])
+    # Maximum charging rate must be less than available storage capacity (StorageChargeHeadroom: 0 drops this row)
+    if get(setup, "StorageChargeHeadroom", 1) == 1
+        @constraint(EP,
+            [y in STOR_ALL, t in 1:T],
+            efficiency_up(gen[y]) * vCHARGE[y, t] <= eTotalCapEnergy[y] - vS[y, hoursbefore(hours_per_subperiod, t, 1)])
+    end
     ## Patrick Bryant's suggestion implementation - End
 
     # Storage discharge and charge power (and reserve contribution) related constraints:
@@ -199,8 +201,8 @@ function storage_all_operation!(EP::Model, inputs::Dict, setup::Dict)
 
     STOR_ALL = inputs["STOR_ALL"]
 
-    eTotalCap = EP[:eTotalCap]
-    eTotalCapEnergy = EP[:eTotalCapEnergy]
+    eTotalCap = stor_cap_power(EP)          # group capacities if operational groups exist
+    eTotalCapEnergy = stor_cap_energy(EP)
 
     vP = EP[:vP]
     vS = EP[:vS]
@@ -260,7 +262,13 @@ function storage_all_operation!(EP::Model, inputs::Dict, setup::Dict)
         vCAPRES_discharge = EP[:vCAPRES_discharge]
         add_similar_to_expression!(expr[STOR_ALL, :], vCAPRES_discharge[STOR_ALL, :])
     end
-    @constraint(EP, [y in STOR_ALL, t in 1:T], expr[y, t]<=eTotalCap[y])
+    if get(setup, "StorageDischargeDerate", 0) == 1
+        # discharge derate: Generators_variability.csv column (1.0 for storage without a column)
+        @constraint(EP, [y in STOR_ALL, t in 1:T],
+            expr[y, t]<=inputs["pP_Max"][y, t] * eTotalCap[y])
+    else
+        @constraint(EP, [y in STOR_ALL, t in 1:T], expr[y, t]<=eTotalCap[y])
+    end
     # Maximum discharging rate (and contribution to reserves up) must be less than available stored energy in prior period
     @constraint(EP,
         [y in STOR_ALL, t in 1:T],

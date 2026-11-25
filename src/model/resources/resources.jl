@@ -593,6 +593,13 @@ resource_type_mga(r::AbstractResource) = r.resource_type
 zone_id(r::AbstractResource) = r.zone
 zone_id(rs::Vector{T}) where {T <: AbstractResource} = zone_id.(rs)
 
+# Storage operational group (Storage.csv column Stor_Op_Group, ported from the chair's fork);
+# "None", empty or missing = standalone
+function stor_op_group(r::AbstractResource)
+    g = get(r, :stor_op_group, "None")
+    return ismissing(g) ? "None" : string(g)
+end
+
 # getter for boolean attributes (true or false) with validation
 function new_build(r::AbstractResource)
     validate_boolean_attribute(r, :new_build)

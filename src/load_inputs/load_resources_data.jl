@@ -1129,6 +1129,8 @@ function add_resources_to_input_data!(inputs::Dict,
     inputs["STOR_LONG_DURATION"] = intersect(inputs["STOR_ALL"], is_LDS(gen))
     inputs["STOR_SHORT_DURATION"] = intersect(inputs["STOR_ALL"], is_SDS(gen))
 
+    load_storage_operational_groups!(inputs, setup, gen)
+
     ## VRE
     # Set of controllable variable renewable resources
     inputs["VRE"] = vre(gen)
@@ -1538,4 +1540,64 @@ function load_multi_fuels_data!(inputs::Dict,
     if haskey(inputs, "THERM_COMMIT_PWFU") && !isempty(inputs["THERM_COMMIT_PWFU"])
         error("Multi-fuel option is not available when piece-wise heat rates are used. Please remove multi fuels to avoid this error.")
     end
+end
+
+@doc raw"""
+    load_storage_operational_groups!(inputs::Dict, setup::Dict, gen::Vector{<:AbstractResource})
+
+Storage operational groups (the `Stor_Op_Group` column of `Storage.csv`; ported from the chair's
+GenX fork): the storage resources with the same label other than `None` or empty form a group,
+whose lowest-R_ID member (the representative) carries the operational variables and rows, sized
+by the group's total power and energy capacity; the other members (`STOR_BIN_ONLY`) keep their
+own capacity decisions and get no dispatch. Stores `STOR_OP_MEMBERS` (representative => members),
+`STOR_BIN_ONLY`, `STOR_OPERATIONAL` (= `STOR_ALL` minus `STOR_BIN_ONLY`) and
+`STOR_GROUPS_ACTIVE` (true if any group exists; false = the model is as without the column).
+Refused: members that differ in zone, `Min_Duration`, `Max_Duration`, `Eff_Up`, `Eff_Down`,
+`Self_Disch` or LDS flag; an asymmetric member; a member with `Min_Duration` != `Max_Duration`;
+a group with an LDS member under `Benders: 1` (the Benders LDS master rows are not grouped).
+"""
+function load_storage_operational_groups!(inputs::Dict, setup::Dict,
+        gen::Vector{<:AbstractResource})
+    stor_op_members = Dict{Int, Vector{Int}}()
+    stor_bin_only = Int[]
+    stor_groups = Dict{String, Vector{Int}}()
+    for y in inputs["STOR_ALL"]
+        g = stor_op_group(gen[y])
+        if g != "None" && g != ""
+            push!(get!(stor_groups, g, Int[]), y)
+        end
+    end
+    lds = is_LDS(gen)
+    for (g, members) in stor_groups
+        sort!(members)
+        rep = members[1]
+        stor_op_members[rep] = members
+        append!(stor_bin_only, members[2:end])
+        for y in members
+            if zone_id(gen[y]) != zone_id(gen[rep]) ||
+               min_duration(gen[y]) != min_duration(gen[rep]) ||
+               max_duration(gen[y]) != max_duration(gen[rep]) ||
+               efficiency_up(gen[y]) != efficiency_up(gen[rep]) ||
+               efficiency_down(gen[y]) != efficiency_down(gen[rep]) ||
+               self_discharge(gen[y]) != self_discharge(gen[rep]) ||
+               (y in lds) != (rep in lds) ||
+               (y in inputs["STOR_ASYMMETRIC"])
+                error("storage operational group $g has inconsistent members (zone, duration, efficiency, self-discharge, LDS flag must match; asymmetric storage not supported)")
+            end
+            min_duration(gen[y]) == max_duration(gen[y]) ||
+                error("storage operational group $g: member $(resource_name(gen[y])) has Min_Duration $(min_duration(gen[y])) != Max_Duration $(max_duration(gen[y])); pooling is exact only at a fixed duration")
+        end
+        if setup["Benders"] == 1 && rep in lds
+            error("storage operational group $g has LDS members; groups with LDS = 1 are not supported with Benders: 1")
+        end
+    end
+    sort!(stor_bin_only)
+    inputs["STOR_OP_MEMBERS"] = stor_op_members
+    inputs["STOR_BIN_ONLY"] = stor_bin_only
+    inputs["STOR_OPERATIONAL"] = setdiff(inputs["STOR_ALL"], stor_bin_only)
+    inputs["STOR_GROUPS_ACTIVE"] = !isempty(stor_op_members)
+    if inputs["STOR_GROUPS_ACTIVE"]
+        println("Storage operational groups: $(length(stor_op_members)) groups aggregate $(length(stor_bin_only) + length(stor_op_members)) storage resources")
+    end
+    return nothing
 end

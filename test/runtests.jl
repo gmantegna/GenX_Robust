@@ -96,6 +96,10 @@ end
     include("test_ops_floors_budgets.jl")
 end
 
+@testset "Operational rows: storage groups" begin
+    include("test_ops_storage_groups.jl")
+end
+
 # Test writing outputs
 @testset "Writing outputs " begin
     for test_file in filter!(x -> endswith(x, ".jl"), readdir("writing_outputs"))

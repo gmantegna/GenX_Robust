@@ -128,6 +128,17 @@ function hydro_res!(EP::Model, inputs::Dict, setup::Dict)
         CONSTRAINTSET = HYDRO_RES
     end
 
+    # Hydro with an energy budget column (Hourly_energy_budget.csv) gets the budget rows of
+    # resolve_operations! instead of the reservoir rows (start, interior, minimum flow, maximum
+    # outflow, maximum energy). Without budgeted hydro every set below is the one used before.
+    BUDGETED = budgeted_hydro(inputs)
+    HYDRO_RESV = HYDRO_RES
+    if !isempty(BUDGETED)
+        CONSTRAINTSET = setdiff(CONSTRAINTSET, BUDGETED)
+        HYDRO_RESV = setdiff(HYDRO_RES, BUDGETED)
+        HYDRO_RES_KNOWN_CAP = setdiff(HYDRO_RES_KNOWN_CAP, BUDGETED)
+    end
+
     @constraint(EP,
         cHydroReservoirStart[y in CONSTRAINTSET, t in START_SUBPERIODS],
         EP[:vS_HYDRO][y,
@@ -144,7 +155,7 @@ function hydro_res!(EP::Model, inputs::Dict, setup::Dict)
             # DEV NOTE: Last inputs["pP_Max"][y,t] term above is inflows; currently part of capacity factors inputs in Generators_variability.csv but should be moved to its own Hydro_inflows.csv input in future.
 
             # Constraints for reservoir hydro
-            cHydroReservoirInterior[y in HYDRO_RES, t in INTERIOR_SUBPERIODS],
+            cHydroReservoirInterior[y in HYDRO_RESV, t in INTERIOR_SUBPERIODS],
             EP[:vS_HYDRO][y, t] == (EP[:vS_HYDRO][y, hoursbefore(p, t, 1)] -
              (1 / efficiency_down(gen[y]) * EP[:vP][y, t]) - vSPILL[y, t] +
              inputs["pP_Max"][y, t] * EP[:eTotalCap][y])
@@ -159,7 +170,7 @@ function hydro_res!(EP::Model, inputs::Dict, setup::Dict)
             reserves_term[y, hoursbefore(p, t, 1)] <=
             ramp_down_fraction(gen[y]) * EP[:eTotalCap][y]
             # Minimum streamflow running requirements (power generation and spills must be >= min value) in all hours
-            cHydroMinFlow[y in HYDRO_RES, t in 1:T],
+            cHydroMinFlow[y in HYDRO_RESV, t in 1:T],
             EP[:vP][y, t] + EP[:vSPILL][y, t] >= min_power(gen[y]) * EP[:eTotalCap][y]
             # DEV NOTE: When creating new hydro inputs, should rename Min_Power with Min_flow or similar for clarity since this includes spilled water as well
 
@@ -167,7 +178,7 @@ function hydro_res!(EP::Model, inputs::Dict, setup::Dict)
             # DEV NOTE: We do not currently account for hydro power plant outages - leave it for later to figure out if we should.
             # DEV NOTE (CONTD): If we defin pPMax as hourly availability of the plant and define inflows as a separate parameter, then notation will be consistent with its use for other resources
             cHydroMaxPower[y in HYDRO_RES, t in 1:T], EP[:vP][y, t] <= EP[:eTotalCap][y]
-            cHydroMaxOutflow[y in HYDRO_RES, t in 1:T],
+            cHydroMaxOutflow[y in HYDRO_RESV, t in 1:T],
             EP[:vP][y, t] <= EP[:vS_HYDRO][y, hoursbefore(p, t, 1)]
         end)
 

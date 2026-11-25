@@ -356,6 +356,9 @@ function operation_model!(EP::Model, setup::Dict, inputs::Dict)
         electrolyzer!(EP, inputs, setup)
     end
 
+    # Hourly minimum output and energy budgets ported from the chair's fork (only if their inputs exist)
+    resolve_operations!(EP, inputs, setup)
+
     # Policies
 
     if setup["OperationalReserves"] > 0

@@ -1,0 +1,52 @@
+host=della-h14n3 job=18378828 start=2026-11-25T21:50:57Z
+tree /scratch/gpfs/JENKINS/gm1710/p42ra/port/c3 expect d7e33689812a7d926685a070892ec2de9b1ead45; tree stamp: d7e33689812a7d926685a070892ec2de9b1ead45
+path = "/scratch/gpfs/JENKINS/gm1710/p42ra/port/c3"
+=== precompile 2026-11-25T21:50:57Z
+└  
+[ Info: GenX: patched MacroEnergySolvers 0.2.2 solve_subproblem (infeasible-point defect: an infeasible subproblem that returns a point was taken for solved). Set GENX_DISABLE_MES_PATCH=1 to keep stock behaviour.
+GenX loaded from /scratch/gpfs/JENKINS/gm1710/p42ra/port/c3/src/GenX.jl
+=== runtests 2026-11-25T21:53:27Z
+SUITE rc=0 2026-11-25T21:57:00Z
+counts: Test Failed 0 / Error During Test 0 / ERROR: 0
+=== every Test Summary block (header + rows) ===
+Test Summary:     | Pass  Total  Time
+Expr manipulation |   26     26  2.3s
+Test Summary:    | Pass  Total   Time
+Resource loading |  291    291  23.3s
+Test Summary:       | Pass  Total     Time
+GenX modules        |  145    145  1m23.2s
+  Three zones       |    1      1     2.6s
+  TDR               |    7      7     3.7s
+  Piecewise Fuel    |    1      1     2.4s
+  VRE_STOR          |    3      3    24.8s
+  Electrolyzer      |    2      2     1.8s
+  Fusion            |    2      2     6.8s
+  Multi Stage       |  125    125    33.6s
+  DCOPF             |    1      1     2.1s
+  Multi Fuels       |    1      1     2.3s
+  Compute Conflicts |    1      1     1.2s
+  Retrofit          |    1      1     1.8s
+Test Summary:    | Pass  Total  Time
+Gurobi extension |    5      5  0.7s
+Test Summary:         | Pass  Total   Time
+Benders decomposition |    8      8  22.8s
+Test Summary:        | Pass  Total  Time
+NSE disabled periods |   50     50  2.5s
+Test Summary:     | Pass  Broken  Total   Time
+NSE budget policy |  146       2    148  26.4s
+Test Summary:    | Pass  Total   Time
+NSE budget zones |   52     52  10.4s
+Test Summary:   | Pass  Total  Time
+PRM_ELCC policy |   86     86  8.9s
+Test Summary:                                  | Pass  Total  Time
+Simultaneous flow and directional line ratings |   80     80  8.4s
+Test Summary:             | Pass  Total  Time
+Operational rows: loaders |   43     43  8.0s
+Test Summary:                        | Pass  Total  Time
+Operational rows: floors and budgets |   49     49  3.7s
+Test Summary:                    | Pass  Total  Time
+Operational rows: storage groups |   29     29  2.6s
+Test Summary:    | Pass  Total  Time
+Writing outputs  |  219    219  1.9s
+end 2026-11-25T21:57:01Z
+DONE

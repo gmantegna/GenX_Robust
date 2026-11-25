@@ -895,3 +895,7 @@ A simultaneous-flow row bounds the sum of the listed directional flow components
 |limit\_MW | The group's limit in MW (the same on every row of the group); divided by the ParameterScale factor, as `Line_Max_Flow_MW` is. Refused: a negative or non-finite value.|
 
 The file is refused if one of the columns `Simultaneous Flow Group`, `Line_Number`, `Direction`, `limit_MW` is missing, or if `Trans_Loss_Segments` is not 1.
+
+### 2.11 Generators\_Pmin.csv and Hourly\_energy\_budget.csv (hourly minimum output, energy budgets)
+
+Optional files in the same folder as `Generators_variability.csv`, with the same layout (`Time_Index`, then one column per resource name, at least T rows). `Generators_Pmin.csv` is read only with `Hourly_Pmin: 1` and is then required; a value is the hour's minimum output as a fraction of the resource's total capacity. `Hourly_energy_budget.csv` is read whenever it exists in the `system` folder; a value is the hour's energy budget as a fraction of total capacity (MWh per MW per hour). A resource without a column gets 0. Both are refused with `ParameterScale: 1`; a hydro resource with a budget column and `LDS: 1` is refused.

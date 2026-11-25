@@ -43,7 +43,12 @@ function default_settings()
         "PoliciesFolder" => "policies",
         "Benders" => 0,
         "ObjScale" => 1,
-        "LDES_Feasible" => 0,)
+        "LDES_Feasible" => 0,
+        "Hourly_Pmin" => 0,            # 1 = hourly minimum output rows from Generators_Pmin.csv
+        "Fixed_Dispatch" => 0,         # 1 is refused (not supported on this branch)
+        "HydroBudgetMaxProfile" => 0,  # 1 = budgeted hydro output <= Generators_variability x capacity
+        "StorageDischargeDerate" => 0, # 1 = storage discharge <= Generators_variability x capacity
+        "StorageChargeHeadroom" => 1,)  # 0 = drop the charge <= energy capacity - state of charge row
 end
 
 @doc raw"""

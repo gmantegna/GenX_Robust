@@ -88,6 +88,10 @@ end
     include("test_simultaneous_flow.jl")
 end
 
+@testset "Operational rows: loaders" begin
+    include("test_ops_loaders.jl")
+end
+
 # Test writing outputs
 @testset "Writing outputs " begin
     for test_file in filter!(x -> endswith(x, ".jl"), readdir("writing_outputs"))

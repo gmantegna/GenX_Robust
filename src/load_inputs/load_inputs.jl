@@ -35,6 +35,9 @@ function load_inputs(setup::Dict, path::AbstractString)
     load_resources_data!(inputs, setup, path, resources_path)
     # Read in generator/resource availability profiles
     load_generators_variability!(setup, path, inputs)
+    # Optional hourly minimum output (Hourly_Pmin: 1) and energy budgets (file present)
+    load_hourly_pmin!(setup, path, inputs)
+    load_energy_budget!(setup, path, inputs)
 
     validatetimebasis(inputs)
 
@@ -97,6 +100,8 @@ function load_inputs(setup::Dict, path::AbstractString)
     scale_factor = setup["ParameterScale"] == 1 ? ModelScalingFactor : 1
     inputs["VirtualChargeDischargeCost"] = setup["VirtualChargeDischargeCost"] /
                                            scale_factor
+
+    validate_operational_rows!(setup, inputs)
 
     println("CSV Files Successfully Read In From $path")
 

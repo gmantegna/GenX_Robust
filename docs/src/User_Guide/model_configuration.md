@@ -37,6 +37,8 @@ The following tables summarize the model settings parameters and their default/p
 |LDES_Feasible | Flag controlling whether penalized slack variables are added to the long-duration energy storage (LDES) inter-period constraints to guarantee subproblem feasibility. Applies to both the traditional LDES module and the co-located VRE-storage module, and is relevant when representative periods are used (`REP_PERIOD > 1`) and/or under Benders decomposition. See the [Benders Decomposition](@ref) section for details.|
 ||0 = (default) add slack variables to the LDES constraints, guaranteeing feasibility.|
 ||1 = do **not** add any slack variables to the LDES constraints in either the traditional LDES module or the VRE-storage module.|
+|Hourly\_Pmin | 1 = read `Generators_Pmin.csv` (required then; see Optional inputs). Default 0.|
+|Fixed\_Dispatch | Only 0 (default) is accepted; 1 is refused.|
 
 ## 2. Solution strategy
 

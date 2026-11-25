@@ -66,7 +66,8 @@ Refusals for the operational rows ported from the chair's fork (reimagining-ra #
 `Fixed_Dispatch: 1` (not ported); `ParameterScale: 1` with any of these inputs or keys in use
 (the rows are not scaled); `OperationalFloorPenalty` with `NSEBudget: 1`, or not a number above
 VoLL; an `EnergyBudgetWindowHours` that is not a positive integer dividing the subperiod length;
-a budgeted hydro resource with `LDS: 1`; a 0/1 key with another value.
+a budgeted hydro resource with `LDS: 1`; `HydroBudgetMaxProfile: 1` without a loaded
+`Hourly_energy_budget.csv`; a 0/1 key with another value.
 """
 function validate_operational_rows!(setup::Dict, inputs::Dict)
     for k in ("Hourly_Pmin", "Fixed_Dispatch", "HydroBudgetMaxProfile",
@@ -85,6 +86,12 @@ function validate_operational_rows!(setup::Dict, inputs::Dict)
         error("ParameterScale: 1 is not supported with hourly Pmin, energy budgets, " *
               "OperationalFloorPenalty, EnergyBudgetWindowHours, HydroBudgetMaxProfile or " *
               "StorageDischargeDerate (these rows are not scaled).")
+    end
+
+    if get(setup, "HydroBudgetMaxProfile", 0) == 1 && !haskey(inputs, "pBudget")
+        error("HydroBudgetMaxProfile: 1 needs Hourly_energy_budget.csv in the system folder: " *
+              "the hourly hydro maximum is built only for hydro with a budget column, and no " *
+              "budget file was loaded.")
     end
 
     if haskey(setup, "OperationalFloorPenalty")

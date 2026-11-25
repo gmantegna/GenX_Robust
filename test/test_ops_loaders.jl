@@ -134,6 +134,18 @@ load_err(dir; overrides = Dict()) =
         @test load_err(dir; overrides = nse1) == ""
     end
 
+    @testset "L11 HydroBudgetMaxProfile 1 refused without Hourly_energy_budget.csv" begin
+        mk(; budget = nothing) = ops_case(; T = 24, demand = fill(60.0, 24),
+            hydro = [hydro_row("Hy", 1, 100)], budget = budget)
+        dir0 = mk()
+        dir1 = mk(; budget = Dict("Hy" => fill(0.5, 24)))
+        @test occursin("HydroBudgetMaxProfile: 1 needs Hourly_energy_budget.csv",
+            load_err(dir0; overrides = Dict("HydroBudgetMaxProfile" => 1)))
+        @test load_err(dir1; overrides = Dict("HydroBudgetMaxProfile" => 1)) == ""
+        @test load_err(dir0; overrides = Dict("HydroBudgetMaxProfile" => 0)) == ""
+        @test load_err(dir0) == ""
+    end
+
     @testset "T11 slicing of pP_Min and pBudget into Benders subperiods" begin
         # 2 periods of 24 h, capacity 100 MW: Pmin 0.3 / 0.6, budget 0.3 / 0.6 per hour
         prof = [fill(0.3, 24); fill(0.6, 24)]

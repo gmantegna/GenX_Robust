@@ -40,7 +40,7 @@ The following tables summarize the model settings parameters and their default/p
 |Hourly\_Pmin | 1 = read `Generators_Pmin.csv` (required then; see Optional inputs) and add `cHourlyPmin`. Default 0.|
 |OperationalFloorPenalty | No default. If set, a number above the largest NSE segment cost ($/MWh): the hourly minimum and budget rows get a nonnegative slack (`vFloorSlack`, `vBudgetSpill`) priced at this value times the hour's weight. Absent: the rows are hard. Refused with `NSEBudget: 1`: the bound above VoLL assumes non-served energy is priced at VoLL, which the NSE budget changes, so NSE-budget runs must use hard floors and budgets.|
 |EnergyBudgetWindowHours | Length in hours of the energy-budget windows; must divide the subperiod length. Absent: one window per subperiod.|
-|HydroBudgetMaxProfile | 1 = hydro with a budget column produces at most its `Generators_variability.csv` value times capacity in each hour. Default 0.|
+|HydroBudgetMaxProfile | 1 = hydro with a budget column produces at most its `Generators_variability.csv` value times capacity in each hour. Default 0. Refused if no `Hourly_energy_budget.csv` was loaded.|
 |StorageDischargeDerate | 1 = storage discharge (plus reserve and virtual discharge) is at most its `Generators_variability.csv` value times capacity (group capacity for a group's representative). Default 0.|
 |StorageChargeHeadroom | 0 = drop the row efficiency_up x charge <= energy capacity - previous state of charge. Default 1 (the row is built).|
 |Fixed\_Dispatch | Only 0 (default) is accepted; 1 is refused.|

@@ -44,6 +44,16 @@ function storage_symmetric!(EP::AbstractModel, inputs::Dict, setup::Dict)
                 end)
         end
     end
+
+    # Simultaneous charge and discharge within the hour, off unless StorSimultaneousCharge == 1:
+    # vP + vCHARGE <= 0.5 x (pP_Max + 1) x capacity, on the resources whose discharge profile pP_Max
+    # is below 1 in some hour (charging profile 1); elsewhere the row equals the one above
+    if get(setup, "StorSimultaneousCharge", 0) == 1
+        STOR_SIM = [y for y in STOR_SYMMETRIC if any(inputs["pP_Max"][y, t] < 1.0 for t in 1:T)]
+        @constraint(EP, cStorSimCharge[y in STOR_SIM, t in 1:T],
+            EP[:vP][y, t] + EP[:vCHARGE][y, t] <=
+            0.5 * (inputs["pP_Max"][y, t] + 1.0) * EP[:eTotalCapStorOp][y])
+    end
 end
 
 @doc raw"""

@@ -38,7 +38,8 @@ function default_settings()
         "PoliciesFolder" => "policies",
         "ObjScale" => 1,
         "ARO" => 0,
-        "HydroHourlyMax" => 0  # 1: hydro output <= hourly pP_Max x capacity (cHydroMaxPowerProfile)
+        "HydroHourlyMax" => 0,  # 1: hydro output <= hourly pP_Max x capacity (cHydroMaxPowerProfile)
+        "StorSimultaneousCharge" => 0  # 1: vP + vCHARGE <= 0.5 x (pP_Max + 1) x capacity (cStorSimCharge)
     )
 end
 

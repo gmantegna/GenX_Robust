@@ -122,6 +122,18 @@ load_err(dir; overrides = Dict()) =
         @test load_err(mk(0)) == ""
     end
 
+    @testset "L10 OperationalFloorPenalty refused with NSEBudget 1, accepted with NSEBudget 0" begin
+        # The penalty's guard (P > VoLL) assumes shed is priced at VoLL; under the NSE budget it
+        # is not (review of GenX_Robust PR 14, finding 1).
+        dir = base1()
+        nse1 = Dict("NSEBudget" => 1, "NSEBudgetTargetMWh" => 0.0)
+        @test occursin("NSE-budget runs must use hard floors and budgets",
+            load_err(dir; overrides = merge(nse1, Dict("OperationalFloorPenalty" => 2_000))))
+        @test load_err(dir;
+            overrides = Dict("NSEBudget" => 0, "OperationalFloorPenalty" => 2_000)) == ""
+        @test load_err(dir; overrides = nse1) == ""
+    end
+
     @testset "T11 slicing of pP_Min and pBudget into Benders subperiods" begin
         # 2 periods of 24 h, capacity 100 MW: Pmin 0.3 / 0.6, budget 0.3 / 0.6 per hour
         prof = [fill(0.3, 24); fill(0.6, 24)]

@@ -38,7 +38,7 @@ The following tables summarize the model settings parameters and their default/p
 ||0 = (default) add slack variables to the LDES constraints, guaranteeing feasibility.|
 ||1 = do **not** add any slack variables to the LDES constraints in either the traditional LDES module or the VRE-storage module.|
 |Hourly\_Pmin | 1 = read `Generators_Pmin.csv` (required then; see Optional inputs) and add `cHourlyPmin`. Default 0.|
-|OperationalFloorPenalty | No default. If set, a number above the largest NSE segment cost ($/MWh): the hourly minimum and budget rows get a nonnegative slack (`vFloorSlack`, `vBudgetSpill`) priced at this value times the hour's weight. Absent: the rows are hard.|
+|OperationalFloorPenalty | No default. If set, a number above the largest NSE segment cost ($/MWh): the hourly minimum and budget rows get a nonnegative slack (`vFloorSlack`, `vBudgetSpill`) priced at this value times the hour's weight. Absent: the rows are hard. Refused with `NSEBudget: 1`: the bound above VoLL assumes non-served energy is priced at VoLL, which the NSE budget changes, so NSE-budget runs must use hard floors and budgets.|
 |EnergyBudgetWindowHours | Length in hours of the energy-budget windows; must divide the subperiod length. Absent: one window per subperiod.|
 |HydroBudgetMaxProfile | 1 = hydro with a budget column produces at most its `Generators_variability.csv` value times capacity in each hour. Default 0.|
 |StorageDischargeDerate | 1 = storage discharge (plus reserve and virtual discharge) is at most its `Generators_variability.csv` value times capacity (group capacity for a group's representative). Default 0.|

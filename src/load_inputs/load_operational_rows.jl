@@ -64,9 +64,9 @@ operational_rows_voll(inputs::Dict) = maximum(inputs["pC_D_Curtail"])
 
 Refusals for the operational rows ported from the chair's fork (reimagining-ra #204):
 `Fixed_Dispatch: 1` (not ported); `ParameterScale: 1` with any of these inputs or keys in use
-(the rows are not scaled); `OperationalFloorPenalty` not a number above VoLL; an
-`EnergyBudgetWindowHours` that is not a positive integer dividing the subperiod length; a
-budgeted hydro resource with `LDS: 1`; a 0/1 key with another value.
+(the rows are not scaled); `OperationalFloorPenalty` with `NSEBudget: 1`, or not a number above
+VoLL; an `EnergyBudgetWindowHours` that is not a positive integer dividing the subperiod length;
+a budgeted hydro resource with `LDS: 1`; a 0/1 key with another value.
 """
 function validate_operational_rows!(setup::Dict, inputs::Dict)
     for k in ("Hourly_Pmin", "Fixed_Dispatch", "HydroBudgetMaxProfile",
@@ -88,6 +88,11 @@ function validate_operational_rows!(setup::Dict, inputs::Dict)
     end
 
     if haskey(setup, "OperationalFloorPenalty")
+        get(setup, "NSEBudget", 0) == 1 &&
+            error("OperationalFloorPenalty cannot be used with NSEBudget: 1. The penalty's " *
+                  "guard (a number above VoLL) assumes non-served energy is priced at VoLL, " *
+                  "which the NSE budget changes; NSE-budget runs must use hard floors and " *
+                  "budgets (leave OperationalFloorPenalty unset).")
         P = setup["OperationalFloorPenalty"]
         voll = operational_rows_voll(inputs)
         (P isa Real && isfinite(P) && P > voll) ||

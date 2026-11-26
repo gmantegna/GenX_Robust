@@ -110,9 +110,10 @@ end
     for key in (0, 1)
         setup = toy_setup(Dict("CapResThermalHourlyAvailability" => key))
         EP, inputs = build(CASE, setup)
-        redirect_stdout(devnull) do
+        _, solve_time = redirect_stdout(devnull) do
             GenX.solve_model(EP, setup)
         end
+        inputs["solve_time"] = solve_time    # as run_genx_case_simple! (write_status reads it)
         @test termination_status(EP) == MOI.OPTIMAL
         @test length(inputs["STOR_OPERATIONAL"]) < length(inputs["STOR_ALL"])   # groups are on
         out = mktempdir()

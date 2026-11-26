@@ -1,0 +1,61 @@
+host=della-h14n1 job=18386422 start=2026-11-25T23:58:05Z
+path = "/scratch/gpfs/JENKINS/gm1710/p42ra/port/fixfiles-18386422/work"
+tree from clone archive 32bd46751ac4ec084de0d4fb8c86ec51d420c41b
+overlay: 60542cf67dea32f4  ./test/ops_rows_helpers.jl a5d5121acbb5a388  ./test/test_ops_floors_budgets.jl 976e7062177c3fcd  ./test/test_ops_loaders.jl 
+##### tree := 32bd46751ac4ec084de0d4fb8c86ec51d420c41b 23:59:25  src sha256-of-tree fdbeba1f22504a0a
+[ Info: GenX: patched MacroEnergySolvers 0.2.2 solve_subproblem (infeasible-point defect: an infeasible subproblem that returns a point was taken for solved). Set GENX_DISABLE_MES_PATCH=1 to keep stock behaviour.
+GenX from /scratch/gpfs/JENKINS/gm1710/p42ra/port/fixfiles-18386422/work/src/GenX.jl
+RESULT 32bd4675_ovl_test_ops_loaders.jl rc=1 00:02:32  Test Failed 2 / Error During Test 0
+L10 OperationalFloorPenalty refused with NSEBudget 1, accepted with NSEBudget 0: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/fixfiles-18386422/work/test/test_ops_loaders.jl:130
+  Expression: occursin("NSE-budget runs must use hard floors and budgets", load_err(dir; overrides = merge(nse1, Dict("OperationalFloorPenalty" => 2000))))
+   Evaluated: occursin("NSE-budget runs must use hard floors and budgets", "")
+
+--
+L11 HydroBudgetMaxProfile 1 refused without Hourly_energy_budget.csv: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/fixfiles-18386422/work/test/test_ops_loaders.jl:142
+  Expression: occursin("HydroBudgetMaxProfile: 1 needs Hourly_energy_budget.csv", load_err(dir0; overrides = Dict("HydroBudgetMaxProfile" => 1)))
+   Evaluated: occursin("HydroBudgetMaxProfile: 1 needs Hourly_energy_budget.csv", "")
+
+Test Summary:                                                                     | Pass  Fail  Total   Time
+Operational rows: loaders, keys, refusals, slicing                                |   48     2     50  11.0s
+  L1 absent inputs: nothing stored, defaults                                      |    9            9   2.0s
+  L2 Generators_Pmin.csv read with Hourly_Pmin 1; missing column = 0              |    4            4   0.4s
+  L3 Hourly_Pmin 1 needs the file                                                 |    2            2   0.1s
+  L4 Hourly_energy_budget.csv read when present                                   |    3            3   0.1s
+  L5 Fixed_Dispatch 1 refused, 0 accepted                                         |    3            3   0.0s
+  L6 ParameterScale 1 refused with these inputs, accepted without                 |    4            4   0.0s
+  L7 OperationalFloorPenalty must exceed VoLL (1000)                              |    4            4   0.1s
+  L7b VoLL is the largest segment cost (two segments: 1000 and 1500)              |    2            2   3.1s
+  L8 EnergyBudgetWindowHours divides the subperiod (H = 48)                       |    5            5   0.0s
+  L9 budgeted hydro with LDS 1 refused, LDS 0 accepted                            |    2            2   3.5s
+  L10 OperationalFloorPenalty refused with NSEBudget 1, accepted with NSEBudget 0 |    2     1      3   1.2s
+  L11 HydroBudgetMaxProfile 1 refused without Hourly_energy_budget.csv            |    3     1      4   0.1s
+  T11 slicing of pP_Min and pBudget into Benders subperiods                       |    5            5   0.3s
+RESULT 32bd4675_ovl_test_ops_floors_budgets.jl rc=0 00:02:56  Test Failed 0 / Error During Test 0
+Test Summary:                                    | Pass  Total   Time
+Operational rows: floors, budgets, hydro maximum |   73     73  14.5s
+tree from fixtrees/3dcd2028ec7ea807286eae106f0d350191379a51
+##### tree := 3dcd2028ec7ea807286eae106f0d350191379a51 00:02:57  src sha256-of-tree 17a21072446e12bb
+[ Info: GenX: patched MacroEnergySolvers 0.2.2 solve_subproblem (infeasible-point defect: an infeasible subproblem that returns a point was taken for solved). Set GENX_DISABLE_MES_PATCH=1 to keep stock behaviour.
+GenX from /scratch/gpfs/JENKINS/gm1710/p42ra/port/fixfiles-18386422/work/src/GenX.jl
+RESULT 3dcd2028_test_ops_loaders.jl rc=0 00:05:56  Test Failed 0 / Error During Test 0
+Test Summary:                                      | Pass  Total   Time
+Operational rows: loaders, keys, refusals, slicing |   46     46  10.4s
+tree from fixtrees/7b30d9656a0dd592c7fee47240fb3b4b2c444e2a
+##### tree := 7b30d9656a0dd592c7fee47240fb3b4b2c444e2a 00:05:58  src sha256-of-tree 8d1968537463781f
+[ Info: GenX: patched MacroEnergySolvers 0.2.2 solve_subproblem (infeasible-point defect: an infeasible subproblem that returns a point was taken for solved). Set GENX_DISABLE_MES_PATCH=1 to keep stock behaviour.
+GenX from /scratch/gpfs/JENKINS/gm1710/p42ra/port/fixfiles-18386422/work/src/GenX.jl
+RESULT 7b30d965_test_ops_loaders.jl rc=0 00:09:01  Test Failed 0 / Error During Test 0
+Test Summary:                                      | Pass  Total   Time
+Operational rows: loaders, keys, refusals, slicing |   50     50  11.0s
+tree from fixtrees/b5bb47ccc044f9af5b56cd8bcc82dbd7e7ceb45c
+##### tree := b5bb47ccc044f9af5b56cd8bcc82dbd7e7ceb45c 00:09:02  src sha256-of-tree 8d1968537463781f
+[ Info: GenX: patched MacroEnergySolvers 0.2.2 solve_subproblem (infeasible-point defect: an infeasible subproblem that returns a point was taken for solved). Set GENX_DISABLE_MES_PATCH=1 to keep stock behaviour.
+GenX from /scratch/gpfs/JENKINS/gm1710/p42ra/port/fixfiles-18386422/work/src/GenX.jl
+RESULT b5bb47cc_test_ops_loaders.jl rc=0 00:09:31  Test Failed 0 / Error During Test 0
+Test Summary:                                      | Pass  Total   Time
+Operational rows: loaders, keys, refusals, slicing |   50     50  11.3s
+RESULT b5bb47cc_test_ops_floors_budgets.jl rc=0 00:09:58  Test Failed 0 / Error During Test 0
+Test Summary:                                    | Pass  Total   Time
+Operational rows: floors, budgets, hydro maximum |   73     73  15.9s
+end 2026-11-26T00:09:58Z
+DONE

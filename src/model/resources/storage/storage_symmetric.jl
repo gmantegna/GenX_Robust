@@ -46,4 +46,16 @@ function storage_symmetric!(EP::Model, inputs::Dict, setup::Dict)
     end
 
     @constraint(EP, [y in SYMMETRIC, t in 1:T], expr[y, t]<=eTotalCap[y])
+
+    # Simultaneous charge and discharge within the hour (StorSimultaneousCharge: 1, ported from the
+    # lab's rung-B branch base/d58-rungb f63283ac): for the operational symmetric storage (a group's
+    # representative or ungrouped storage) whose pP_Max is below 1 in some hour,
+    # vP + vCHARGE <= 0.5 x (pP_Max + 1) x capacity (group capacity for a representative), every hour.
+    # Reserve and virtual charge/discharge terms are not in this row (as on f63283ac).
+    if get(setup, "StorSimultaneousCharge", 0) == 1
+        STOR_SIM = [y for y in intersect(SYMMETRIC, get(inputs, "STOR_OPERATIONAL", SYMMETRIC))
+                    if any(inputs["pP_Max"][y, t] < 1.0 for t in 1:T)]
+        @constraint(EP, cStorSimCharge[y in STOR_SIM, t in 1:T],
+            vP[y, t] + vCHARGE[y, t] <= 0.5 * (inputs["pP_Max"][y, t] + 1.0) * eTotalCap[y])
+    end
 end

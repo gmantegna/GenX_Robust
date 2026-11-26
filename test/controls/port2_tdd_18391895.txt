@@ -1,0 +1,645 @@
+# pre-change record, job 18391895: the three new test files over 4d602268 (simcharge, cut_slopes = committed files; co2_lines = first version, superseded by 18392423)
+host=della-h12n16 job=18391895 start=2026-11-26T01:25:52Z
+path = "/scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work"
+tree from clone archive 4d602268554ce60136c8de5140ec7c27a42bc567
+overlay: f8a0a685f351b7bb  ./test/test_ops_co2_lines.jl 940add278175a6ca  ./test/test_ops_cut_slopes.jl 0dfe80609ace99f4  ./test/test_ops_simcharge.jl 
+##### tree := 4d602268554ce60136c8de5140ec7c27a42bc567 01:25:53  src sha256-of-tree 8d1968537463781f
+[ Info: GenX: patched MacroEnergySolvers 0.2.2 solve_subproblem (infeasible-point defect: an infeasible subproblem that returns a point was taken for solved). Set GENX_DISABLE_MES_PATCH=1 to keep stock behaviour.
+GenX from /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/src/GenX.jl
+RESULT 4d602268_ovl_test_ops_simcharge.jl rc=1 01:29:24  Test Failed 8 / Error During Test 8
+S1 ungrouped A (10 MW, 40 MWh): the row binds in hour 2, not the first: Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:39
+  Test threw exception
+  Expression: ≈(normalized_rhs((EP1[:cStorSimCharge])[gA, 2]), 7.5, atol = ATOL)
+  KeyError: key :cStorSimCharge not found
+--
+S1 ungrouped A (10 MW, 40 MWh): the row binds in hour 2, not the first: Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:40
+  Test threw exception
+  Expression: ≈(normalized_rhs((EP1[:cStorSimCharge])[gA, 1]), 10, atol = ATOL)
+  KeyError: key :cStorSimCharge not found
+--
+S1 ungrouped A (10 MW, 40 MWh): the row binds in hour 2, not the first: Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:41
+  Test threw exception
+  Expression: ≈(normalized_rhs((EP1[:cStorSimCharge])[gA, 3]), 10, atol = ATOL)
+  KeyError: key :cStorSimCharge not found
+--
+S1 ungrouped A (10 MW, 40 MWh): the row binds in hour 2, not the first: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:42
+  Expression: ≈(value((EP1[:vCHARGE])[gA, 2]), 7.5, atol = ATOL)
+   Evaluated: 10.0 ≈ 7.5 (atol=1.0e-6)
+
+--
+S1 ungrouped A (10 MW, 40 MWh): the row binds in hour 2, not the first: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:43
+  Expression: ≈(nse_mwh(EP1), 12.5, atol = ATOL)
+   Evaluated: 10.0 ≈ 12.5 (atol=1.0e-6)
+
+--
+S1 ungrouped A (10 MW, 40 MWh): the row binds in hour 2, not the first: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:44
+  Expression: ≈(objective_value(EP1), 12500, atol = ATOL)
+   Evaluated: 10000.0 ≈ 12500 (atol=1.0e-6)
+
+--
+S2 profile 1 in every hour: no row, objective as with the key off: Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:50
+  Test threw exception
+  Expression: isempty(EP1[:cStorSimCharge])
+  KeyError: key :cStorSimCharge not found
+--
+S3 group S = A (10 MW, 40 MWh, representative) + B (30 MW, 120 MWh): Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:66
+  Test threw exception
+  Expression: collect(axes(EP1[:cStorSimCharge], 1)) == [gA]
+  KeyError: key :cStorSimCharge not found
+--
+S3 group S = A (10 MW, 40 MWh, representative) + B (30 MW, 120 MWh): Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:67
+  Test threw exception
+  Expression: ≈(normalized_rhs((EP1[:cStorSimCharge])[gA, 2]), 30, atol = ATOL)
+  KeyError: key :cStorSimCharge not found
+--
+S3 group S = A (10 MW, 40 MWh, representative) + B (30 MW, 120 MWh): Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:68
+  Expression: ≈(nse_mwh(EP1), 10, atol = ATOL)
+   Evaluated: 0.0 ≈ 10 (atol=1.0e-6)
+
+--
+S3 group S = A (10 MW, 40 MWh, representative) + B (30 MW, 120 MWh): Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:69
+  Expression: ≈(objective_value(EP1), 10000, atol = ATOL)
+   Evaluated: 0.0 ≈ 10000 (atol=1.0e-6)
+
+--
+S4 the same A and B in no group: each carries its own row: Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:79
+  Test threw exception
+  Expression: collect(axes(EP1[:cStorSimCharge], 1)) == [rid(inputs, "A")]
+  KeyError: key :cStorSimCharge not found
+--
+Test Summary:                                                               | Pass  Fail  Error  Total  Time
+Operational rows: simultaneous charging (StorSimultaneousCharge)            |    7     8      8     23  9.9s
+  S1 ungrouped A (10 MW, 40 MWh): the row binds in hour 2, not the first    |    4     3      3     10  6.4s
+  S2 profile 1 in every hour: no row, objective as with the key off         |    1            1      2  0.1s
+  S3 group S = A (10 MW, 40 MWh, representative) + B (30 MW, 120 MWh)       |    1     2      2      5  1.0s
+  S4 the same A and B in no group: each carries its own row                 |          1      1      2  0.2s
+  S5 Benders subproblem builds cStorSimCharge (same values as the monolith) |          1      1      2  2.0s
+  S6 the key must be 0 or 1                                                 |    1     1             2  0.0s
+RESULT 4d602268_ovl_test_ops_co2_lines.jl rc=1 01:29:45  Test Failed 13 / Error During Test 4
+T7 forward: Phi+ = 20, TH = 30.01, objective 300.1: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_co2_lines.jl:48
+  Expression: ≈(value((EP[:vTAUX_POS])[1, 1]), 20, atol = ATOL)
+   Evaluated: 50.02501250625313 ≈ 20 (atol=1.0e-6)
+
+--
+T7 forward: Phi+ = 20, TH = 30.01, objective 300.1: Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_co2_lines.jl:49
+  Test threw exception
+  Expression: ≈(value((EP[:eCO2LineImports])[1]), 10, atol = ATOL)
+  KeyError: key :eCO2LineImports not found
+--
+T7 forward: Phi+ = 20, TH = 30.01, objective 300.1: Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_co2_lines.jl:50
+  Test threw exception
+  Expression: ≈(value((EP[:eForwardEmissionsByLine])[1, 1]), 10, atol = ATOL)
+  KeyError: key :eForwardEmissionsByLine not found
+--
+T7 forward: Phi+ = 20, TH = 30.01, objective 300.1: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_co2_lines.jl:51
+  Expression: ≈(value((EP[:cCO2Emissions_systemwide])[1]), 10, atol = ATOL)
+   Evaluated: 0.0 ≈ 10 (atol=1.0e-6)
+
+--
+T7 forward: Phi+ = 20, TH = 30.01, objective 300.1: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_co2_lines.jl:52
+  Expression: ≈(objective_value(EP), 300.1, atol = ATOL)
+   Evaluated: 0.0 ≈ 300.1 (atol=1.0e-6)
+
+--
+T7 forward: Phi+ = 20, TH = 30.01, objective 300.1: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_co2_lines.jl:54
+  Expression: normalized_coefficient((EP[:cCO2Emissions_systemwide])[1], (EP[:vTAUX_POS])[1, 1]) ≈ 0.5
+   Evaluated: 0.0 ≈ 0.5
+
+--
+T7 reverse: line 2 -> 1, flow is Phi-, EF+ 0.1, EF- 0.5: the same values: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_co2_lines.jl:61
+  Expression: ≈(value((EP[:vTAUX_NEG])[1, 1]), 20, atol = ATOL)
+   Evaluated: 50.02501250625313 ≈ 20 (atol=1.0e-6)
+
+--
+T7 reverse: line 2 -> 1, flow is Phi-, EF+ 0.1, EF- 0.5: the same values: Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_co2_lines.jl:62
+  Test threw exception
+  Expression: ≈(value((EP[:eReverseEmissionsByLine])[1, 1]), 10, atol = ATOL)
+  KeyError: key :eReverseEmissionsByLine not found
+--
+T7 reverse: line 2 -> 1, flow is Phi-, EF+ 0.1, EF- 0.5: the same values: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_co2_lines.jl:63
+  Expression: ≈(objective_value(EP), 300.1, atol = ATOL)
+   Evaluated: 0.0 ≈ 300.1 (atol=1.0e-6)
+
+--
+T7 S4: a reverse factor with a zero forward factor adds nothing (fork's filter): Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_co2_lines.jl:69
+  Test threw exception
+  Expression: ≈(value((EP[:eCO2LineImports])[1]), 0, atol = ATOL)
+  KeyError: key :eCO2LineImports not found
+--
+T7 Benders subproblem: the row carries the term, budget 10 t gives 300.1: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_co2_lines.jl:91
+  Expression: normalized_coefficient(c, (EP[:vTAUX_POS])[1, 1]) ≈ 0.5
+   Evaluated: 0.0 ≈ 0.5
+
+--
+T7 Benders subproblem: the row carries the term, budget 10 t gives 300.1: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_co2_lines.jl:94
+  Expression: ≈(objective_value(EP), 300.1, atol = ATOL)
+   Evaluated: 0.0 ≈ 300.1 (atol=1.0e-6)
+
+--
+grep: write error: Broken pipe
+Test Summary:                                                                     | Pass  Fail  Error  Total   Time
+Operational rows: import CO2 on lines                                             |    9    13      4     26  10.2s
+  T7 forward: Phi+ = 20, TH = 30.01, objective 300.1                              |    1     4      2      7   7.1s
+  T7 reverse: line 2 -> 1, flow is Phi-, EF+ 0.1, EF- 0.5: the same values        |          2      1      3   0.2s
+  T7 S4: a reverse factor with a zero forward factor adds nothing (fork's filter) |    1            1      2   0.1s
+  T7 absent columns and all-zero factors: no term, objective 0                    |    4                   4   0.2s
+  T7 Benders subproblem: the row carries the term, budget 10 t gives 300.1        |          2             2   2.2s
+  T7 refusals, each with its accepted side                                        |    3     5             8   0.3s
+RESULT 4d602268_ovl_test_ops_cut_slopes.jl rc=1 01:30:10  Test Failed 8 / Error During Test 0
+C4 simultaneous charging (B1) on the group: buildable member B: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_cut_slopes.jl:124
+  Expression: ≈(s.V0, 10000, atol = ATOL)
+   Evaluated: 0.0 ≈ 10000 (atol=1.0e-6)
+
+--
+C4 simultaneous charging (B1) on the group: buildable member B: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_cut_slopes.jl:125
+  Expression: ≈(s.lam, -750, atol = ATOL)
+   Evaluated: 0.0 ≈ -750 (atol=1.0e-6)
+
+--
+C4 simultaneous charging (B1) on the group: buildable member B: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_cut_slopes.jl:126
+  Expression: ≈(s.fwd, -750, atol = ATOL)
+   Evaluated: 0.0 ≈ -750 (atol=1.0e-6)
+
+--
+C4 simultaneous charging (B1) on the group: buildable member B: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_cut_slopes.jl:127
+  Expression: ≈(s.bwd, -750, atol = ATOL)
+   Evaluated: -1000.0 ≈ -750 (atol=1.0e-6)
+
+--
+C5 import CO2 on lines (B2): slope in the period's CO2 budget: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_cut_slopes.jl:145
+  Expression: ≈(s.V0, 300.1, atol = ATOL)
+   Evaluated: 0.0 ≈ 300.1 (atol=1.0e-6)
+
+--
+C5 import CO2 on lines (B2): slope in the period's CO2 budget: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_cut_slopes.jl:146
+  Expression: ≈(s.lam, -19.99, atol = ATOL)
+   Evaluated: 0.0 ≈ -19.99 (atol=1.0e-6)
+
+--
+C5 import CO2 on lines (B2): slope in the period's CO2 budget: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_cut_slopes.jl:147
+  Expression: ≈(s.fwd, -19.99, atol = ATOL)
+   Evaluated: 0.0 ≈ -19.99 (atol=1.0e-6)
+
+--
+C5 import CO2 on lines (B2): slope in the period's CO2 budget: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_cut_slopes.jl:148
+  Expression: ≈(s.bwd, -19.99, atol = ATOL)
+   Evaluated: 0.0 ≈ -19.99 (atol=1.0e-6)
+
+Test Summary:                                                        | Pass  Fail  Total   Time
+Operational rows: Benders cut slopes of the new rows                 |   12     8     20  13.7s
+  C1 hourly floor on a buildable thermal                             |    4            4   8.0s
+  C2 energy budget on a buildable hydro                              |    4            4   2.2s
+  C3 storage group: buildable member B, derate on the representative |    4            4   1.3s
+  C4 simultaneous charging (B1) on the group: buildable member B     |          4      4   1.3s
+  C5 import CO2 on lines (B2): slope in the period's CO2 budget      |          4      4   1.0s
+end 2026-11-26T01:30:10Z
+DONE
+
+# per-run log 4d602268_ovl_test_ops_simcharge.jl
+[ Info: GenX: patched MacroEnergySolvers 0.2.2 solve_subproblem (infeasible-point defect: an infeasible subproblem that returns a point was taken for solved). Set GENX_DISABLE_MES_PATCH=1 to keep stock behaviour.
+ERROR: LoadError: Some tests did not pass: 7 passed, 8 failed, 8 errored, 0 broken.
+in expression starting at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:1
+S1 ungrouped A (10 MW, 40 MWh): the row binds in hour 2, not the first: Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:39
+  Test threw exception
+  Expression: ≈(normalized_rhs((EP1[:cStorSimCharge])[gA, 2]), 7.5, atol = ATOL)
+  KeyError: key :cStorSimCharge not found
+  Stacktrace:
+   [1] getindex(m::JuMP.Model, name::Symbol)
+     @ JuMP ~/p42ra/julia_depot/packages/JuMP/Y8Mtc/src/JuMP.jl:1113
+   [2] macro expansion
+     @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:676 [inlined]
+   [3] macro expansion
+     @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:39 [inlined]
+   [4] macro expansion
+     @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+   [5] macro expansion
+     @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:27 [inlined]
+   [6] macro expansion
+     @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+   [7] top-level scope
+     @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:26
+S1 ungrouped A (10 MW, 40 MWh): the row binds in hour 2, not the first: Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:40
+  Test threw exception
+  Expression: ≈(normalized_rhs((EP1[:cStorSimCharge])[gA, 1]), 10, atol = ATOL)
+  KeyError: key :cStorSimCharge not found
+  Stacktrace:
+   [1] getindex(m::JuMP.Model, name::Symbol)
+     @ JuMP ~/p42ra/julia_depot/packages/JuMP/Y8Mtc/src/JuMP.jl:1113
+   [2] macro expansion
+     @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:676 [inlined]
+   [3] macro expansion
+     @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:40 [inlined]
+   [4] macro expansion
+     @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+   [5] macro expansion
+     @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:27 [inlined]
+   [6] macro expansion
+     @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+   [7] top-level scope
+     @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:26
+S1 ungrouped A (10 MW, 40 MWh): the row binds in hour 2, not the first: Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:41
+  Test threw exception
+  Expression: ≈(normalized_rhs((EP1[:cStorSimCharge])[gA, 3]), 10, atol = ATOL)
+  KeyError: key :cStorSimCharge not found
+  Stacktrace:
+   [1] getindex(m::JuMP.Model, name::Symbol)
+     @ JuMP ~/p42ra/julia_depot/packages/JuMP/Y8Mtc/src/JuMP.jl:1113
+   [2] macro expansion
+     @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:676 [inlined]
+   [3] macro expansion
+     @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:41 [inlined]
+   [4] macro expansion
+     @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+   [5] macro expansion
+     @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:27 [inlined]
+   [6] macro expansion
+     @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+   [7] top-level scope
+     @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:26
+S1 ungrouped A (10 MW, 40 MWh): the row binds in hour 2, not the first: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:42
+  Expression: ≈(value((EP1[:vCHARGE])[gA, 2]), 7.5, atol = ATOL)
+   Evaluated: 10.0 ≈ 7.5 (atol=1.0e-6)
+
+Stacktrace:
+ [1] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:679 [inlined]
+ [2] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:42 [inlined]
+ [3] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [4] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:27 [inlined]
+ [5] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [6] top-level scope
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:26
+S1 ungrouped A (10 MW, 40 MWh): the row binds in hour 2, not the first: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:43
+  Expression: ≈(nse_mwh(EP1), 12.5, atol = ATOL)
+   Evaluated: 10.0 ≈ 12.5 (atol=1.0e-6)
+
+Stacktrace:
+ [1] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:679 [inlined]
+ [2] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:43 [inlined]
+ [3] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [4] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:27 [inlined]
+ [5] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [6] top-level scope
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:26
+S1 ungrouped A (10 MW, 40 MWh): the row binds in hour 2, not the first: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:44
+  Expression: ≈(objective_value(EP1), 12500, atol = ATOL)
+   Evaluated: 10000.0 ≈ 12500 (atol=1.0e-6)
+
+Stacktrace:
+ [1] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:679 [inlined]
+ [2] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:44 [inlined]
+ [3] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [4] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:27 [inlined]
+ [5] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [6] top-level scope
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:26
+S2 profile 1 in every hour: no row, objective as with the key off: Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:50
+  Test threw exception
+  Expression: isempty(EP1[:cStorSimCharge])
+  KeyError: key :cStorSimCharge not found
+  Stacktrace:
+   [1] getindex(m::JuMP.Model, name::Symbol)
+     @ JuMP ~/p42ra/julia_depot/packages/JuMP/Y8Mtc/src/JuMP.jl:1113
+   [2] macro expansion
+     @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:676 [inlined]
+   [3] macro expansion
+     @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:50 [inlined]
+   [4] macro expansion
+     @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+   [5] macro expansion
+     @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:48 [inlined]
+   [6] macro expansion
+     @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+   [7] top-level scope
+     @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:26
+S3 group S = A (10 MW, 40 MWh, representative) + B (30 MW, 120 MWh): Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:66
+  Test threw exception
+  Expression: collect(axes(EP1[:cStorSimCharge], 1)) == [gA]
+  KeyError: key :cStorSimCharge not found
+  Stacktrace:
+   [1] getindex(m::JuMP.Model, name::Symbol)
+     @ JuMP ~/p42ra/julia_depot/packages/JuMP/Y8Mtc/src/JuMP.jl:1113
+   [2] macro expansion
+     @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:676 [inlined]
+   [3] macro expansion
+     @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:66 [inlined]
+   [4] macro expansion
+     @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+   [5] macro expansion
+     @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:55 [inlined]
+   [6] macro expansion
+     @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+   [7] top-level scope
+     @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:26
+S3 group S = A (10 MW, 40 MWh, representative) + B (30 MW, 120 MWh): Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:67
+  Test threw exception
+  Expression: ≈(normalized_rhs((EP1[:cStorSimCharge])[gA, 2]), 30, atol = ATOL)
+  KeyError: key :cStorSimCharge not found
+  Stacktrace:
+   [1] getindex(m::JuMP.Model, name::Symbol)
+     @ JuMP ~/p42ra/julia_depot/packages/JuMP/Y8Mtc/src/JuMP.jl:1113
+   [2] macro expansion
+     @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:676 [inlined]
+   [3] macro expansion
+     @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:67 [inlined]
+   [4] macro expansion
+     @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+   [5] macro expansion
+     @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:55 [inlined]
+   [6] macro expansion
+     @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+   [7] top-level scope
+     @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:26
+S3 group S = A (10 MW, 40 MWh, representative) + B (30 MW, 120 MWh): Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:68
+  Expression: ≈(nse_mwh(EP1), 10, atol = ATOL)
+   Evaluated: 0.0 ≈ 10 (atol=1.0e-6)
+
+Stacktrace:
+ [1] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:679 [inlined]
+ [2] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:68 [inlined]
+ [3] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [4] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:55 [inlined]
+ [5] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [6] top-level scope
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:26
+S3 group S = A (10 MW, 40 MWh, representative) + B (30 MW, 120 MWh): Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:69
+  Expression: ≈(objective_value(EP1), 10000, atol = ATOL)
+   Evaluated: 0.0 ≈ 10000 (atol=1.0e-6)
+
+Stacktrace:
+ [1] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:679 [inlined]
+ [2] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:69 [inlined]
+ [3] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [4] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:55 [inlined]
+ [5] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [6] top-level scope
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:26
+S4 the same A and B in no group: each carries its own row: Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:79
+  Test threw exception
+  Expression: collect(axes(EP1[:cStorSimCharge], 1)) == [rid(inputs, "A")]
+  KeyError: key :cStorSimCharge not found
+  Stacktrace:
+   [1] getindex(m::JuMP.Model, name::Symbol)
+     @ JuMP ~/p42ra/julia_depot/packages/JuMP/Y8Mtc/src/JuMP.jl:1113
+   [2] macro expansion
+     @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:676 [inlined]
+   [3] macro expansion
+     @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:79 [inlined]
+   [4] macro expansion
+     @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+   [5] macro expansion
+     @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:73 [inlined]
+   [6] macro expansion
+     @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+   [7] top-level scope
+     @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:26
+S4 the same A and B in no group: each carries its own row: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:80
+  Expression: ≈(objective_value(EP1), 2500, atol = ATOL)
+   Evaluated: 0.0 ≈ 2500 (atol=1.0e-6)
+
+Stacktrace:
+ [1] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:679 [inlined]
+ [2] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:80 [inlined]
+ [3] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [4] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:73 [inlined]
+ [5] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [6] top-level scope
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:26
+S5 Benders subproblem builds cStorSimCharge (same values as the monolith): Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:92
+  Test threw exception
+  Expression: ≈(normalized_rhs((EP[:cStorSimCharge])[gA, 2]), 7.5, atol = ATOL)
+  KeyError: key :cStorSimCharge not found
+  Stacktrace:
+   [1] getindex(m::JuMP.Model, name::Symbol)
+     @ JuMP ~/p42ra/julia_depot/packages/JuMP/Y8Mtc/src/JuMP.jl:1113
+   [2] macro expansion
+     @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:676 [inlined]
+   [3] macro expansion
+     @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:92 [inlined]
+   [4] macro expansion
+     @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+   [5] macro expansion
+     @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:84 [inlined]
+   [6] macro expansion
+     @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+   [7] top-level scope
+     @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:26
+S5 Benders subproblem builds cStorSimCharge (same values as the monolith): Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:94
+  Expression: ≈(objective_value(EP), 12500, atol = ATOL)
+   Evaluated: 10000.0 ≈ 12500 (atol=1.0e-6)
+
+Stacktrace:
+ [1] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:679 [inlined]
+ [2] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:94 [inlined]
+ [3] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [4] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:84 [inlined]
+ [5] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [6] top-level scope
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:26
+S6 the key must be 0 or 1: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:100
+  Expression: occursin("StorSimultaneousCharge must be 0 or 1", err(Dict("StorSimultaneousCharge" => 2)))
+   Evaluated: occursin("StorSimultaneousCharge must be 0 or 1", "")
+
+Stacktrace:
+ [1] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:679 [inlined]
+ [2] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:100 [inlined]
+ [3] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [4] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:98 [inlined]
+ [5] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [6] top-level scope
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_simcharge.jl:26
+Test Summary:                                                               | Pass  Fail  Error  Total  Time
+Operational rows: simultaneous charging (StorSimultaneousCharge)            |    7     8      8     23  9.9s
+  S1 ungrouped A (10 MW, 40 MWh): the row binds in hour 2, not the first    |    4     3      3     10  6.4s
+  S2 profile 1 in every hour: no row, objective as with the key off         |    1            1      2  0.1s
+  S3 group S = A (10 MW, 40 MWh, representative) + B (30 MW, 120 MWh)       |    1     2      2      5  1.0s
+  S4 the same A and B in no group: each carries its own row                 |          1      1      2  0.2s
+  S5 Benders subproblem builds cStorSimCharge (same values as the monolith) |          1      1      2  2.0s
+  S6 the key must be 0 or 1                                                 |    1     1             2  0.0s
+
+# per-run log 4d602268_ovl_test_ops_cut_slopes.jl
+[ Info: GenX: patched MacroEnergySolvers 0.2.2 solve_subproblem (infeasible-point defect: an infeasible subproblem that returns a point was taken for solved). Set GENX_DISABLE_MES_PATCH=1 to keep stock behaviour.
+ERROR: LoadError: Some tests did not pass: 12 passed, 8 failed, 0 errored, 0 broken.
+in expression starting at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_cut_slopes.jl:1
+C4 simultaneous charging (B1) on the group: buildable member B: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_cut_slopes.jl:124
+  Expression: ≈(s.V0, 10000, atol = ATOL)
+   Evaluated: 0.0 ≈ 10000 (atol=1.0e-6)
+
+Stacktrace:
+ [1] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:679 [inlined]
+ [2] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_cut_slopes.jl:124 [inlined]
+ [3] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [4] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_cut_slopes.jl:119 [inlined]
+ [5] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [6] top-level scope
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_cut_slopes.jl:65
+C4 simultaneous charging (B1) on the group: buildable member B: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_cut_slopes.jl:125
+  Expression: ≈(s.lam, -750, atol = ATOL)
+   Evaluated: 0.0 ≈ -750 (atol=1.0e-6)
+
+Stacktrace:
+ [1] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:679 [inlined]
+ [2] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_cut_slopes.jl:125 [inlined]
+ [3] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [4] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_cut_slopes.jl:119 [inlined]
+ [5] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [6] top-level scope
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_cut_slopes.jl:65
+C4 simultaneous charging (B1) on the group: buildable member B: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_cut_slopes.jl:126
+  Expression: ≈(s.fwd, -750, atol = ATOL)
+   Evaluated: 0.0 ≈ -750 (atol=1.0e-6)
+
+Stacktrace:
+ [1] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:679 [inlined]
+ [2] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_cut_slopes.jl:126 [inlined]
+ [3] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [4] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_cut_slopes.jl:119 [inlined]
+ [5] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [6] top-level scope
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_cut_slopes.jl:65
+C4 simultaneous charging (B1) on the group: buildable member B: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_cut_slopes.jl:127
+  Expression: ≈(s.bwd, -750, atol = ATOL)
+   Evaluated: -1000.0 ≈ -750 (atol=1.0e-6)
+
+Stacktrace:
+ [1] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:679 [inlined]
+ [2] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_cut_slopes.jl:127 [inlined]
+ [3] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [4] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_cut_slopes.jl:119 [inlined]
+ [5] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [6] top-level scope
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_cut_slopes.jl:65
+C5 import CO2 on lines (B2): slope in the period's CO2 budget: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_cut_slopes.jl:145
+  Expression: ≈(s.V0, 300.1, atol = ATOL)
+   Evaluated: 0.0 ≈ 300.1 (atol=1.0e-6)
+
+Stacktrace:
+ [1] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:679 [inlined]
+ [2] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_cut_slopes.jl:145 [inlined]
+ [3] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [4] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_cut_slopes.jl:135 [inlined]
+ [5] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [6] top-level scope
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_cut_slopes.jl:65
+C5 import CO2 on lines (B2): slope in the period's CO2 budget: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_cut_slopes.jl:146
+  Expression: ≈(s.lam, -19.99, atol = ATOL)
+   Evaluated: 0.0 ≈ -19.99 (atol=1.0e-6)
+
+Stacktrace:
+ [1] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:679 [inlined]
+ [2] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_cut_slopes.jl:146 [inlined]
+ [3] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [4] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_cut_slopes.jl:135 [inlined]
+ [5] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [6] top-level scope
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_cut_slopes.jl:65
+C5 import CO2 on lines (B2): slope in the period's CO2 budget: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_cut_slopes.jl:147
+  Expression: ≈(s.fwd, -19.99, atol = ATOL)
+   Evaluated: 0.0 ≈ -19.99 (atol=1.0e-6)
+
+Stacktrace:
+ [1] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:679 [inlined]
+ [2] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_cut_slopes.jl:147 [inlined]
+ [3] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [4] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_cut_slopes.jl:135 [inlined]
+ [5] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [6] top-level scope
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_cut_slopes.jl:65
+C5 import CO2 on lines (B2): slope in the period's CO2 budget: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_cut_slopes.jl:148
+  Expression: ≈(s.bwd, -19.99, atol = ATOL)
+   Evaluated: 0.0 ≈ -19.99 (atol=1.0e-6)
+
+Stacktrace:
+ [1] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:679 [inlined]
+ [2] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_cut_slopes.jl:148 [inlined]
+ [3] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [4] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_cut_slopes.jl:135 [inlined]
+ [5] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [6] top-level scope
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391895/work/test/test_ops_cut_slopes.jl:65
+Test Summary:                                                        | Pass  Fail  Total   Time
+Operational rows: Benders cut slopes of the new rows                 |   12     8     20  13.7s
+  C1 hourly floor on a buildable thermal                             |    4            4   8.0s
+  C2 energy budget on a buildable hydro                              |    4            4   2.2s
+  C3 storage group: buildable member B, derate on the representative |    4            4   1.3s
+  C4 simultaneous charging (B1) on the group: buildable member B     |          4      4   1.3s
+  C5 import CO2 on lines (B2): slope in the period's CO2 budget      |          4      4   1.0s

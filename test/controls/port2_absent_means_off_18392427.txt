@@ -1,0 +1,16 @@
+host=della-h14n3 job=18392427 start=2026-11-26T01:37:24Z base=4d602268554ce60136c8de5140ec7c27a42bc567 head=d4b95f69a312dd53757b7bf3bb267e1dc021ebbe
+/scratch/gpfs/JENKINS/gm1710/p42ra/port/env-p2base/Manifest.toml-path = "/scratch/gpfs/JENKINS/gm1710/p42ra/port/p2-base"
+/scratch/gpfs/JENKINS/gm1710/p42ra/port/env-p2/Manifest.toml-path = "/scratch/gpfs/JENKINS/gm1710/p42ra/port/p2-head"
+CASE three_zones | variables 7818 | constraints 17912 (affine 10334) | status OPTIMAL | objective 6960.594225766712 | lp bytes 1016749
+CASE VRE_storage/solar_wind | variables 37900 | constraints 74076 (affine 36584) | status OPTIMAL | objective 92376.27554321395 | lp bytes 6034672
+CASE benders/1_three_zones | variables 1575 | constraints 3602 (affine 2075) | status OPTIMAL | objective 4975.380323094653 | lp bytes 193214
+ABSENT DONE base
+CASE three_zones | variables 7818 | constraints 17912 (affine 10334) | status OPTIMAL | objective 6960.594225766712 | lp bytes 1016749
+CASE VRE_storage/solar_wind | variables 37900 | constraints 74076 (affine 36584) | status OPTIMAL | objective 92376.27554321395 | lp bytes 6034672
+CASE benders/1_three_zones | variables 1575 | constraints 3602 (affine 2075) | status OPTIMAL | objective 4975.380323094653 | lp bytes 193214
+ABSENT DONE head
+CMP benders_1_three_zones.lp identical (193214 bytes, sha256 c25f7d885c974510)
+CMP three_zones.lp identical (1016749 bytes, sha256 bd64868729cbbee0)
+CMP VRE_storage_solar_wind.lp identical (6034672 bytes, sha256 f5751e38dffa99c9)
+end 2026-11-26T01:45:18Z
+DONE

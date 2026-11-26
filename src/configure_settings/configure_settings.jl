@@ -48,7 +48,8 @@ function default_settings()
         "Fixed_Dispatch" => 0,         # 1 is refused (not supported on this branch)
         "HydroBudgetMaxProfile" => 0,  # 1 = budgeted hydro output <= Generators_variability x capacity
         "StorageDischargeDerate" => 0, # 1 = storage discharge <= Generators_variability x capacity
-        "StorageChargeHeadroom" => 1,)  # 0 = drop the charge <= energy capacity - state of charge row
+        "StorageChargeHeadroom" => 1,  # 0 = drop the charge <= energy capacity - state of charge row
+        "StorSimultaneousCharge" => 0,)  # 1 = symmetric storage vP + vCHARGE <= 0.5 x (pP_Max + 1) x capacity
 end
 
 @doc raw"""

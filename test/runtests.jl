@@ -104,6 +104,18 @@ end
     include("test_ops_hurdle.jl")
 end
 
+@testset "Operational rows: simultaneous charging" begin
+    include("test_ops_simcharge.jl")
+end
+
+@testset "Operational rows: import CO2 on lines" begin
+    include("test_ops_co2_lines.jl")
+end
+
+@testset "Operational rows: Benders cut slopes" begin
+    include("test_ops_cut_slopes.jl")
+end
+
 # Test writing outputs
 @testset "Writing outputs " begin
     for test_file in filter!(x -> endswith(x, ".jl"), readdir("writing_outputs"))

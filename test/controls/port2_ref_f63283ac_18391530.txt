@@ -1,0 +1,46 @@
+START 2026-11-26T01:18:09Z host=della-r3c4n2 job=18391530
+rungB clone sha=f63283ac1b78bbdda0fc898cd49e05fafbd89c95
+RB SOLVE START out_rb_sim1 StorSimultaneousCharge=1 2026-11-26T01:18:09Z
+override StorSimultaneousCharge = 1
+GATE model build seconds 90.262888407
+Optimal objective 9.29453645e+09
+Optimal objective  9.294536448e+09
+GATE termination OPTIMAL primal FEASIBLE_POINT objective 9.294536448025997e9 solve_s 62.511698712
+GATE DUMP OK /scratch/gpfs/JENKINS/gm1710/p42ra/port/gate/cfix/out_rb_sim1
+RB SOLVE END 2026-11-26T01:22:12Z wall=243
+objective_value,9.294536448025997e9
+num_constraints,1867141
+genx_path,/home/gm1710/p42ra/wt-base-d58rb/src/GenX.jl
+overrides,StorSimultaneousCharge=1
+name,lhs,rhs,dual
+cCO2Emissions_systemwide[1],7.378699000000023e6,7.378699e6,-76.0982768691589
+RB SOLVE START out_rb_sim0 StorSimultaneousCharge=0 2026-11-26T01:22:12Z
+override StorSimultaneousCharge = 0
+GATE model build seconds 92.665709588
+Optimal objective 9.25366076e+09
+Optimal objective  9.253660760e+09
+GATE termination OPTIMAL primal FEASIBLE_POINT objective 9.253660759885853e9 solve_s 63.837578859
+GATE DUMP OK /scratch/gpfs/JENKINS/gm1710/p42ra/port/gate/cfix/out_rb_sim0
+RB SOLVE END 2026-11-26T01:25:49Z wall=217
+objective_value,9.253660759885853e9
+num_constraints,1833445
+genx_path,/home/gm1710/p42ra/wt-base-d58rb/src/GenX.jl
+overrides,StorSimultaneousCharge=0
+name,lhs,rhs,dual
+cCO2Emissions_systemwide[1],7.378699000000025e6,7.378699e6,-76.0982768691589
+RB SOLVE START out_rb_sim1_co2off StorSimultaneousCharge=1 CO2Cap=0 2026-11-26T01:25:49Z
+override StorSimultaneousCharge = 1
+override CO2Cap = 0
+GATE model build seconds 86.023359651
+Optimal objective 9.13672241e+09
+Optimal objective  9.136722414e+09
+GATE termination OPTIMAL primal FEASIBLE_POINT objective 9.136722414371845e9 solve_s 51.336652718
+GATE DUMP OK /scratch/gpfs/JENKINS/gm1710/p42ra/port/gate/cfix/out_rb_sim1_co2off
+RB SOLVE END 2026-11-26T01:29:04Z wall=195
+objective_value,9.136722414371845e9
+num_constraints,1867140
+genx_path,/home/gm1710/p42ra/wt-base-d58rb/src/GenX.jl
+overrides,StorSimultaneousCharge=1 CO2Cap=0
+name,lhs,rhs,dual
+END 2026-11-26T01:29:04Z
+DONE

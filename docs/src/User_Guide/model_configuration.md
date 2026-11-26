@@ -43,6 +43,7 @@ The following tables summarize the model settings parameters and their default/p
 |HydroBudgetMaxProfile | 1 = hydro with a budget column produces at most its `Generators_variability.csv` value times capacity in each hour. Default 0. Refused if no `Hourly_energy_budget.csv` was loaded.|
 |StorageDischargeDerate | 1 = storage discharge (plus reserve and virtual discharge) is at most its `Generators_variability.csv` value times capacity (group capacity for a group's representative). Default 0.|
 |StorageChargeHeadroom | 0 = drop the row efficiency_up x charge <= energy capacity - previous state of charge. Default 1 (the row is built).|
+|StorSimultaneousCharge | 1 = for each symmetric storage that carries dispatch (a group's representative or ungrouped storage) and whose `Generators_variability.csv` value is below 1 in some hour, add `cStorSimCharge`: discharge + charge <= 0.5 x (that hour's value + 1) x capacity in every hour (group capacity for a representative; reserve and virtual charge/discharge are not in this row); asymmetric storage gets no such row. Default 0.|
 |Fixed\_Dispatch | Only 0 (default) is accepted; 1 is refused.|
 
 ## 2. Solution strategy

@@ -76,6 +76,8 @@ function load_inputs(setup::Dict, path::AbstractString)
 
     if setup["CO2Cap"] >= 1
         load_co2_cap!(setup, policies_path, inputs)
+        # optional import-CO2 factors of lines (EF_*_CO_2_Cap_Zone_* columns of Network.csv)
+        inputs["Z"] > 1 && load_co2_import_factors!(network_var, inputs, setup)
     end
 
     if get(setup, "NSEDisabledPeriods", 0) == 1

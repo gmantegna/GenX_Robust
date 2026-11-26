@@ -1,0 +1,517 @@
+# base-port2 (#204) mutants: two della jobs, tree d4b95f69 (head of B1-B3); list mwe/della/port2_mutants.txt (reimagining-ra base/ops-port-build)
+# job 18392424 (mutants 1-9)
+host=della-h14n3 job=18392424 start=2026-11-26T01:37:24Z head=d4b95f69a312dd53757b7bf3bb267e1dc021ebbe lines=1..9 list sha256 c6ae96152918c6b5
+path = "/scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392424/work"
+----- MUTANT 1 m01_sim_no_half: src/model/resources/storage/storage_symmetric.jl :: sed 's/<= 0.5 \* (inputs\["pP_Max"]\[y, t] + 1.0)/<= (inputs["pP_Max"][y, t] + 1.0)/'   01:37:26
+-            vP[y, t] + vCHARGE[y, t] <= 0.5 * (inputs["pP_Max"][y, t] + 1.0) * eTotalCap[y])
++            vP[y, t] + vCHARGE[y, t] <= (inputs["pP_Max"][y, t] + 1.0) * eTotalCap[y])
+RESULT m01_sim_no_half file=test_ops_simcharge.jl rc=1  Test Failed 12 / Error During Test 0
+S1 ungrouped A (10 MW, 40 MWh): the row binds in hour 2, not the first: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392424/work/test/test_ops_simcharge.jl:39
+  Expression: ≈(normalized_rhs((EP1[:cStorSimCharge])[gA, 2]), 7.5, atol = ATOL)
+   Evaluated: 15.0 ≈ 7.5 (atol=1.0e-6)
+
+--
+S1 ungrouped A (10 MW, 40 MWh): the row binds in hour 2, not the first: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392424/work/test/test_ops_simcharge.jl:40
+  Expression: ≈(normalized_rhs((EP1[:cStorSimCharge])[gA, 1]), 10, atol = ATOL)
+   Evaluated: 20.0 ≈ 10 (atol=1.0e-6)
+
+--
+S1 ungrouped A (10 MW, 40 MWh): the row binds in hour 2, not the first: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392424/work/test/test_ops_simcharge.jl:41
+  Expression: ≈(normalized_rhs((EP1[:cStorSimCharge])[gA, 3]), 10, atol = ATOL)
+   Evaluated: 20.0 ≈ 10 (atol=1.0e-6)
+
+--
+S1 ungrouped A (10 MW, 40 MWh): the row binds in hour 2, not the first: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392424/work/test/test_ops_simcharge.jl:42
+  Expression: ≈(value((EP1[:vCHARGE])[gA, 2]), 7.5, atol = ATOL)
+   Evaluated: 10.0 ≈ 7.5 (atol=1.0e-6)
+
+--
+S1 ungrouped A (10 MW, 40 MWh): the row binds in hour 2, not the first: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392424/work/test/test_ops_simcharge.jl:43
+  Expression: ≈(nse_mwh(EP1), 12.5, atol = ATOL)
+   Evaluated: 10.0 ≈ 12.5 (atol=1.0e-6)
+
+ [6] top-level scope
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392424/work/test/test_ops_simcharge.jl:26
+Test Summary:                                                               | Pass  Fail  Total  Time
+Operational rows: simultaneous charging (StorSimultaneousCharge)            |   11    12     23  9.5s
+  S1 ungrouped A (10 MW, 40 MWh): the row binds in hour 2, not the first    |    4     6     10  6.2s
+  S2 profile 1 in every hour: no row, objective as with the key off         |    2            2  0.0s
+  S3 group S = A (10 MW, 40 MWh, representative) + B (30 MW, 120 MWh)       |    2     3      5  1.0s
+  S4 the same A and B in no group: each carries its own row                 |    1     1      2  0.1s
+  S5 Benders subproblem builds cStorSimCharge (same values as the monolith) |          2      2  2.1s
+  S6 the key must be 0 or 1                                                 |    2            2  0.0s
+ERROR: LoadError: Some tests did not pass: 11 passed, 12 failed, 0 errored, 0 broken.
+restored: work src = head src
+----- MUTANT 2 m02_sim_hour1: src/model/resources/storage/storage_symmetric.jl :: sed 's/0.5 \* (inputs\["pP_Max"]\[y, t] + 1.0)/0.5 * (inputs["pP_Max"][y, 1] + 1.0)/'   01:40:52
+-            vP[y, t] + vCHARGE[y, t] <= 0.5 * (inputs["pP_Max"][y, t] + 1.0) * eTotalCap[y])
++            vP[y, t] + vCHARGE[y, t] <= 0.5 * (inputs["pP_Max"][y, 1] + 1.0) * eTotalCap[y])
+RESULT m02_sim_hour1 file=test_ops_simcharge.jl rc=1  Test Failed 10 / Error During Test 0
+S1 ungrouped A (10 MW, 40 MWh): the row binds in hour 2, not the first: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392424/work/test/test_ops_simcharge.jl:39
+  Expression: ≈(normalized_rhs((EP1[:cStorSimCharge])[gA, 2]), 7.5, atol = ATOL)
+   Evaluated: 10.0 ≈ 7.5 (atol=1.0e-6)
+
+--
+S1 ungrouped A (10 MW, 40 MWh): the row binds in hour 2, not the first: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392424/work/test/test_ops_simcharge.jl:42
+  Expression: ≈(value((EP1[:vCHARGE])[gA, 2]), 7.5, atol = ATOL)
+   Evaluated: 10.0 ≈ 7.5 (atol=1.0e-6)
+
+--
+S1 ungrouped A (10 MW, 40 MWh): the row binds in hour 2, not the first: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392424/work/test/test_ops_simcharge.jl:43
+  Expression: ≈(nse_mwh(EP1), 12.5, atol = ATOL)
+   Evaluated: 10.0 ≈ 12.5 (atol=1.0e-6)
+
+--
+S1 ungrouped A (10 MW, 40 MWh): the row binds in hour 2, not the first: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392424/work/test/test_ops_simcharge.jl:44
+  Expression: ≈(objective_value(EP1), 12500, atol = ATOL)
+   Evaluated: 10000.0 ≈ 12500 (atol=1.0e-6)
+
+--
+S3 group S = A (10 MW, 40 MWh, representative) + B (30 MW, 120 MWh): Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392424/work/test/test_ops_simcharge.jl:67
+  Expression: ≈(normalized_rhs((EP1[:cStorSimCharge])[gA, 2]), 30, atol = ATOL)
+   Evaluated: 40.0 ≈ 30 (atol=1.0e-6)
+
+ [6] top-level scope
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392424/work/test/test_ops_simcharge.jl:26
+Test Summary:                                                               | Pass  Fail  Total  Time
+Operational rows: simultaneous charging (StorSimultaneousCharge)            |   13    10     23  9.5s
+  S1 ungrouped A (10 MW, 40 MWh): the row binds in hour 2, not the first    |    6     4     10  6.2s
+  S2 profile 1 in every hour: no row, objective as with the key off         |    2            2  0.0s
+  S3 group S = A (10 MW, 40 MWh, representative) + B (30 MW, 120 MWh)       |    2     3      5  1.0s
+  S4 the same A and B in no group: each carries its own row                 |    1     1      2  0.2s
+  S5 Benders subproblem builds cStorSimCharge (same values as the monolith) |          2      2  2.0s
+  S6 the key must be 0 or 1                                                 |    2            2  0.0s
+ERROR: LoadError: Some tests did not pass: 13 passed, 10 failed, 0 errored, 0 broken.
+restored: work src = head src
+----- MUTANT 3 m03_sim_own_cap: src/model/resources/storage/storage_symmetric.jl :: sed 's/+ 1.0) \* eTotalCap\[y])/+ 1.0) * EP[:eTotalCap][y])/'   01:44:10
+-            vP[y, t] + vCHARGE[y, t] <= 0.5 * (inputs["pP_Max"][y, t] + 1.0) * eTotalCap[y])
++            vP[y, t] + vCHARGE[y, t] <= 0.5 * (inputs["pP_Max"][y, t] + 1.0) * EP[:eTotalCap][y])
+RESULT m03_sim_own_cap file=test_ops_simcharge.jl rc=1  Test Failed 3 / Error During Test 0
+S3 group S = A (10 MW, 40 MWh, representative) + B (30 MW, 120 MWh): Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392424/work/test/test_ops_simcharge.jl:67
+  Expression: ≈(normalized_rhs((EP1[:cStorSimCharge])[gA, 2]), 30, atol = ATOL)
+   Evaluated: 7.5 ≈ 30 (atol=1.0e-6)
+
+--
+S3 group S = A (10 MW, 40 MWh, representative) + B (30 MW, 120 MWh): Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392424/work/test/test_ops_simcharge.jl:68
+  Expression: ≈(nse_mwh(EP1), 10, atol = ATOL)
+   Evaluated: 32.5 ≈ 10 (atol=1.0e-6)
+
+--
+S3 group S = A (10 MW, 40 MWh, representative) + B (30 MW, 120 MWh): Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392424/work/test/test_ops_simcharge.jl:69
+  Expression: ≈(objective_value(EP1), 10000, atol = ATOL)
+   Evaluated: 32500.0 ≈ 10000 (atol=1.0e-6)
+
+ [6] top-level scope
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392424/work/test/test_ops_simcharge.jl:26
+Test Summary:                                                               | Pass  Fail  Total  Time
+Operational rows: simultaneous charging (StorSimultaneousCharge)            |   20     3     23  9.4s
+  S1 ungrouped A (10 MW, 40 MWh): the row binds in hour 2, not the first    |   10           10  5.0s
+  S2 profile 1 in every hour: no row, objective as with the key off         |    2            2  0.0s
+  S3 group S = A (10 MW, 40 MWh, representative) + B (30 MW, 120 MWh)       |    2     3      5  2.1s
+  S4 the same A and B in no group: each carries its own row                 |    2            2  0.1s
+  S5 Benders subproblem builds cStorSimCharge (same values as the monolith) |    2            2  2.1s
+  S6 the key must be 0 or 1                                                 |    2            2  0.1s
+ERROR: LoadError: Some tests did not pass: 20 passed, 3 failed, 0 errored, 0 broken.
+restored: work src = head src
+----- MUTANT 4 m04_sim_own_cap_cut: src/model/resources/storage/storage_symmetric.jl :: sed 's/+ 1.0) \* eTotalCap\[y])/+ 1.0) * EP[:eTotalCap][y])/'   01:47:29
+-            vP[y, t] + vCHARGE[y, t] <= 0.5 * (inputs["pP_Max"][y, t] + 1.0) * eTotalCap[y])
++            vP[y, t] + vCHARGE[y, t] <= 0.5 * (inputs["pP_Max"][y, t] + 1.0) * EP[:eTotalCap][y])
+RESULT m04_sim_own_cap_cut file=test_ops_cut_slopes.jl rc=1  Test Failed 4 / Error During Test 0
+C4 simultaneous charging (B1) on the group: buildable member B: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392424/work/test/test_ops_cut_slopes.jl:124
+  Expression: ≈(s.V0, 10000, atol = ATOL)
+   Evaluated: 32500.0 ≈ 10000 (atol=1.0e-6)
+
+--
+C4 simultaneous charging (B1) on the group: buildable member B: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392424/work/test/test_ops_cut_slopes.jl:125
+  Expression: ≈(s.lam, -750, atol = ATOL)
+   Evaluated: 0.0 ≈ -750 (atol=1.0e-6)
+
+--
+C4 simultaneous charging (B1) on the group: buildable member B: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392424/work/test/test_ops_cut_slopes.jl:126
+  Expression: ≈(s.fwd, -750, atol = ATOL)
+   Evaluated: 0.0 ≈ -750 (atol=1.0e-6)
+
+--
+C4 simultaneous charging (B1) on the group: buildable member B: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392424/work/test/test_ops_cut_slopes.jl:127
+  Expression: ≈(s.bwd, -750, atol = ATOL)
+   Evaluated: 0.0 ≈ -750 (atol=1.0e-6)
+
+ [6] top-level scope
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392424/work/test/test_ops_cut_slopes.jl:65
+Test Summary:                                                        | Pass  Fail  Total   Time
+Operational rows: Benders cut slopes of the new rows                 |   16     4     20  15.4s
+  C1 hourly floor on a buildable thermal                             |    4            4   8.3s
+  C2 energy budget on a buildable hydro                              |    4            4   2.4s
+  C3 storage group: buildable member B, derate on the representative |    4            4   1.5s
+  C4 simultaneous charging (B1) on the group: buildable member B     |          4      4   1.5s
+  C5 import CO2 on lines (B2): slope in the period's CO2 budget      |    4            4   1.6s
+ERROR: LoadError: Some tests did not pass: 16 passed, 4 failed, 0 errored, 0 broken.
+restored: work src = head src
+----- MUTANT 5 m05_sim_members: src/model/resources/storage/storage_symmetric.jl :: sed 's/for y in intersect(SYMMETRIC, get(inputs, "STOR_OPERATIONAL", SYMMETRIC))/for y in SYMMETRIC/'   01:47:55
+-        STOR_SIM = [y for y in intersect(SYMMETRIC, get(inputs, "STOR_OPERATIONAL", SYMMETRIC))
++        STOR_SIM = [y for y in SYMMETRIC
+RESULT m05_sim_members file=test_ops_simcharge.jl rc=1  Test Failed 1 / Error During Test 0
+S3 group S = A (10 MW, 40 MWh, representative) + B (30 MW, 120 MWh): Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392424/work/test/test_ops_simcharge.jl:66
+  Expression: collect(axes(EP1[:cStorSimCharge], 1)) == [gA]
+   Evaluated: [2, 3] == [2]
+
+ [6] top-level scope
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392424/work/test/test_ops_simcharge.jl:26
+Test Summary:                                                               | Pass  Fail  Total  Time
+Operational rows: simultaneous charging (StorSimultaneousCharge)            |   22     1     23  9.8s
+  S1 ungrouped A (10 MW, 40 MWh): the row binds in hour 2, not the first    |   10           10  5.1s
+  S2 profile 1 in every hour: no row, objective as with the key off         |    2            2  0.0s
+  S3 group S = A (10 MW, 40 MWh, representative) + B (30 MW, 120 MWh)       |    4     1      5  2.2s
+  S4 the same A and B in no group: each carries its own row                 |    2            2  0.2s
+  S5 Benders subproblem builds cStorSimCharge (same values as the monolith) |    2            2  2.3s
+  S6 the key must be 0 or 1                                                 |    2            2  0.1s
+ERROR: LoadError: Some tests did not pass: 22 passed, 1 failed, 0 errored, 0 broken.
+restored: work src = head src
+----- MUTANT 6 m06_sim_filter: src/model/resources/storage/storage_symmetric.jl :: sed 's/\[y, t] < 1.0 for t in 1:T)]/[y, t] <= 1.0 for t in 1:T)]/'   01:51:29
+-                    if any(inputs["pP_Max"][y, t] < 1.0 for t in 1:T)]
++                    if any(inputs["pP_Max"][y, t] <= 1.0 for t in 1:T)]
+RESULT m06_sim_filter file=test_ops_simcharge.jl rc=1  Test Failed 2 / Error During Test 0
+S2 profile 1 in every hour: no row, objective as with the key off: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392424/work/test/test_ops_simcharge.jl:50
+  Expression: isempty(EP1[:cStorSimCharge])
+   Evaluated: isempty(2-dimensional DenseAxisArray{JuMP.ConstraintRef{JuMP.Model, MathOptInterface.ConstraintIndex{MathOptInterface.ScalarAffineFunction{Float64}, MathOptInterface.LessThan{Float64}}, JuMP.ScalarShape},2,...} with index sets:
+    Dimension 1, [2]
+    Dimension 2, Base.OneTo(3)
+--
+S4 the same A and B in no group: each carries its own row: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392424/work/test/test_ops_simcharge.jl:79
+  Expression: collect(axes(EP1[:cStorSimCharge], 1)) == [rid(inputs, "A")]
+   Evaluated: [2, 3] == [2]
+
+ [6] top-level scope
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392424/work/test/test_ops_simcharge.jl:26
+Test Summary:                                                               | Pass  Fail  Total  Time
+Operational rows: simultaneous charging (StorSimultaneousCharge)            |   21     2     23  9.9s
+  S1 ungrouped A (10 MW, 40 MWh): the row binds in hour 2, not the first    |   10           10  5.1s
+  S2 profile 1 in every hour: no row, objective as with the key off         |    1     1      2  1.6s
+  S3 group S = A (10 MW, 40 MWh, representative) + B (30 MW, 120 MWh)       |    5            5  1.0s
+  S4 the same A and B in no group: each carries its own row                 |    1     1      2  0.2s
+  S5 Benders subproblem builds cStorSimCharge (same values as the monolith) |    2            2  2.0s
+  S6 the key must be 0 or 1                                                 |    2            2  0.1s
+ERROR: LoadError: Some tests did not pass: 21 passed, 2 failed, 0 errored, 0 broken.
+restored: work src = head src
+----- MUTANT 7 m07_sim_refusal: src/load_inputs/load_operational_rows.jl :: sed 's/"StorageChargeHeadroom", "StorSimultaneousCharge")/"StorageChargeHeadroom")/'   01:54:53
+-        "StorageDischargeDerate", "StorageChargeHeadroom", "StorSimultaneousCharge")
++        "StorageDischargeDerate", "StorageChargeHeadroom")
+RESULT m07_sim_refusal file=test_ops_simcharge.jl rc=1  Test Failed 1 / Error During Test 0
+S6 the key must be 0 or 1: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392424/work/test/test_ops_simcharge.jl:100
+  Expression: occursin("StorSimultaneousCharge must be 0 or 1", err(Dict("StorSimultaneousCharge" => 2)))
+   Evaluated: occursin("StorSimultaneousCharge must be 0 or 1", "")
+
+ [6] top-level scope
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392424/work/test/test_ops_simcharge.jl:26
+Test Summary:                                                               | Pass  Fail  Total  Time
+Operational rows: simultaneous charging (StorSimultaneousCharge)            |   22     1     23  9.8s
+  S1 ungrouped A (10 MW, 40 MWh): the row binds in hour 2, not the first    |   10           10  5.3s
+  S2 profile 1 in every hour: no row, objective as with the key off         |    2            2  0.0s
+  S3 group S = A (10 MW, 40 MWh, representative) + B (30 MW, 120 MWh)       |    5            5  1.0s
+  S4 the same A and B in no group: each carries its own row                 |    2            2  0.1s
+  S5 Benders subproblem builds cStorSimCharge (same values as the monolith) |    2            2  2.1s
+  S6 the key must be 0 or 1                                                 |    1     1      2  1.2s
+ERROR: LoadError: Some tests did not pass: 22 passed, 1 failed, 0 errored, 0 broken.
+restored: work src = head src
+----- MUTANT 8 m08_sim_default_on: src/model/resources/storage/storage_symmetric.jl :: sed 's/get(setup, "StorSimultaneousCharge", 0) == 1/get(setup, "StorSimultaneousCharge", 1) >= 0/'   01:58:14
+-    if get(setup, "StorSimultaneousCharge", 0) == 1
++    if get(setup, "StorSimultaneousCharge", 1) >= 0
+RESULT m08_sim_default_on file=test_ops_simcharge.jl rc=1  Test Failed 3 / Error During Test 0
+S1 ungrouped A (10 MW, 40 MWh): the row binds in hour 2, not the first: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392424/work/test/test_ops_simcharge.jl:32
+  Expression: !(has_name(EP0, :cStorSimCharge))
+
+ [1] macro expansion
+--
+S1 ungrouped A (10 MW, 40 MWh): the row binds in hour 2, not the first: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392424/work/test/test_ops_simcharge.jl:33
+  Expression: ≈(objective_value(EP0), 10000, atol = ATOL)
+   Evaluated: 12500.0 ≈ 10000 (atol=1.0e-6)
+
+--
+S3 group S = A (10 MW, 40 MWh, representative) + B (30 MW, 120 MWh): Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392424/work/test/test_ops_simcharge.jl:61
+  Expression: ≈(objective_value(EP0), 0, atol = ATOL)
+   Evaluated: 10000.0 ≈ 0 (atol=1.0e-6)
+
+ [6] top-level scope
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392424/work/test/test_ops_simcharge.jl:26
+Test Summary:                                                               | Pass  Fail  Total  Time
+Operational rows: simultaneous charging (StorSimultaneousCharge)            |   20     3     23  8.8s
+  S1 ungrouped A (10 MW, 40 MWh): the row binds in hour 2, not the first    |    8     2     10  5.9s
+  S2 profile 1 in every hour: no row, objective as with the key off         |    2            2  0.0s
+  S3 group S = A (10 MW, 40 MWh, representative) + B (30 MW, 120 MWh)       |    4     1      5  0.9s
+  S4 the same A and B in no group: each carries its own row                 |    2            2  0.1s
+  S5 Benders subproblem builds cStorSimCharge (same values as the monolith) |    2            2  1.8s
+  S6 the key must be 0 or 1                                                 |    2            2  0.1s
+ERROR: LoadError: Some tests did not pass: 20 passed, 3 failed, 0 errored, 0 broken.
+restored: work src = head src
+----- MUTANT 9 m09_co2_no_omega: src/model/policies/co2_cap.jl :: sed 's/add_to_expression!(imports\[cap], omega\[t] \* ef\[l, cap], vTAUX_POS\[l, t])/add_to_expression!(imports[cap], ef[l, cap], vTAUX_POS[l, t])/'   02:01:42
+-        add_to_expression!(imports[cap], omega[t] * ef[l, cap], vTAUX_POS[l, t])
++        add_to_expression!(imports[cap], ef[l, cap], vTAUX_POS[l, t])
+RESULT m09_co2_no_omega file=test_ops_co2_lines.jl rc=1  Test Failed 3 / Error During Test 0
+T7 weighted hour (omega = 2): Phi+ = 10, objective 800.1: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392424/work/test/test_ops_co2_lines.jl:64
+  Expression: ≈(value((EP[:vTAUX_POS])[1, 1]), 10, atol = ATOL)
+   Evaluated: 20.0 ≈ 10 (atol=1.0e-6)
+
+--
+T7 weighted hour (omega = 2): Phi+ = 10, objective 800.1: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392424/work/test/test_ops_co2_lines.jl:65
+  Expression: ≈(objective_value(EP), 800.1, atol = ATOL)
+   Evaluated: 600.1999999999999 ≈ 800.1 (atol=1.0e-6)
+
+--
+T7 weighted hour (omega = 2): Phi+ = 10, objective 800.1: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392424/work/test/test_ops_co2_lines.jl:66
+  Expression: normalized_coefficient((EP[:cCO2Emissions_systemwide])[1], (EP[:vTAUX_POS])[1, 1]) ≈ 1.0
+   Evaluated: 0.5 ≈ 1.0
+
+ [6] top-level scope
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392424/work/test/test_ops_co2_lines.jl:43
+Test Summary:                                                                     | Pass  Fail  Total   Time
+Operational rows: import CO2 on lines                                             |   27     3     30  10.3s
+  T7 forward: Phi+ = 20, TH = 30.01, objective 300.1                              |    7            7   6.0s
+  T7 weighted hour (omega = 2): Phi+ = 10, objective 800.1                        |    1     3      4   1.4s
+  T7 reverse: line 2 -> 1, flow is Phi-, EF+ 0.1, EF- 0.5: the same values        |    3            3   0.1s
+  T7 S4: a reverse factor with a zero forward factor adds nothing (fork's filter) |    2            2   0.0s
+  T7 absent columns and all-zero factors: no term, objective 0                    |    4            4   0.3s
+  T7 Benders subproblem: the row carries the term, budget 10 t gives 300.1        |    2            2   2.2s
+  T7 refusals, each with its accepted side                                        |    8            8   0.3s
+ERROR: LoadError: Some tests did not pass: 27 passed, 3 failed, 0 errored, 0 broken.
+restored: work src = head src
+final: work src restored = head src
+end 2026-11-26T02:04:55Z
+DONE
+
+# job 18392425 (mutants 10-18)
+host=della-h14n3 job=18392425 start=2026-11-26T01:37:24Z head=d4b95f69a312dd53757b7bf3bb267e1dc021ebbe lines=10..18 list sha256 c6ae96152918c6b5
+path = "/scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392425/work"
+----- MUTANT 10 m10_co2_no_filter: src/model/policies/co2_cap.jl :: sed 's/for cap in 1:NC, l in findall(x -> x != 0, ef\[:, cap]), t in 1:T/for cap in 1:NC, l in LOSS_LINES, t in 1:T/'   01:37:26
+-    for cap in 1:NC, l in findall(x -> x != 0, ef[:, cap]), t in 1:T
++    for cap in 1:NC, l in LOSS_LINES, t in 1:T
+RESULT m10_co2_no_filter file=test_ops_co2_lines.jl rc=1  Test Failed 2 / Error During Test 0
+T7 S4: a reverse factor with a zero forward factor adds nothing (fork's filter): Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392425/work/test/test_ops_co2_lines.jl:81
+  Expression: ≈(value((EP[:eCO2LineImports])[1]), 0, atol = ATOL)
+   Evaluated: 10.0 ≈ 0 (atol=1.0e-6)
+
+--
+T7 S4: a reverse factor with a zero forward factor adds nothing (fork's filter): Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392425/work/test/test_ops_co2_lines.jl:82
+  Expression: ≈(objective_value(EP), 0, atol = ATOL)
+   Evaluated: 300.09999999999997 ≈ 0 (atol=1.0e-6)
+
+ [6] top-level scope
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392425/work/test/test_ops_co2_lines.jl:43
+Test Summary:                                                                     | Pass  Fail  Total  Time
+Operational rows: import CO2 on lines                                             |   28     2     30  8.1s
+  T7 forward: Phi+ = 20, TH = 30.01, objective 300.1                              |    7            7  4.6s
+  T7 weighted hour (omega = 2): Phi+ = 10, objective 800.1                        |    4            4  0.2s
+  T7 reverse: line 2 -> 1, flow is Phi-, EF+ 0.1, EF- 0.5: the same values        |    3            3  0.0s
+  T7 S4: a reverse factor with a zero forward factor adds nothing (fork's filter) |          2      2  1.0s
+  T7 absent columns and all-zero factors: no term, objective 0                    |    4            4  0.3s
+  T7 Benders subproblem: the row carries the term, budget 10 t gives 300.1        |    2            2  1.8s
+  T7 refusals, each with its accepted side                                        |    8            8  0.2s
+ERROR: LoadError: Some tests did not pass: 28 passed, 2 failed, 0 errored, 0 broken.
+restored: work src = head src
+----- MUTANT 11 m11_co2_rev_sign: src/model/policies/co2_cap.jl :: sed 's/add_to_expression!(imports\[cap], omega\[t] \* er\[l, cap], vTAUX_NEG\[l, t])/add_to_expression!(imports[cap], -omega[t] * er[l, cap], vTAUX_NEG[l, t])/'   01:40:16
+-        er[l, cap] != 0 && add_to_expression!(imports[cap], omega[t] * er[l, cap], vTAUX_NEG[l, t])
++        er[l, cap] != 0 && add_to_expression!(imports[cap], -omega[t] * er[l, cap], vTAUX_NEG[l, t])
+RESULT m11_co2_rev_sign file=test_ops_co2_lines.jl rc=1  Test Failed 3 / Error During Test 0
+T7 reverse: line 2 -> 1, flow is Phi-, EF+ 0.1, EF- 0.5: the same values: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392425/work/test/test_ops_co2_lines.jl:73
+  Expression: ≈(value((EP[:vTAUX_NEG])[1, 1]), 20, atol = ATOL)
+   Evaluated: 50.02501250625313 ≈ 20 (atol=1.0e-6)
+
+--
+T7 reverse: line 2 -> 1, flow is Phi-, EF+ 0.1, EF- 0.5: the same values: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392425/work/test/test_ops_co2_lines.jl:74
+  Expression: ≈(value((EP[:eReverseEmissionsByLine])[1, 1]), 10, atol = ATOL)
+   Evaluated: 25.012506253126563 ≈ 10 (atol=1.0e-6)
+
+--
+T7 reverse: line 2 -> 1, flow is Phi-, EF+ 0.1, EF- 0.5: the same values: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392425/work/test/test_ops_co2_lines.jl:75
+  Expression: ≈(objective_value(EP), 300.1, atol = ATOL)
+   Evaluated: 0.0 ≈ 300.1 (atol=1.0e-6)
+
+ [6] top-level scope
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392425/work/test/test_ops_co2_lines.jl:43
+Test Summary:                                                                     | Pass  Fail  Total  Time
+Operational rows: import CO2 on lines                                             |   27     3     30  9.5s
+  T7 forward: Phi+ = 20, TH = 30.01, objective 300.1                              |    7            7  5.5s
+  T7 weighted hour (omega = 2): Phi+ = 10, objective 800.1                        |    4            4  0.2s
+  T7 reverse: line 2 -> 1, flow is Phi-, EF+ 0.1, EF- 0.5: the same values        |          3      3  1.2s
+  T7 S4: a reverse factor with a zero forward factor adds nothing (fork's filter) |    2            2  0.0s
+  T7 absent columns and all-zero factors: no term, objective 0                    |    4            4  0.3s
+  T7 Benders subproblem: the row carries the term, budget 10 t gives 300.1        |    2            2  2.1s
+  T7 refusals, each with its accepted side                                        |    8            8  0.3s
+ERROR: LoadError: Some tests did not pass: 27 passed, 3 failed, 0 errored, 0 broken.
+restored: work src = head src
+----- MUTANT 12 m12_co2_rev_on_fwd: src/model/policies/co2_cap.jl :: sed 's/omega\[t] \* er\[l, cap], vTAUX_NEG\[l, t])/omega[t] * ef[l, cap], vTAUX_NEG[l, t])/'   01:43:06
+-        er[l, cap] != 0 && add_to_expression!(imports[cap], omega[t] * er[l, cap], vTAUX_NEG[l, t])
++        er[l, cap] != 0 && add_to_expression!(imports[cap], omega[t] * ef[l, cap], vTAUX_NEG[l, t])
+RESULT m12_co2_rev_on_fwd file=test_ops_co2_lines.jl rc=1  Test Failed 3 / Error During Test 0
+T7 reverse: line 2 -> 1, flow is Phi-, EF+ 0.1, EF- 0.5: the same values: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392425/work/test/test_ops_co2_lines.jl:73
+  Expression: ≈(value((EP[:vTAUX_NEG])[1, 1]), 20, atol = ATOL)
+   Evaluated: 50.02501250625313 ≈ 20 (atol=1.0e-6)
+
+--
+T7 reverse: line 2 -> 1, flow is Phi-, EF+ 0.1, EF- 0.5: the same values: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392425/work/test/test_ops_co2_lines.jl:74
+  Expression: ≈(value((EP[:eReverseEmissionsByLine])[1, 1]), 10, atol = ATOL)
+   Evaluated: 25.012506253126563 ≈ 10 (atol=1.0e-6)
+
+--
+T7 reverse: line 2 -> 1, flow is Phi-, EF+ 0.1, EF- 0.5: the same values: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392425/work/test/test_ops_co2_lines.jl:75
+  Expression: ≈(objective_value(EP), 300.1, atol = ATOL)
+   Evaluated: 0.0 ≈ 300.1 (atol=1.0e-6)
+
+ [6] top-level scope
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392425/work/test/test_ops_co2_lines.jl:43
+Test Summary:                                                                     | Pass  Fail  Total  Time
+Operational rows: import CO2 on lines                                             |   27     3     30  9.4s
+  T7 forward: Phi+ = 20, TH = 30.01, objective 300.1                              |    7            7  5.5s
+  T7 weighted hour (omega = 2): Phi+ = 10, objective 800.1                        |    4            4  0.2s
+  T7 reverse: line 2 -> 1, flow is Phi-, EF+ 0.1, EF- 0.5: the same values        |          3      3  1.2s
+  T7 S4: a reverse factor with a zero forward factor adds nothing (fork's filter) |    2            2  0.0s
+  T7 absent columns and all-zero factors: no term, objective 0                    |    4            4  0.3s
+  T7 Benders subproblem: the row carries the term, budget 10 t gives 300.1        |    2            2  1.9s
+  T7 refusals, each with its accepted side                                        |    8            8  0.3s
+ERROR: LoadError: Some tests did not pass: 27 passed, 3 failed, 0 errored, 0 broken.
+restored: work src = head src
+----- MUTANT 13 m13_co2_sub_no_term: src/model/policies/co2_cap.jl :: sed 's/imports\[cap] - vCO2Cap_slack\[cap]<=vCO2budget\[w,cap])/- vCO2Cap_slack[cap]<=vCO2budget[w,cap])/'   01:45:54
+-                imports[cap] - vCO2Cap_slack[cap]<=vCO2budget[w,cap])
++                - vCO2Cap_slack[cap]<=vCO2budget[w,cap])
+RESULT m13_co2_sub_no_term file=test_ops_co2_lines.jl rc=1  Test Failed 2 / Error During Test 0
+T7 Benders subproblem: the row carries the term, budget 10 t gives 300.1: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392425/work/test/test_ops_co2_lines.jl:103
+  Expression: normalized_coefficient(c, (EP[:vTAUX_POS])[1, 1]) ≈ 0.5
+   Evaluated: 0.0 ≈ 0.5
+
+--
+T7 Benders subproblem: the row carries the term, budget 10 t gives 300.1: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392425/work/test/test_ops_co2_lines.jl:106
+  Expression: ≈(objective_value(EP), 300.1, atol = ATOL)
+   Evaluated: 0.0 ≈ 300.1 (atol=1.0e-6)
+
+ [6] top-level scope
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392425/work/test/test_ops_co2_lines.jl:43
+Test Summary:                                                                     | Pass  Fail  Total  Time
+Operational rows: import CO2 on lines                                             |   28     2     30  9.4s
+  T7 forward: Phi+ = 20, TH = 30.01, objective 300.1                              |    7            7  5.4s
+  T7 weighted hour (omega = 2): Phi+ = 10, objective 800.1                        |    4            4  0.2s
+  T7 reverse: line 2 -> 1, flow is Phi-, EF+ 0.1, EF- 0.5: the same values        |    3            3  0.1s
+  T7 S4: a reverse factor with a zero forward factor adds nothing (fork's filter) |    2            2  0.0s
+  T7 absent columns and all-zero factors: no term, objective 0                    |    4            4  0.3s
+  T7 Benders subproblem: the row carries the term, budget 10 t gives 300.1        |          2      2  3.2s
+  T7 refusals, each with its accepted side                                        |    8            8  0.3s
+ERROR: LoadError: Some tests did not pass: 28 passed, 2 failed, 0 errored, 0 broken.
+restored: work src = head src
+----- MUTANT 14 m14_co2_sub_no_term_cut: src/model/policies/co2_cap.jl :: sed 's/imports\[cap] - vCO2Cap_slack\[cap]<=vCO2budget\[w,cap])/- vCO2Cap_slack[cap]<=vCO2budget[w,cap])/'   01:48:38
+-                imports[cap] - vCO2Cap_slack[cap]<=vCO2budget[w,cap])
++                - vCO2Cap_slack[cap]<=vCO2budget[w,cap])
+RESULT m14_co2_sub_no_term_cut file=test_ops_cut_slopes.jl rc=1  Test Failed 4 / Error During Test 0
+C5 import CO2 on lines (B2): slope in the period's CO2 budget: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392425/work/test/test_ops_cut_slopes.jl:145
+  Expression: ≈(s.V0, 300.1, atol = ATOL)
+   Evaluated: 0.0 ≈ 300.1 (atol=1.0e-6)
+
+--
+C5 import CO2 on lines (B2): slope in the period's CO2 budget: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392425/work/test/test_ops_cut_slopes.jl:146
+  Expression: ≈(s.lam, -19.99, atol = ATOL)
+   Evaluated: 0.0 ≈ -19.99 (atol=1.0e-6)
+
+--
+C5 import CO2 on lines (B2): slope in the period's CO2 budget: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392425/work/test/test_ops_cut_slopes.jl:147
+  Expression: ≈(s.fwd, -19.99, atol = ATOL)
+   Evaluated: 0.0 ≈ -19.99 (atol=1.0e-6)
+
+--
+C5 import CO2 on lines (B2): slope in the period's CO2 budget: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392425/work/test/test_ops_cut_slopes.jl:148
+  Expression: ≈(s.bwd, -19.99, atol = ATOL)
+   Evaluated: 0.0 ≈ -19.99 (atol=1.0e-6)
+
+ [6] top-level scope
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392425/work/test/test_ops_cut_slopes.jl:65
+Test Summary:                                                        | Pass  Fail  Total   Time
+Operational rows: Benders cut slopes of the new rows                 |   16     4     20  12.7s
+  C1 hourly floor on a buildable thermal                             |    4            4   7.0s
+  C2 energy budget on a buildable hydro                              |    4            4   1.9s
+  C3 storage group: buildable member B, derate on the representative |    4            4   1.2s
+  C4 simultaneous charging (B1) on the group: buildable member B     |    4            4   0.2s
+  C5 import CO2 on lines (B2): slope in the period's CO2 budget      |          4      4   2.4s
+ERROR: LoadError: Some tests did not pass: 16 passed, 4 failed, 0 errored, 0 broken.
+restored: work src = head src
+----- MUTANT 15 m15_co2_lossline_refusal: src/load_inputs/load_co2_cap.jl :: sed 's/if ef\[l, cap] != 0 \&\& !(l in inputs\["LOSS_LINES"])/if false \&\& !(l in inputs["LOSS_LINES"])/'   01:49:01
+-        if ef[l, cap] != 0 && !(l in inputs["LOSS_LINES"])
++        if false && !(l in inputs["LOSS_LINES"])
+RESULT m15_co2_lossline_refusal file=test_ops_co2_lines.jl rc=1  Test Failed 1 / Error During Test 0
+T7 refusals, each with its accepted side: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392425/work/test/test_ops_co2_lines.jl:112
+  Expression: occursin("not a loss line", err(co2_case(; loss = 0.0)))
+   Evaluated: occursin("not a loss line", "")
+
+ [6] top-level scope
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392425/work/test/test_ops_co2_lines.jl:43
+Test Summary:                                                                     | Pass  Fail  Total  Time
+Operational rows: import CO2 on lines                                             |   29     1     30  9.0s
+  T7 forward: Phi+ = 20, TH = 30.01, objective 300.1                              |    7            7  5.2s
+  T7 weighted hour (omega = 2): Phi+ = 10, objective 800.1                        |    4            4  0.2s
+  T7 reverse: line 2 -> 1, flow is Phi-, EF+ 0.1, EF- 0.5: the same values        |    3            3  0.1s
+  T7 S4: a reverse factor with a zero forward factor adds nothing (fork's filter) |    2            2  0.0s
+  T7 absent columns and all-zero factors: no term, objective 0                    |    4            4  0.3s
+  T7 Benders subproblem: the row carries the term, budget 10 t gives 300.1        |    2            2  2.0s
+  T7 refusals, each with its accepted side                                        |    7     1      8  1.2s
+ERROR: LoadError: Some tests did not pass: 29 passed, 1 failed, 0 errored, 0 broken.
+restored: work src = head src
+----- MUTANT 16 m16_co2_masscap_refusal: src/load_inputs/load_co2_cap.jl :: sed 's/(any_nonzero \&\& setup\["CO2Cap"] != 1) \&\&/(any_nonzero \&\& setup["CO2Cap"] > 3) \&\&/'   01:51:51
+-    (any_nonzero && setup["CO2Cap"] != 1) &&
++    (any_nonzero && setup["CO2Cap"] > 3) &&
+RESULT m16_co2_masscap_refusal file=test_ops_co2_lines.jl rc=1  Test Failed 1 / Error During Test 0
+T7 refusals, each with its accepted side: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392425/work/test/test_ops_co2_lines.jl:118
+  Expression: occursin("mass cap (CO2Cap: 1) only", err(co2_case(); o = Dict("CO2Cap" => 2)))
+   Evaluated: occursin("mass cap (CO2Cap: 1) only", "")
+
+ [6] top-level scope
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392425/work/test/test_ops_co2_lines.jl:43
+Test Summary:                                                                     | Pass  Fail  Total  Time
+Operational rows: import CO2 on lines                                             |   29     1     30  8.0s
+  T7 forward: Phi+ = 20, TH = 30.01, objective 300.1                              |    7            7  4.6s
+  T7 weighted hour (omega = 2): Phi+ = 10, objective 800.1                        |    4            4  0.1s
+  T7 reverse: line 2 -> 1, flow is Phi-, EF+ 0.1, EF- 0.5: the same values        |    3            3  0.0s
+  T7 S4: a reverse factor with a zero forward factor adds nothing (fork's filter) |    2            2  0.0s
+  T7 absent columns and all-zero factors: no term, objective 0                    |    4            4  0.3s
+  T7 Benders subproblem: the row carries the term, budget 10 t gives 300.1        |    2            2  1.8s
+  T7 refusals, each with its accepted side                                        |    7     1      8  1.1s
+ERROR: LoadError: Some tests did not pass: 29 passed, 1 failed, 0 errored, 0 broken.
+restored: work src = head src
+----- MUTANT 17 m17_co2_ps_refusal: src/load_inputs/load_co2_cap.jl :: sed 's/setup\["ParameterScale"] == 1 \&\&$/setup["ParameterScale"] == 2 \&\&/'   01:54:36
+-    setup["ParameterScale"] == 1 &&
++    setup["ParameterScale"] == 2 &&
+RESULT m17_co2_ps_refusal file=test_ops_co2_lines.jl rc=1  Test Failed 1 / Error During Test 0
+T7 refusals, each with its accepted side: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392425/work/test/test_ops_co2_lines.jl:116
+  Expression: occursin("not supported with ParameterScale: 1", err(co2_case(); o = Dict("ParameterScale" => 1)))
+   Evaluated: occursin("not supported with ParameterScale: 1", "")
+
+ [6] top-level scope
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392425/work/test/test_ops_co2_lines.jl:43
+Test Summary:                                                                     | Pass  Fail  Total  Time
+Operational rows: import CO2 on lines                                             |   29     1     30  7.9s
+  T7 forward: Phi+ = 20, TH = 30.01, objective 300.1                              |    7            7  4.6s
+  T7 weighted hour (omega = 2): Phi+ = 10, objective 800.1                        |    4            4  0.1s
+  T7 reverse: line 2 -> 1, flow is Phi-, EF+ 0.1, EF- 0.5: the same values        |    3            3  0.1s
+  T7 S4: a reverse factor with a zero forward factor adds nothing (fork's filter) |    2            2  0.0s
+  T7 absent columns and all-zero factors: no term, objective 0                    |    4            4  0.3s
+  T7 Benders subproblem: the row carries the term, budget 10 t gives 300.1        |    2            2  1.8s
+  T7 refusals, each with its accepted side                                        |    7     1      8  1.1s
+ERROR: LoadError: Some tests did not pass: 29 passed, 1 failed, 0 errored, 0 broken.
+restored: work src = head src
+----- MUTANT 18 m18_co2_absent_on: src/load_inputs/load_co2_cap.jl :: sed 's/any_nonzero || return nothing /false \&\& return nothing /'   01:57:18
+-    any_nonzero || return nothing    # all factors 0: nothing stored, the CO2 rows are unchanged
++    false && return nothing    # all factors 0: nothing stored, the CO2 rows are unchanged
+RESULT m18_co2_absent_on file=test_ops_co2_lines.jl rc=1  Test Failed 1 / Error During Test 0
+T7 absent columns and all-zero factors: no term, objective 0: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392425/work/test/test_ops_co2_lines.jl:90
+  Expression: !(has_name(EP0, :eCO2LineImports))
+
+ [1] macro expansion
+ [6] top-level scope
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2mut-18392425/work/test/test_ops_co2_lines.jl:43
+Test Summary:                                                                     | Pass  Fail  Total  Time
+Operational rows: import CO2 on lines                                             |   29     1     30  8.4s
+  T7 forward: Phi+ = 20, TH = 30.01, objective 300.1                              |    7            7  4.8s
+  T7 weighted hour (omega = 2): Phi+ = 10, objective 800.1                        |    4            4  0.2s
+  T7 reverse: line 2 -> 1, flow is Phi-, EF+ 0.1, EF- 0.5: the same values        |    3            3  0.1s
+  T7 S4: a reverse factor with a zero forward factor adds nothing (fork's filter) |    2            2  0.0s
+  T7 absent columns and all-zero factors: no term, objective 0                    |    3     1      4  1.2s
+  T7 Benders subproblem: the row carries the term, budget 10 t gives 300.1        |    2            2  1.9s
+  T7 refusals, each with its accepted side                                        |    8            8  0.2s
+ERROR: LoadError: Some tests did not pass: 29 passed, 1 failed, 0 errored, 0 broken.
+restored: work src = head src
+final: work src restored = head src
+end 2026-11-26T02:00:03Z
+DONE

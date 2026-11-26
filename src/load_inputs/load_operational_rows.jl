@@ -71,7 +71,7 @@ a budgeted hydro resource with `LDS: 1`; `HydroBudgetMaxProfile: 1` without a lo
 """
 function validate_operational_rows!(setup::Dict, inputs::Dict)
     for k in ("Hourly_Pmin", "Fixed_Dispatch", "HydroBudgetMaxProfile",
-        "StorageDischargeDerate", "StorageChargeHeadroom")
+        "StorageDischargeDerate", "StorageChargeHeadroom", "StorSimultaneousCharge")
         get(setup, k, 0) in (0, 1) || error("$k must be 0 or 1 (got $(setup[k])).")
     end
     get(setup, "Fixed_Dispatch", 0) == 1 &&

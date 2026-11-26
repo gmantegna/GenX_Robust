@@ -26,3 +26,18 @@ fix1_absent_means_off_18386425.txt  the three cases of absent_means_off_18376174
 fix1_gate_co2off_18386426.txt  the port on C_fix with CO2Cap 0 at fix commit 3/3 against d58's
                             CO2-off objective (read from the predecessor's out_d58_co2off).
 The commit adding these logs changes no file outside test/controls/.
+
+Port 2 (StorSimultaneousCharge, import CO2 on lines, Benders cut slopes; scripts mwe/della/port2_*.sbatch
+and port_suite.sbatch; branch base/ops-port2):
+port2_tdd_18391895.txt      the new test files on the src of 4d602268 (pre); simcharge and cut_slopes
+                            are the committed files; its co2_lines run is of a first version.
+port2_tdd_18392423.txt      the final test_ops_co2_lines.jl on 4d602268 (pre), then 06a34d36 (B2)
+                            and d4b95f69 (B3: all three new files) (post).
+port2_tdd_18391905.txt      post-change of c6d38e96 (B1); its other two runs are of first versions.
+port2_mutants.txt           jobs 18392424 and 18392425: 18 mutants on the tree of d4b95f69.
+port2_suite_18392426.txt    whole test/runtests.jl on the tree of d4b95f69.
+port2_absent_means_off_18392427.txt  the three cases, 4d602268 against d4b95f69: LP files identical.
+port2_ref_f63283ac_18391530.txt  base/d58-rungb f63283ac on C_fix: StorSimultaneousCharge 1 and 0
+                            (CO2Cap 1), and 1 with CO2Cap 0 (the references of the parity runs).
+port2_gate_18392428.txt     the port at d4b95f69 on C_fix: CO2Cap 1; StorSimultaneousCharge 1
+                            (CO2Cap 1 and 0); CO2Cap 0.

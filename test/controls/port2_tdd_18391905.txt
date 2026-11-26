@@ -1,0 +1,32 @@
+# post-change, job 18391905: c6d38e96 (B1, final sha) simcharge; 2214d89f and 161fa243 are the first versions of B2/B3 (superseded)
+host=della-h12n16 job=18391905 start=2026-11-26T01:26:24Z
+path = "/scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391905/work"
+tree from clone archive c6d38e965c61a55bdd8d6b9bbf3511f9365c1425
+##### tree := c6d38e965c61a55bdd8d6b9bbf3511f9365c1425 01:26:25  src sha256-of-tree 96d5e58bb4b2c2ba
+[ Info: GenX: patched MacroEnergySolvers 0.2.2 solve_subproblem (infeasible-point defect: an infeasible subproblem that returns a point was taken for solved). Set GENX_DISABLE_MES_PATCH=1 to keep stock behaviour.
+GenX from /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391905/work/src/GenX.jl
+RESULT c6d38e96_test_ops_simcharge.jl rc=0 01:30:00  Test Failed 0 / Error During Test 0
+Test Summary:                                                    | Pass  Total  Time
+Operational rows: simultaneous charging (StorSimultaneousCharge) |   23     23  8.5s
+tree from clone archive 2214d89f41d7018c22c8ca2e42fee6bbaddcd20a
+##### tree := 2214d89f41d7018c22c8ca2e42fee6bbaddcd20a 01:30:01  src sha256-of-tree 1b27c7f219ff33f3
+[ Info: GenX: patched MacroEnergySolvers 0.2.2 solve_subproblem (infeasible-point defect: an infeasible subproblem that returns a point was taken for solved). Set GENX_DISABLE_MES_PATCH=1 to keep stock behaviour.
+GenX from /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391905/work/src/GenX.jl
+RESULT 2214d89f_test_ops_co2_lines.jl rc=0 01:33:55  Test Failed 0 / Error During Test 0
+Test Summary:                         | Pass  Total   Time
+Operational rows: import CO2 on lines |   26     26  10.1s
+tree from clone archive 161fa243edb76499d7ac2da3b5a1e09e79fed185
+##### tree := 161fa243edb76499d7ac2da3b5a1e09e79fed185 01:33:56  src sha256-of-tree 1b27c7f219ff33f3
+[ Info: GenX: patched MacroEnergySolvers 0.2.2 solve_subproblem (infeasible-point defect: an infeasible subproblem that returns a point was taken for solved). Set GENX_DISABLE_MES_PATCH=1 to keep stock behaviour.
+GenX from /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18391905/work/src/GenX.jl
+RESULT 161fa243_test_ops_cut_slopes.jl rc=0 01:34:29  Test Failed 0 / Error During Test 0
+Test Summary:                                        | Pass  Total   Time
+Operational rows: Benders cut slopes of the new rows |   20     20  13.1s
+RESULT 161fa243_test_ops_simcharge.jl rc=0 01:34:46  Test Failed 0 / Error During Test 0
+Test Summary:                                                    | Pass  Total  Time
+Operational rows: simultaneous charging (StorSimultaneousCharge) |   23     23  7.6s
+RESULT 161fa243_test_ops_co2_lines.jl rc=0 01:35:07  Test Failed 0 / Error During Test 0
+Test Summary:                         | Pass  Total   Time
+Operational rows: import CO2 on lines |   26     26  10.4s
+end 2026-11-26T01:35:07Z
+DONE

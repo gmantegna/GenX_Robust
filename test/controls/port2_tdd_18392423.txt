@@ -1,0 +1,463 @@
+# job 18392423: pre-change of the final test_ops_co2_lines.jl over 4d602268; post at 06a34d36 (B2) and d4b95f69 (B3, all three files)
+host=della-h14n3 job=18392423 start=2026-11-26T01:37:24Z
+path = "/scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work"
+tree from clone archive 4d602268554ce60136c8de5140ec7c27a42bc567
+overlay: 5fae61f8d90482e6  ./test/test_ops_co2_lines.jl 
+##### tree := 4d602268554ce60136c8de5140ec7c27a42bc567 01:37:25  src sha256-of-tree 8d1968537463781f
+[ Info: GenX: patched MacroEnergySolvers 0.2.2 solve_subproblem (infeasible-point defect: an infeasible subproblem that returns a point was taken for solved). Set GENX_DISABLE_MES_PATCH=1 to keep stock behaviour.
+GenX from /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/src/GenX.jl
+RESULT 4d602268_ovl_test_ops_co2_lines.jl rc=1 01:40:28  Test Failed 16 / Error During Test 4
+T7 forward: Phi+ = 20, TH = 30.01, objective 300.1: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:48
+  Expression: ≈(value((EP[:vTAUX_POS])[1, 1]), 20, atol = ATOL)
+   Evaluated: 50.02501250625313 ≈ 20 (atol=1.0e-6)
+
+--
+T7 forward: Phi+ = 20, TH = 30.01, objective 300.1: Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:49
+  Test threw exception
+  Expression: ≈(value((EP[:eCO2LineImports])[1]), 10, atol = ATOL)
+  KeyError: key :eCO2LineImports not found
+--
+T7 forward: Phi+ = 20, TH = 30.01, objective 300.1: Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:50
+  Test threw exception
+  Expression: ≈(value((EP[:eForwardEmissionsByLine])[1, 1]), 10, atol = ATOL)
+  KeyError: key :eForwardEmissionsByLine not found
+--
+T7 forward: Phi+ = 20, TH = 30.01, objective 300.1: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:51
+  Expression: ≈(value((EP[:cCO2Emissions_systemwide])[1]), 10, atol = ATOL)
+   Evaluated: 0.0 ≈ 10 (atol=1.0e-6)
+
+--
+T7 forward: Phi+ = 20, TH = 30.01, objective 300.1: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:52
+  Expression: ≈(objective_value(EP), 300.1, atol = ATOL)
+   Evaluated: 0.0 ≈ 300.1 (atol=1.0e-6)
+
+--
+T7 forward: Phi+ = 20, TH = 30.01, objective 300.1: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:54
+  Expression: normalized_coefficient((EP[:cCO2Emissions_systemwide])[1], (EP[:vTAUX_POS])[1, 1]) ≈ 0.5
+   Evaluated: 0.0 ≈ 0.5
+
+--
+T7 weighted hour (omega = 2): Phi+ = 10, objective 800.1: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:64
+  Expression: ≈(value((EP[:vTAUX_POS])[1, 1]), 10, atol = ATOL)
+   Evaluated: 50.02501250625313 ≈ 10 (atol=1.0e-6)
+
+--
+T7 weighted hour (omega = 2): Phi+ = 10, objective 800.1: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:65
+  Expression: ≈(objective_value(EP), 800.1, atol = ATOL)
+   Evaluated: 0.0 ≈ 800.1 (atol=1.0e-6)
+
+--
+T7 weighted hour (omega = 2): Phi+ = 10, objective 800.1: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:66
+  Expression: normalized_coefficient((EP[:cCO2Emissions_systemwide])[1], (EP[:vTAUX_POS])[1, 1]) ≈ 1.0
+   Evaluated: 0.0 ≈ 1.0
+
+--
+T7 reverse: line 2 -> 1, flow is Phi-, EF+ 0.1, EF- 0.5: the same values: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:73
+  Expression: ≈(value((EP[:vTAUX_NEG])[1, 1]), 20, atol = ATOL)
+   Evaluated: 50.02501250625313 ≈ 20 (atol=1.0e-6)
+
+--
+T7 reverse: line 2 -> 1, flow is Phi-, EF+ 0.1, EF- 0.5: the same values: Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:74
+  Test threw exception
+  Expression: ≈(value((EP[:eReverseEmissionsByLine])[1, 1]), 10, atol = ATOL)
+  KeyError: key :eReverseEmissionsByLine not found
+--
+T7 reverse: line 2 -> 1, flow is Phi-, EF+ 0.1, EF- 0.5: the same values: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:75
+  Expression: ≈(objective_value(EP), 300.1, atol = ATOL)
+   Evaluated: 0.0 ≈ 300.1 (atol=1.0e-6)
+
+--
+grep: write error: Broken pipe
+Test Summary:                                                                     | Pass  Fail  Error  Total   Time
+Operational rows: import CO2 on lines                                             |   10    16      4     30  11.1s
+  T7 forward: Phi+ = 20, TH = 30.01, objective 300.1                              |    1     4      2      7   7.2s
+  T7 weighted hour (omega = 2): Phi+ = 10, objective 800.1                        |    1     3             4   0.3s
+  T7 reverse: line 2 -> 1, flow is Phi-, EF+ 0.1, EF- 0.5: the same values        |          2      1      3   0.2s
+  T7 S4: a reverse factor with a zero forward factor adds nothing (fork's filter) |    1            1      2   0.1s
+  T7 absent columns and all-zero factors: no term, objective 0                    |    4                   4   0.2s
+  T7 Benders subproblem: the row carries the term, budget 10 t gives 300.1        |          2             2   2.8s
+  T7 refusals, each with its accepted side                                        |    3     5             8   0.3s
+tree from clone archive 06a34d36ad4d4ac7f2960c036e9734160a143539
+##### tree := 06a34d36ad4d4ac7f2960c036e9734160a143539 01:40:29  src sha256-of-tree 1b27c7f219ff33f3
+[ Info: GenX: patched MacroEnergySolvers 0.2.2 solve_subproblem (infeasible-point defect: an infeasible subproblem that returns a point was taken for solved). Set GENX_DISABLE_MES_PATCH=1 to keep stock behaviour.
+GenX from /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/src/GenX.jl
+RESULT 06a34d36_test_ops_co2_lines.jl rc=0 01:43:47  Test Failed 0 / Error During Test 0
+Test Summary:                         | Pass  Total  Time
+Operational rows: import CO2 on lines |   30     30  8.6s
+tree from clone archive d4b95f69a312dd53757b7bf3bb267e1dc021ebbe
+##### tree := d4b95f69a312dd53757b7bf3bb267e1dc021ebbe 01:43:47  src sha256-of-tree 1b27c7f219ff33f3
+[ Info: GenX: patched MacroEnergySolvers 0.2.2 solve_subproblem (infeasible-point defect: an infeasible subproblem that returns a point was taken for solved). Set GENX_DISABLE_MES_PATCH=1 to keep stock behaviour.
+GenX from /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/src/GenX.jl
+RESULT d4b95f69_test_ops_simcharge.jl rc=0 01:44:13  Test Failed 0 / Error During Test 0
+Test Summary:                                                    | Pass  Total  Time
+Operational rows: simultaneous charging (StorSimultaneousCharge) |   23     23  7.8s
+RESULT d4b95f69_test_ops_co2_lines.jl rc=0 01:44:33  Test Failed 0 / Error During Test 0
+Test Summary:                         | Pass  Total  Time
+Operational rows: import CO2 on lines |   30     30  9.7s
+RESULT d4b95f69_test_ops_cut_slopes.jl rc=0 01:44:59  Test Failed 0 / Error During Test 0
+Test Summary:                                        | Pass  Total   Time
+Operational rows: Benders cut slopes of the new rows |   20     20  14.9s
+end 2026-11-26T01:44:59Z
+DONE
+
+# per-run log 4d602268_ovl_test_ops_co2_lines.jl
+[ Info: GenX: patched MacroEnergySolvers 0.2.2 solve_subproblem (infeasible-point defect: an infeasible subproblem that returns a point was taken for solved). Set GENX_DISABLE_MES_PATCH=1 to keep stock behaviour.
+ERROR: LoadError: Some tests did not pass: 10 passed, 16 failed, 4 errored, 0 broken.
+in expression starting at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:1
+T7 forward: Phi+ = 20, TH = 30.01, objective 300.1: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:48
+  Expression: ≈(value((EP[:vTAUX_POS])[1, 1]), 20, atol = ATOL)
+   Evaluated: 50.02501250625313 ≈ 20 (atol=1.0e-6)
+
+Stacktrace:
+ [1] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:679 [inlined]
+ [2] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:48 [inlined]
+ [3] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [4] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:44 [inlined]
+ [5] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [6] top-level scope
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:43
+T7 forward: Phi+ = 20, TH = 30.01, objective 300.1: Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:49
+  Test threw exception
+  Expression: ≈(value((EP[:eCO2LineImports])[1]), 10, atol = ATOL)
+  KeyError: key :eCO2LineImports not found
+  Stacktrace:
+   [1] getindex(m::JuMP.Model, name::Symbol)
+     @ JuMP ~/p42ra/julia_depot/packages/JuMP/Y8Mtc/src/JuMP.jl:1113
+   [2] macro expansion
+     @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:676 [inlined]
+   [3] macro expansion
+     @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:49 [inlined]
+   [4] macro expansion
+     @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+   [5] macro expansion
+     @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:44 [inlined]
+   [6] macro expansion
+     @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+   [7] top-level scope
+     @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:43
+T7 forward: Phi+ = 20, TH = 30.01, objective 300.1: Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:50
+  Test threw exception
+  Expression: ≈(value((EP[:eForwardEmissionsByLine])[1, 1]), 10, atol = ATOL)
+  KeyError: key :eForwardEmissionsByLine not found
+  Stacktrace:
+   [1] getindex(m::JuMP.Model, name::Symbol)
+     @ JuMP ~/p42ra/julia_depot/packages/JuMP/Y8Mtc/src/JuMP.jl:1113
+   [2] macro expansion
+     @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:676 [inlined]
+   [3] macro expansion
+     @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:50 [inlined]
+   [4] macro expansion
+     @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+   [5] macro expansion
+     @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:44 [inlined]
+   [6] macro expansion
+     @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+   [7] top-level scope
+     @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:43
+T7 forward: Phi+ = 20, TH = 30.01, objective 300.1: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:51
+  Expression: ≈(value((EP[:cCO2Emissions_systemwide])[1]), 10, atol = ATOL)
+   Evaluated: 0.0 ≈ 10 (atol=1.0e-6)
+
+Stacktrace:
+ [1] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:679 [inlined]
+ [2] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:51 [inlined]
+ [3] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [4] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:44 [inlined]
+ [5] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [6] top-level scope
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:43
+T7 forward: Phi+ = 20, TH = 30.01, objective 300.1: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:52
+  Expression: ≈(objective_value(EP), 300.1, atol = ATOL)
+   Evaluated: 0.0 ≈ 300.1 (atol=1.0e-6)
+
+Stacktrace:
+ [1] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:679 [inlined]
+ [2] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:52 [inlined]
+ [3] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [4] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:44 [inlined]
+ [5] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [6] top-level scope
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:43
+T7 forward: Phi+ = 20, TH = 30.01, objective 300.1: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:54
+  Expression: normalized_coefficient((EP[:cCO2Emissions_systemwide])[1], (EP[:vTAUX_POS])[1, 1]) ≈ 0.5
+   Evaluated: 0.0 ≈ 0.5
+
+Stacktrace:
+ [1] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:679 [inlined]
+ [2] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:54 [inlined]
+ [3] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [4] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:44 [inlined]
+ [5] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [6] top-level scope
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:43
+T7 weighted hour (omega = 2): Phi+ = 10, objective 800.1: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:64
+  Expression: ≈(value((EP[:vTAUX_POS])[1, 1]), 10, atol = ATOL)
+   Evaluated: 50.02501250625313 ≈ 10 (atol=1.0e-6)
+
+Stacktrace:
+ [1] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:679 [inlined]
+ [2] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:64 [inlined]
+ [3] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [4] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:59 [inlined]
+ [5] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [6] top-level scope
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:43
+T7 weighted hour (omega = 2): Phi+ = 10, objective 800.1: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:65
+  Expression: ≈(objective_value(EP), 800.1, atol = ATOL)
+   Evaluated: 0.0 ≈ 800.1 (atol=1.0e-6)
+
+Stacktrace:
+ [1] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:679 [inlined]
+ [2] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:65 [inlined]
+ [3] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [4] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:59 [inlined]
+ [5] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [6] top-level scope
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:43
+T7 weighted hour (omega = 2): Phi+ = 10, objective 800.1: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:66
+  Expression: normalized_coefficient((EP[:cCO2Emissions_systemwide])[1], (EP[:vTAUX_POS])[1, 1]) ≈ 1.0
+   Evaluated: 0.0 ≈ 1.0
+
+Stacktrace:
+ [1] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:679 [inlined]
+ [2] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:66 [inlined]
+ [3] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [4] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:59 [inlined]
+ [5] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [6] top-level scope
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:43
+T7 reverse: line 2 -> 1, flow is Phi-, EF+ 0.1, EF- 0.5: the same values: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:73
+  Expression: ≈(value((EP[:vTAUX_NEG])[1, 1]), 20, atol = ATOL)
+   Evaluated: 50.02501250625313 ≈ 20 (atol=1.0e-6)
+
+Stacktrace:
+ [1] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:679 [inlined]
+ [2] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:73 [inlined]
+ [3] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [4] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:70 [inlined]
+ [5] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [6] top-level scope
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:43
+T7 reverse: line 2 -> 1, flow is Phi-, EF+ 0.1, EF- 0.5: the same values: Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:74
+  Test threw exception
+  Expression: ≈(value((EP[:eReverseEmissionsByLine])[1, 1]), 10, atol = ATOL)
+  KeyError: key :eReverseEmissionsByLine not found
+  Stacktrace:
+   [1] getindex(m::JuMP.Model, name::Symbol)
+     @ JuMP ~/p42ra/julia_depot/packages/JuMP/Y8Mtc/src/JuMP.jl:1113
+   [2] macro expansion
+     @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:676 [inlined]
+   [3] macro expansion
+     @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:74 [inlined]
+   [4] macro expansion
+     @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+   [5] macro expansion
+     @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:70 [inlined]
+   [6] macro expansion
+     @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+   [7] top-level scope
+     @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:43
+T7 reverse: line 2 -> 1, flow is Phi-, EF+ 0.1, EF- 0.5: the same values: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:75
+  Expression: ≈(objective_value(EP), 300.1, atol = ATOL)
+   Evaluated: 0.0 ≈ 300.1 (atol=1.0e-6)
+
+Stacktrace:
+ [1] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:679 [inlined]
+ [2] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:75 [inlined]
+ [3] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [4] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:70 [inlined]
+ [5] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [6] top-level scope
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:43
+T7 S4: a reverse factor with a zero forward factor adds nothing (fork's filter): Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:81
+  Test threw exception
+  Expression: ≈(value((EP[:eCO2LineImports])[1]), 0, atol = ATOL)
+  KeyError: key :eCO2LineImports not found
+  Stacktrace:
+   [1] getindex(m::JuMP.Model, name::Symbol)
+     @ JuMP ~/p42ra/julia_depot/packages/JuMP/Y8Mtc/src/JuMP.jl:1113
+   [2] macro expansion
+     @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:676 [inlined]
+   [3] macro expansion
+     @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:81 [inlined]
+   [4] macro expansion
+     @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+   [5] macro expansion
+     @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:79 [inlined]
+   [6] macro expansion
+     @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+   [7] top-level scope
+     @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:43
+T7 Benders subproblem: the row carries the term, budget 10 t gives 300.1: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:103
+  Expression: normalized_coefficient(c, (EP[:vTAUX_POS])[1, 1]) ≈ 0.5
+   Evaluated: 0.0 ≈ 0.5
+
+Stacktrace:
+ [1] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:679 [inlined]
+ [2] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:103 [inlined]
+ [3] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [4] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:95 [inlined]
+ [5] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [6] top-level scope
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:43
+T7 Benders subproblem: the row carries the term, budget 10 t gives 300.1: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:106
+  Expression: ≈(objective_value(EP), 300.1, atol = ATOL)
+   Evaluated: 0.0 ≈ 300.1 (atol=1.0e-6)
+
+Stacktrace:
+ [1] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:679 [inlined]
+ [2] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:106 [inlined]
+ [3] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [4] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:95 [inlined]
+ [5] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [6] top-level scope
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:43
+T7 refusals, each with its accepted side: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:110
+  Expression: occursin("must be given together", err(co2_case(; cols = (:f,))))
+   Evaluated: occursin("must be given together", "")
+
+Stacktrace:
+ [1] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:679 [inlined]
+ [2] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:110 [inlined]
+ [3] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [4] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:110 [inlined]
+ [5] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [6] top-level scope
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:43
+T7 refusals, each with its accepted side: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:112
+  Expression: occursin("not a loss line", err(co2_case(; loss = 0.0)))
+   Evaluated: occursin("not a loss line", "")
+
+Stacktrace:
+ [1] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:679 [inlined]
+ [2] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:112 [inlined]
+ [3] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [4] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:110 [inlined]
+ [5] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [6] top-level scope
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:43
+T7 refusals, each with its accepted side: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:114
+  Expression: occursin("Trans_Loss_Segments = 1 only", err(co2_case(); o = Dict("Trans_Loss_Segments" => 0)))
+   Evaluated: occursin("Trans_Loss_Segments = 1 only", "")
+
+Stacktrace:
+ [1] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:679 [inlined]
+ [2] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:114 [inlined]
+ [3] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [4] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:110 [inlined]
+ [5] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [6] top-level scope
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:43
+T7 refusals, each with its accepted side: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:116
+  Expression: occursin("not supported with ParameterScale: 1", err(co2_case(); o = Dict("ParameterScale" => 1)))
+   Evaluated: occursin("not supported with ParameterScale: 1", "")
+
+Stacktrace:
+ [1] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:679 [inlined]
+ [2] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:116 [inlined]
+ [3] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [4] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:110 [inlined]
+ [5] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [6] top-level scope
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:43
+T7 refusals, each with its accepted side: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:118
+  Expression: occursin("mass cap (CO2Cap: 1) only", err(co2_case(); o = Dict("CO2Cap" => 2)))
+   Evaluated: occursin("mass cap (CO2Cap: 1) only", "")
+
+Stacktrace:
+ [1] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:679 [inlined]
+ [2] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:118 [inlined]
+ [3] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [4] macro expansion
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:110 [inlined]
+ [5] macro expansion
+   @ ~/p42ra/julia_depot/juliaup/julia-1.11.5+0.x64.linux.gnu/share/julia/stdlib/v1.11/Test/src/Test.jl:1704 [inlined]
+ [6] top-level scope
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/p2files-18392423/work/test/test_ops_co2_lines.jl:43
+Test Summary:                                                                     | Pass  Fail  Error  Total   Time
+Operational rows: import CO2 on lines                                             |   10    16      4     30  11.1s
+  T7 forward: Phi+ = 20, TH = 30.01, objective 300.1                              |    1     4      2      7   7.2s
+  T7 weighted hour (omega = 2): Phi+ = 10, objective 800.1                        |    1     3             4   0.3s
+  T7 reverse: line 2 -> 1, flow is Phi-, EF+ 0.1, EF- 0.5: the same values        |          2      1      3   0.2s
+  T7 S4: a reverse factor with a zero forward factor adds nothing (fork's filter) |    1            1      2   0.1s
+  T7 absent columns and all-zero factors: no term, objective 0                    |    4                   4   0.2s
+  T7 Benders subproblem: the row carries the term, budget 10 t gives 300.1        |          2             2   2.8s
+  T7 refusals, each with its accepted side                                        |    3     5             8   0.3s

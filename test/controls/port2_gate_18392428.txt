@@ -1,0 +1,67 @@
+START 2026-11-26T01:37:24Z host=della-h12n16 job=18392428
+port tree d4b95f69a312dd53757b7bf3bb267e1dc021ebbe
+path = "/scratch/gpfs/JENKINS/gm1710/p42ra/port/p2-head"
+PORT SOLVE START out_p2_co2on StorageChargeHeadroom=0 HydroBudgetMaxProfile=0 StorageDischargeDerate=1 2026-11-26T01:37:24Z
+override StorageChargeHeadroom = 0
+override HydroBudgetMaxProfile = 0
+override StorageDischargeDerate = 1
+GATE model build seconds 41.319214925
+Optimal objective 9.25366076e+09
+Optimal objective  9.253660760e+09
+GATE termination OPTIMAL primal FEASIBLE_POINT objective 9.253660759885736e9 solve_s 26.548783391
+GATE DUMP OK /scratch/gpfs/JENKINS/gm1710/p42ra/port/gate/cfix/out_p2_co2on
+PORT SOLVE END 2026-11-26T01:41:13Z wall=229
+objective_value,9.253660759885736e9
+num_constraints,2594063
+genx_path,/scratch/gpfs/JENKINS/gm1710/p42ra/port/p2-head/src/GenX.jl
+name,lhs,rhs,dual
+cCO2Emissions_systemwide[1],7.378699000000032e6,7.378699e6,-76.0982768691589
+PORT SOLVE START out_p2_sim1 StorageChargeHeadroom=0 HydroBudgetMaxProfile=0 StorageDischargeDerate=1 StorSimultaneousCharge=1 2026-11-26T01:41:13Z
+override StorageChargeHeadroom = 0
+override HydroBudgetMaxProfile = 0
+override StorageDischargeDerate = 1
+override StorSimultaneousCharge = 1
+GATE model build seconds 43.094695374
+Optimal objective 9.29453645e+09
+Optimal objective  9.294536448e+09
+GATE termination OPTIMAL primal FEASIBLE_POINT objective 9.29453644802593e9 solve_s 26.102220765
+GATE DUMP OK /scratch/gpfs/JENKINS/gm1710/p42ra/port/gate/cfix/out_p2_sim1
+PORT SOLVE END 2026-11-26T01:42:53Z wall=100
+objective_value,9.29453644802593e9
+num_constraints,2627759
+genx_path,/scratch/gpfs/JENKINS/gm1710/p42ra/port/p2-head/src/GenX.jl
+name,lhs,rhs,dual
+cCO2Emissions_systemwide[1],7.3786990000000335e6,7.378699e6,-76.0982768691589
+PORT SOLVE START out_p2_sim1_co2off StorageChargeHeadroom=0 HydroBudgetMaxProfile=0 StorageDischargeDerate=1 StorSimultaneousCharge=1 CO2Cap=0 2026-11-26T01:42:53Z
+override StorageChargeHeadroom = 0
+override HydroBudgetMaxProfile = 0
+override StorageDischargeDerate = 1
+override StorSimultaneousCharge = 1
+override CO2Cap = 0
+GATE model build seconds 35.570497006
+Optimal objective 9.13672241e+09
+Optimal objective  9.136722414e+09
+GATE termination OPTIMAL primal FEASIBLE_POINT objective 9.13672241437165e9 solve_s 17.335007713
+GATE DUMP OK /scratch/gpfs/JENKINS/gm1710/p42ra/port/gate/cfix/out_p2_sim1_co2off
+PORT SOLVE END 2026-11-26T01:44:14Z wall=81
+objective_value,9.13672241437165e9
+num_constraints,2627758
+genx_path,/scratch/gpfs/JENKINS/gm1710/p42ra/port/p2-head/src/GenX.jl
+name,lhs,rhs,dual
+PORT SOLVE START out_p2_co2off StorageChargeHeadroom=0 HydroBudgetMaxProfile=0 StorageDischargeDerate=1 CO2Cap=0 2026-11-26T01:44:14Z
+override StorageChargeHeadroom = 0
+override HydroBudgetMaxProfile = 0
+override StorageDischargeDerate = 1
+override CO2Cap = 0
+GATE model build seconds 36.238555729
+Optimal objective 9.09695569e+09
+Optimal objective  9.096955692e+09
+GATE termination OPTIMAL primal FEASIBLE_POINT objective 9.096955692124744e9 solve_s 20.125655824
+GATE DUMP OK /scratch/gpfs/JENKINS/gm1710/p42ra/port/gate/cfix/out_p2_co2off
+PORT SOLVE END 2026-11-26T01:45:37Z wall=83
+objective_value,9.096955692124744e9
+num_constraints,2594062
+genx_path,/scratch/gpfs/JENKINS/gm1710/p42ra/port/p2-head/src/GenX.jl
+name,lhs,rhs,dual
+END 2026-11-26T01:45:37Z
+DONE

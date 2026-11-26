@@ -108,6 +108,10 @@ end
     include("test_ops_simcharge.jl")
 end
 
+@testset "Operational rows: import CO2 on lines" begin
+    include("test_ops_co2_lines.jl")
+end
+
 # Test writing outputs
 @testset "Writing outputs " begin
     for test_file in filter!(x -> endswith(x, ".jl"), readdir("writing_outputs"))

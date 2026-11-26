@@ -90,12 +90,23 @@ function co2_cap!(EP::Model, inputs::Dict, setup::Dict)
 
     ## Mass-based: Emissions constraint in absolute emissions limit (tons)
     if setup["CO2Cap"] == 1
-        @constraint(EP, cCO2Emissions_systemwide[cap = 1:inputs["NCO2Cap"]],
-            sum(inputs["omega"][t] * EP[:eEmissionsByZone][z, t]
-            for z in findall(x -> x == 1, inputs["dfCO2CapZones"][:, cap]), t in 1:T) -
-            vCO2Cap_slack[cap]<=
-            sum(inputs["dfMaxCO2"][z, cap]
-            for z in findall(x -> x == 1, inputs["dfCO2CapZones"][:, cap])))
+        imports = co2_line_imports!(EP, inputs)
+        if imports === nothing
+            @constraint(EP, cCO2Emissions_systemwide[cap = 1:inputs["NCO2Cap"]],
+                sum(inputs["omega"][t] * EP[:eEmissionsByZone][z, t]
+                for z in findall(x -> x == 1, inputs["dfCO2CapZones"][:, cap]), t in 1:T) -
+                vCO2Cap_slack[cap]<=
+                sum(inputs["dfMaxCO2"][z, cap]
+                for z in findall(x -> x == 1, inputs["dfCO2CapZones"][:, cap])))
+        else
+            # with import CO2 on lines (Network.csv EF_*_CO_2_Cap_Zone_* columns)
+            @constraint(EP, cCO2Emissions_systemwide[cap = 1:inputs["NCO2Cap"]],
+                sum(inputs["omega"][t] * EP[:eEmissionsByZone][z, t]
+                for z in findall(x -> x == 1, inputs["dfCO2CapZones"][:, cap]), t in 1:T) +
+                imports[cap] - vCO2Cap_slack[cap]<=
+                sum(inputs["dfMaxCO2"][z, cap]
+                for z in findall(x -> x == 1, inputs["dfCO2CapZones"][:, cap])))
+        end
 
         ## (fulfilled) demand + Rate-based: Emissions constraint in terms of rate (tons/MWh)
     elseif setup["CO2Cap"] == 2 ##This part moved to non_served_energy.jl
@@ -124,6 +135,46 @@ function co2_cap!(EP::Model, inputs::Dict, setup::Dict)
 end
 
 
+@doc raw"""
+    co2_line_imports!(EP::Model, inputs::Dict)
+
+Import CO2 on lines for the mass cap (`CO2Cap: 1`; ported from the chair's fork d58adffd,
+`co2_cap.jl:93-130`), built only if `load_co2_import_factors!` stored the factors; otherwise
+returns `nothing` and builds nothing. With $EF^+_{l,c}$, $EF^-_{l,c}$ the forward and reverse
+factors (t/MWh):
+```math
+I_c = \sum_{l:\,EF^+_{l,c} \neq 0} \sum_{t} \omega_t \left(EF^+_{l,c}\,\Phi^+_{l,t} + EF^-_{l,c}\,\Phi^-_{l,t}\right)
+```
+(`vTAUX_POS`, `vTAUX_NEG`), added to the left-hand side of `cCO2Emissions_systemwide[c]` by
+`co2_cap!` and `co2_cap_subperiod!`. Lines with $EF^+_{l,c} = 0$ add nothing to cap $c$, even with
+a nonzero reverse factor (the fork's filter). Also builds the fork's per-line expressions
+`eForwardEmissionsByLine[l,t]` $=\sum_c EF^+_{l,c}\Phi^+_{l,t}$ and `eReverseEmissionsByLine[l,t]`
+$=\sum_c EF^-_{l,c}\Phi^-_{l,t}$ over the loss lines (no row reads them). Returns the vector
+$I_c$ (also `EP[:eCO2LineImports]`).
+"""
+function co2_line_imports!(EP::Model, inputs::Dict)
+    haskey(inputs, "dfTransEFForward") || return nothing
+    T = inputs["T"]
+    NC = inputs["NCO2Cap"]
+    ef = inputs["dfTransEFForward"]
+    er = inputs["dfTransEFReverse"]
+    omega = inputs["omega"]
+    LOSS_LINES = inputs["LOSS_LINES"]
+    vTAUX_POS = EP[:vTAUX_POS]
+    vTAUX_NEG = EP[:vTAUX_NEG]
+    @expression(EP, eForwardEmissionsByLine[l in LOSS_LINES, t = 1:T],
+        sum(vTAUX_POS[l, t] * ef[l, cap] for cap in 1:NC))
+    @expression(EP, eReverseEmissionsByLine[l in LOSS_LINES, t = 1:T],
+        sum(vTAUX_NEG[l, t] * er[l, cap] for cap in 1:NC))
+    imports = [AffExpr(0.0) for cap in 1:NC]
+    for cap in 1:NC, l in findall(x -> x != 0, ef[:, cap]), t in 1:T
+        add_to_expression!(imports[cap], omega[t] * ef[l, cap], vTAUX_POS[l, t])
+        er[l, cap] != 0 && add_to_expression!(imports[cap], omega[t] * er[l, cap], vTAUX_NEG[l, t])
+    end
+    EP[:eCO2LineImports] = imports
+    return imports
+end
+
 function co2_cap_subperiod!(EP::Model, inputs::Dict, setup::Dict)
     println("CO2 Policies Operation Module")
 
@@ -148,10 +199,19 @@ function co2_cap_subperiod!(EP::Model, inputs::Dict, setup::Dict)
 
     ## Mass-based: Emissions constraint in absolute emissions limit (tons)
     if setup["CO2Cap"] == 1
-        @constraint(EP, cCO2Emissions_systemwide[cap = 1:inputs["NCO2Cap"]],
-            sum(inputs["omega"][t] * EP[:eEmissionsByZone][z, t]
-            for z in findall(x -> x == 1, inputs["dfCO2CapZones"][:, cap]), t in 1:T) -
-            vCO2Cap_slack[cap]<=vCO2budget[w,cap])
+        imports = co2_line_imports!(EP, inputs)
+        if imports === nothing
+            @constraint(EP, cCO2Emissions_systemwide[cap = 1:inputs["NCO2Cap"]],
+                sum(inputs["omega"][t] * EP[:eEmissionsByZone][z, t]
+                for z in findall(x -> x == 1, inputs["dfCO2CapZones"][:, cap]), t in 1:T) -
+                vCO2Cap_slack[cap]<=vCO2budget[w,cap])
+        else
+            # with import CO2 on lines (Network.csv EF_*_CO_2_Cap_Zone_* columns)
+            @constraint(EP, cCO2Emissions_systemwide[cap = 1:inputs["NCO2Cap"]],
+                sum(inputs["omega"][t] * EP[:eEmissionsByZone][z, t]
+                for z in findall(x -> x == 1, inputs["dfCO2CapZones"][:, cap]), t in 1:T) +
+                imports[cap] - vCO2Cap_slack[cap]<=vCO2budget[w,cap])
+        end
 
         ## (fulfilled) demand + Rate-based: Emissions constraint in terms of rate (tons/MWh)
     elseif setup["CO2Cap"] == 2 ##This part moved to non_served_energy.jl

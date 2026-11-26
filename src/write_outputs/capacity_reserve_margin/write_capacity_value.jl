@@ -67,13 +67,15 @@ function write_capacity_value(path::AbstractString, inputs::Dict, setup::Dict, E
         riskyhour = findall(>=(minimum_crm_price),
             capacity_reserve_margin_price(EP, inputs, setup, i))
 
-        power(y::Vector{Int}) = value.(EP[:vP][y, riskyhour])'
+        power(y::Vector{Int}) = value.(EP[:vP][y, riskyhour]).data'  # vP is a DenseAxisArray (generators)
 
         capvalue[riskyhour, THERM_ALL_EX] = thermal_plant_effective_capacity(EP,
             inputs,
             THERM_ALL_EX,
             i,
-            riskyhour) ./ total_cap(THERM_ALL_EX)
+            riskyhour;
+            hourly_availability = get(setup, "CapResThermalHourlyAvailability", 0) == 1) ./
+                                          total_cap(THERM_ALL_EX)
 
         capvalue[riskyhour, VRE_EX] = crm_derate(i, VRE_EX) .* max_power(riskyhour, VRE_EX)
 

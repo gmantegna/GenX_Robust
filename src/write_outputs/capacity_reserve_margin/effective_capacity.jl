@@ -11,32 +11,41 @@ function thermal_plant_effective_capacity(EP,
         inputs,
         resources::Vector{Int},
         capres_zone::Int,
-        timesteps::Vector{Int})::Matrix{Float64}
+        timesteps::Vector{Int};
+        hourly_availability::Bool = false)::Matrix{Float64}
     eff_cap = thermal_plant_effective_capacity.(Ref(EP),
         Ref(inputs),
         resources,
         Ref(capres_zone),
-        Ref(timesteps))
+        Ref(timesteps);
+        hourly_availability = hourly_availability)
     return reduce(hcat, eff_cap)
 end
 
-function thermal_plant_effective_capacity(EP::AbstractModel, inputs::Dict, y, capres_zone::Int)
+function thermal_plant_effective_capacity(EP::AbstractModel, inputs::Dict, y, capres_zone::Int;
+        hourly_availability::Bool = false)
     T = inputs["T"]
     timesteps = collect(1:T)
-    return thermal_plant_effective_capacity(EP, inputs, y, capres_zone, timesteps)
+    return thermal_plant_effective_capacity(EP, inputs, y, capres_zone, timesteps;
+        hourly_availability = hourly_availability)
 end
 
 function thermal_plant_effective_capacity(EP::AbstractModel,
         inputs::Dict,
         r_id::Int,
         capres_zone::Int,
-        timesteps::Vector{Int})::Vector{Float64}
+        timesteps::Vector{Int};
+        hourly_availability::Bool = false)::Vector{Float64}
     y = r_id
     gen = inputs["RESOURCES"]
     capresfactor = derating_factor(gen[y], tag = capres_zone)
     eTotalCap = value.(EP[:eTotalCap][y])
 
-    effective_capacity = fill(capresfactor * eTotalCap, length(timesteps))
+    if hourly_availability # setting CapResThermalHourlyAvailability = 1 (thermal.jl)
+        effective_capacity = capresfactor .* inputs["pP_Max"][y, timesteps] .* eTotalCap
+    else
+        effective_capacity = fill(capresfactor * eTotalCap, length(timesteps))
+    end
 
     if has_maintenance(inputs) && y in ids_with_maintenance(gen)
         adjustment = thermal_maintenance_capacity_reserve_margin_adjustment(EP,

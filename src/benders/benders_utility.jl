@@ -43,6 +43,13 @@ function separate_inputs_subperiods(inputs::Dict)
         if haskey(inputs, "C_Start")
             inputs_all[w]["C_Start"] = inputs["C_Start"][:,Tw]; 
         end
+        # hourly minimum output and energy budgets (G x T), sliced like pP_Max
+        if haskey(inputs, "pP_Min")
+            inputs_all[w]["pP_Min"] = inputs["pP_Min"][:, Tw]
+        end
+        if haskey(inputs, "pBudget")
+            inputs_all[w]["pBudget"] = inputs["pBudget"][:, Tw]
+        end
         inputs_all[w]["SubPeriod"] = w;
 		if haskey(inputs,"Period_Map")
 			inputs_all[w]["SubPeriod_Index"] = inputs["Period_Map"].Rep_Period[findfirst(inputs["Period_Map"].Rep_Period_Index.==w)];

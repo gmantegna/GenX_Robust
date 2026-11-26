@@ -1,0 +1,539 @@
+host=della-h14n4 job=18376120 start=2026-11-25T21:11:07Z
+0b7cb264 Operational rows 4/4: hurdle rates on loss lines (#204)
+d7e33689 Operational rows 3/4: storage operational groups, discharge derate, charge-headroom switch (#204)
+3c662100 Operational rows 2/4: hourly Pmin, energy budgets, slacks, budgeted-hydro gate, hydro maximum (#204)
+329fd89b Operational rows 1/4: Pmin and energy-budget loaders, new keys, refusals, Benders slicing (#204)
+544cc5cc Merge pull request #13 from gmantegna/panel/harvest-gx
+path = "/scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/work"
+##### src := 0b7cb2648ff88a68443cb0174497421324460275 21:11:10
+=== precompile 21:11:10
+[ Info: GenX: patched MacroEnergySolvers 0.2.2 solve_subproblem (infeasible-point defect: an infeasible subproblem that returns a point was taken for solved). Set GENX_DISABLE_MES_PATCH=1 to keep stock behaviour.
+GenX from /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/work/src/GenX.jl
+=== POST commit 4 head: all four files
+RESULT post4_test_ops_loaders.jl tests@0b7cb2648ff88a68443cb0174497421324460275 file=test_ops_loaders.jl rc=0 21:11:53
+  counts: Test Failed 0 / Error During Test 0
+[ Info: GenX: patched MacroEnergySolvers 0.2.2 solve_subproblem (infeasible-point defect: an infeasible subproblem that returns a point was taken for solved). Set GENX_DISABLE_MES_PATCH=1 to keep stock behaviour.
+Test Summary:                                      | Pass  Total   Time
+Operational rows: loaders, keys, refusals, slicing |   43     43  16.2s
+RESULT post4_test_ops_floors_budgets.jl tests@0b7cb2648ff88a68443cb0174497421324460275 file=test_ops_floors_budgets.jl rc=0 21:12:23
+  counts: Test Failed 0 / Error During Test 0
+[ Info: GenX: patched MacroEnergySolvers 0.2.2 solve_subproblem (infeasible-point defect: an infeasible subproblem that returns a point was taken for solved). Set GENX_DISABLE_MES_PATCH=1 to keep stock behaviour.
+Test Summary:                                    | Pass  Total   Time
+Operational rows: floors, budgets, hydro maximum |   49     49  16.7s
+RESULT post4_test_ops_storage_groups.jl tests@0b7cb2648ff88a68443cb0174497421324460275 file=test_ops_storage_groups.jl rc=0 21:12:38
+  counts: Test Failed 0 / Error During Test 0
+[ Info: GenX: patched MacroEnergySolvers 0.2.2 solve_subproblem (infeasible-point defect: an infeasible subproblem that returns a point was taken for solved). Set GENX_DISABLE_MES_PATCH=1 to keep stock behaviour.
+Test Summary:                                             | Pass  Total  Time
+Operational rows: storage groups, derate, charge headroom |   29     29  6.2s
+RESULT post4_test_ops_hurdle.jl tests@0b7cb2648ff88a68443cb0174497421324460275 file=test_ops_hurdle.jl rc=0 21:12:56
+  counts: Test Failed 0 / Error During Test 0
+[ Info: GenX: patched MacroEnergySolvers 0.2.2 solve_subproblem (infeasible-point defect: an infeasible subproblem that returns a point was taken for solved). Set GENX_DISABLE_MES_PATCH=1 to keep stock behaviour.
+Test Summary:                  | Pass  Total  Time
+Operational rows: hurdle rates |   15     15  7.4s
+##### src := 544cc5ccc8450c52730ba868d44c858d2a1b5a8e 21:12:56
+RESULT pre1 tests@329fd89bb54d16c400ccf2aebcde9d4a8befbb1f file=test_ops_loaders.jl rc=1 21:17:07
+  counts: Test Failed 12 / Error During Test 16
+L1 absent inputs: nothing stored, defaults: Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/329fd89bb54d16c400ccf2aebcde9d4a8befbb1f/test/test_ops_loaders.jl:24
+  Test threw exception
+  Expression: d["Hourly_Pmin"] == 0
+  KeyError: key "Hourly_Pmin" not found
+--
+L1 absent inputs: nothing stored, defaults: Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/329fd89bb54d16c400ccf2aebcde9d4a8befbb1f/test/test_ops_loaders.jl:25
+  Test threw exception
+  Expression: d["Fixed_Dispatch"] == 0
+  KeyError: key "Fixed_Dispatch" not found
+--
+L1 absent inputs: nothing stored, defaults: Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/329fd89bb54d16c400ccf2aebcde9d4a8befbb1f/test/test_ops_loaders.jl:26
+  Test threw exception
+  Expression: d["HydroBudgetMaxProfile"] == 0
+  KeyError: key "HydroBudgetMaxProfile" not found
+--
+L1 absent inputs: nothing stored, defaults: Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/329fd89bb54d16c400ccf2aebcde9d4a8befbb1f/test/test_ops_loaders.jl:27
+  Test threw exception
+  Expression: d["StorageDischargeDerate"] == 0
+  KeyError: key "StorageDischargeDerate" not found
+--
+L1 absent inputs: nothing stored, defaults: Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/329fd89bb54d16c400ccf2aebcde9d4a8befbb1f/test/test_ops_loaders.jl:28
+  Test threw exception
+  Expression: d["StorageChargeHeadroom"] == 1
+  KeyError: key "StorageChargeHeadroom" not found
+--
+L2 Generators_Pmin.csv read with Hourly_Pmin 1; missing column = 0: Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/329fd89bb54d16c400ccf2aebcde9d4a8befbb1f/test/test_ops_loaders.jl:38
+  Test threw exception
+  Expression: (inputs["pP_Min"])[gT, 1] == 0.3
+  KeyError: key "pP_Min" not found
+--
+L2 Generators_Pmin.csv read with Hourly_Pmin 1; missing column = 0: Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/329fd89bb54d16c400ccf2aebcde9d4a8befbb1f/test/test_ops_loaders.jl:39
+  Test threw exception
+  Expression: (inputs["pP_Min"])[gG, 1] == 0.0
+  KeyError: key "pP_Min" not found
+--
+L2 Generators_Pmin.csv read with Hourly_Pmin 1; missing column = 0: Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/329fd89bb54d16c400ccf2aebcde9d4a8befbb1f/test/test_ops_loaders.jl:40
+  Test threw exception
+  Expression: inputs["PMIN_RIDS"] == [gT]
+  KeyError: key "PMIN_RIDS" not found
+--
+L3 Hourly_Pmin 1 needs the file: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/329fd89bb54d16c400ccf2aebcde9d4a8befbb1f/test/test_ops_loaders.jl:48
+  Expression: occursin("Generators_Pmin.csv does not exist", load_err(dir; overrides = Dict("Hourly_Pmin" => 1)))
+   Evaluated: occursin("Generators_Pmin.csv does not exist", "")
+
+--
+L4 Hourly_energy_budget.csv read when present: Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/329fd89bb54d16c400ccf2aebcde9d4a8befbb1f/test/test_ops_loaders.jl:58
+  Test threw exception
+  Expression: (inputs["pBudget"])[gG, 1] == 0.5
+  KeyError: key "pBudget" not found
+--
+L4 Hourly_energy_budget.csv read when present: Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/329fd89bb54d16c400ccf2aebcde9d4a8befbb1f/test/test_ops_loaders.jl:59
+  Test threw exception
+  Expression: (inputs["pBudget"])[gT, 1] == 0.0
+  KeyError: key "pBudget" not found
+--
+L4 Hourly_energy_budget.csv read when present: Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/329fd89bb54d16c400ccf2aebcde9d4a8befbb1f/test/test_ops_loaders.jl:60
+  Test threw exception
+  Expression: inputs["BUDGET_RIDS"] == [gG]
+  KeyError: key "BUDGET_RIDS" not found
+--
+L5 Fixed_Dispatch 1 refused, 0 accepted: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/329fd89bb54d16c400ccf2aebcde9d4a8befbb1f/test/test_ops_loaders.jl:65
+  Expression: occursin("Fixed_Dispatch: 1", load_err(dir; overrides = Dict("Fixed_Dispatch" => 1)))
+   Evaluated: occursin("Fixed_Dispatch: 1", "")
+
+--
+L5 Fixed_Dispatch 1 refused, 0 accepted: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/329fd89bb54d16c400ccf2aebcde9d4a8befbb1f/test/test_ops_loaders.jl:68
+  Expression: occursin("must be 0 or 1", load_err(dir; overrides = Dict("HydroBudgetMaxProfile" => 2)))
+   Evaluated: occursin("must be 0 or 1", "")
+
+--
+L6 ParameterScale 1 refused with these inputs, accepted without: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/329fd89bb54d16c400ccf2aebcde9d4a8befbb1f/test/test_ops_loaders.jl:74
+  Expression: occursin("ParameterScale: 1 is not supported", load_err(dir; overrides = Dict("Hourly_Pmin" => 1, "ParameterScale" => 1)))
+   Evaluated: occursin("ParameterScale: 1 is not supported", "")
+
+--
+L6 ParameterScale 1 refused with these inputs, accepted without: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/329fd89bb54d16c400ccf2aebcde9d4a8befbb1f/test/test_ops_loaders.jl:79
+  Expression: occursin("ParameterScale: 1 is not supported", load_err(dirb; overrides = Dict("ParameterScale" => 1)))
+   Evaluated: occursin("ParameterScale: 1 is not supported", "")
+
+--
+L7 OperationalFloorPenalty must exceed VoLL (1000): Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/329fd89bb54d16c400ccf2aebcde9d4a8befbb1f/test/test_ops_loaders.jl:85
+  Expression: occursin("must be a number above VoLL", load_err(dir; overrides = Dict("OperationalFloorPenalty" => 1000)))
+   Evaluated: occursin("must be a number above VoLL", "")
+
+--
+L7 OperationalFloorPenalty must exceed VoLL (1000): Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/329fd89bb54d16c400ccf2aebcde9d4a8befbb1f/test/test_ops_loaders.jl:89
+  Expression: occursin("must be a number above VoLL", load_err(dir; overrides = Dict("OperationalFloorPenalty" => "high")))
+   Evaluated: occursin("must be a number above VoLL", "")
+
+--
+L7b VoLL is the largest segment cost (two segments: 1000 and 1500): Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/329fd89bb54d16c400ccf2aebcde9d4a8befbb1f/test/test_ops_loaders.jl:101
+  Expression: occursin("above VoLL = 1500", load_err(dir; overrides = Dict("OperationalFloorPenalty" => 1200)))
+   Evaluated: occursin("above VoLL = 1500", "")
+
+--
+L8 EnergyBudgetWindowHours divides the subperiod (H = 48): Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/329fd89bb54d16c400ccf2aebcde9d4a8befbb1f/test/test_ops_loaders.jl:110
+  Expression: occursin("EnergyBudgetWindowHours must be", load_err(dir; overrides = Dict("EnergyBudgetWindowHours" => 25)))
+   Evaluated: occursin("EnergyBudgetWindowHours must be", "")
+
+--
+L8 EnergyBudgetWindowHours divides the subperiod (H = 48): Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/329fd89bb54d16c400ccf2aebcde9d4a8befbb1f/test/test_ops_loaders.jl:112
+  Expression: occursin("EnergyBudgetWindowHours must be", load_err(dir; overrides = Dict("EnergyBudgetWindowHours" => 0)))
+   Evaluated: occursin("EnergyBudgetWindowHours must be", "")
+
+--
+L8 EnergyBudgetWindowHours divides the subperiod (H = 48): Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/329fd89bb54d16c400ccf2aebcde9d4a8befbb1f/test/test_ops_loaders.jl:114
+  Expression: occursin("EnergyBudgetWindowHours must be", load_err(dir; overrides = Dict("EnergyBudgetWindowHours" => 96)))
+   Evaluated: occursin("EnergyBudgetWindowHours must be", "")
+
+--
+L9 budgeted hydro with LDS 1 refused, LDS 0 accepted: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/329fd89bb54d16c400ccf2aebcde9d4a8befbb1f/test/test_ops_loaders.jl:121
+  Expression: occursin("cannot have LDS = 1", load_err(mk(1)))
+   Evaluated: occursin("cannot have LDS = 1", "")
+
+--
+T11 slicing of pP_Min and pBudget into Benders subperiods: Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/329fd89bb54d16c400ccf2aebcde9d4a8befbb1f/test/test_ops_loaders.jl:135
+  Test threw exception
+  Expression: size((parts[2])["pP_Min"]) == (inputs["G"], 24)
+  KeyError: key "pP_Min" not found
+--
+T11 slicing of pP_Min and pBudget into Benders subperiods: Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/329fd89bb54d16c400ccf2aebcde9d4a8befbb1f/test/test_ops_loaders.jl:136
+  Test threw exception
+  Expression: all(((parts[2])["pP_Min"])[gT, :] .* 100 .≈ 60)
+  KeyError: key "pP_Min" not found
+--
+T11 slicing of pP_Min and pBudget into Benders subperiods: Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/329fd89bb54d16c400ccf2aebcde9d4a8befbb1f/test/test_ops_loaders.jl:137
+  Test threw exception
+  Expression: all(((parts[1])["pP_Min"])[gT, :] .* 100 .≈ 30)
+  KeyError: key "pP_Min" not found
+--
+T11 slicing of pP_Min and pBudget into Benders subperiods: Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/329fd89bb54d16c400ccf2aebcde9d4a8befbb1f/test/test_ops_loaders.jl:138
+  Test threw exception
+  Expression: sum(((parts[2])["pBudget"])[gH, :]) * 100 ≈ 1440
+  KeyError: key "pBudget" not found
+--
+T11 slicing of pP_Min and pBudget into Benders subperiods: Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/329fd89bb54d16c400ccf2aebcde9d4a8befbb1f/test/test_ops_loaders.jl:139
+  Test threw exception
+  Expression: sum(((parts[1])["pBudget"])[gH, :]) * 100 ≈ 720
+  KeyError: key "pBudget" not found
+     @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/329fd89bb54d16c400ccf2aebcde9d4a8befbb1f/test/test_ops_loaders.jl:17
+Test Summary:                                                        | Pass  Fail  Error  Total   Time
+Operational rows: loaders, keys, refusals, slicing                   |   15    12     16     43  19.8s
+  L1 absent inputs: nothing stored, defaults                         |    4            5      9   4.9s
+  L2 Generators_Pmin.csv read with Hourly_Pmin 1; missing column = 0 |    1            3      4   0.8s
+  L3 Hourly_Pmin 1 needs the file                                    |    1     1             2   1.5s
+  L4 Hourly_energy_budget.csv read when present                      |                 3      3   0.4s
+  L5 Fixed_Dispatch 1 refused, 0 accepted                            |    1     2             3   0.1s
+  L6 ParameterScale 1 refused with these inputs, accepted without    |    2     2             4   0.1s
+  L7 OperationalFloorPenalty must exceed VoLL (1000)                 |    2     2             4   0.3s
+  L7b VoLL is the largest segment cost (two segments: 1000 and 1500) |    1     1             2   5.3s
+  L8 EnergyBudgetWindowHours divides the subperiod (H = 48)          |    2     3             5   0.1s
+  L9 budgeted hydro with LDS 1 refused, LDS 0 accepted               |    1     1             2   5.6s
+  T11 slicing of pP_Min and pBudget into Benders subperiods          |                 5      5   0.7s
+##### src := 329fd89bb54d16c400ccf2aebcde9d4a8befbb1f 21:17:07
+RESULT post1 tests@329fd89bb54d16c400ccf2aebcde9d4a8befbb1f file=test_ops_loaders.jl rc=0 21:23:51
+  counts: Test Failed 0 / Error During Test 0
+[ Info: GenX: patched MacroEnergySolvers 0.2.2 solve_subproblem (infeasible-point defect: an infeasible subproblem that returns a point was taken for solved). Set GENX_DISABLE_MES_PATCH=1 to keep stock behaviour.
+Test Summary:                                      | Pass  Total   Time
+Operational rows: loaders, keys, refusals, slicing |   43     43  11.8s
+RESULT pre2 tests@3c662100cd08925330312f85bdec6d377963ee86 file=test_ops_floors_budgets.jl rc=1 21:24:16
+  counts: Test Failed 27 / Error During Test 11
+T1 Pmin: T >= 30, objective 300: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/3c662100cd08925330312f85bdec6d377963ee86/test/test_ops_floors_budgets.jl:30
+  Expression: ≈(objective_value(EP), 300, atol = ATOL)
+   Evaluated: 0.0 ≈ 300 (atol=1.0e-6)
+
+--
+T1 Pmin: T >= 30, objective 300: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/3c662100cd08925330312f85bdec6d377963ee86/test/test_ops_floors_budgets.jl:31
+  Expression: ≈((vp(EP, inputs, "TH"))[1], 30, atol = ATOL)
+   Evaluated: 0.0 ≈ 30 (atol=1.0e-6)
+
+--
+T2 floor slack: u = 10, objective 100,200; hard row infeasible: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/3c662100cd08925330312f85bdec6d377963ee86/test/test_ops_floors_budgets.jl:39
+  Expression: ≈(objective_value(EP), 100200, atol = ATOL)
+   Evaluated: 0.0 ≈ 100200 (atol=1.0e-6)
+
+--
+T2 floor slack: u = 10, objective 100,200; hard row infeasible: Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/3c662100cd08925330312f85bdec6d377963ee86/test/test_ops_floors_budgets.jl:40
+  Test threw exception
+  Expression: ≈(sum(value.(EP[:vFloorSlack])), 10, atol = ATOL)
+  KeyError: key :vFloorSlack not found
+--
+T2 floor slack: u = 10, objective 100,200; hard row infeasible: Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/3c662100cd08925330312f85bdec6d377963ee86/test/test_ops_floors_budgets.jl:41
+  Test threw exception
+  Expression: ≈(value(EP[:eTotalCFloorSlack]), 100000, atol = ATOL)
+  KeyError: key :eTotalCFloorSlack not found
+--
+T2 floor slack: u = 10, objective 100,200; hard row infeasible: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/3c662100cd08925330312f85bdec6d377963ee86/test/test_ops_floors_budgets.jl:43
+  Expression: termination_status(EPh) in (MOI.INFEASIBLE, MOI.INFEASIBLE_OR_UNBOUNDED)
+   Evaluated: MathOptInterface.OPTIMAL in (MathOptInterface.INFEASIBLE, MathOptInterface.INFEASIBLE_OR_UNBOUNDED)
+
+--
+T2b tie: NSE 270 at P = 10,000 and 1,001; P = 1,000 refused: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/3c662100cd08925330312f85bdec6d377963ee86/test/test_ops_floors_budgets.jl:54
+  Expression: ≈(nse_mwh(EPh), 270, atol = ATOL)
+   Evaluated: 200.0 ≈ 270 (atol=1.0e-6)
+
+--
+T2b tie: NSE 270 at P = 10,000 and 1,001; P = 1,000 refused: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/3c662100cd08925330312f85bdec6d377963ee86/test/test_ops_floors_budgets.jl:58
+  Expression: ≈(nse_mwh(EP), 270, atol = ATOL)
+   Evaluated: 200.0 ≈ 270 (atol=1.0e-6)
+
+--
+T2b tie: NSE 270 at P = 10,000 and 1,001; P = 1,000 refused: Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/3c662100cd08925330312f85bdec6d377963ee86/test/test_ops_floors_budgets.jl:59
+  Test threw exception
+  Expression: ≈(sum(value.(EP[:vFloorSlack])), 0, atol = ATOL)
+  KeyError: key :vFloorSlack not found
+--
+T2b tie: NSE 270 at P = 10,000 and 1,001; P = 1,000 refused: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/3c662100cd08925330312f85bdec6d377963ee86/test/test_ops_floors_budgets.jl:58
+  Expression: ≈(nse_mwh(EP), 270, atol = ATOL)
+   Evaluated: 200.0 ≈ 270 (atol=1.0e-6)
+
+--
+T2b tie: NSE 270 at P = 10,000 and 1,001; P = 1,000 refused: Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/3c662100cd08925330312f85bdec6d377963ee86/test/test_ops_floors_budgets.jl:59
+  Test threw exception
+  Expression: ≈(sum(value.(EP[:vFloorSlack])), 0, atol = ATOL)
+  KeyError: key :vFloorSlack not found
+--
+T3 budget: hydro 1,200 MWh, T 240 MWh, objective 2,400: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/3c662100cd08925330312f85bdec6d377963ee86/test/test_ops_floors_budgets.jl:70
+  Expression: ≈(objective_value(EP), 2400, atol = ATOL)
+   Evaluated: 0.0 ≈ 2400 (atol=1.0e-6)
+
+--
+T3 budget: hydro 1,200 MWh, T 240 MWh, objective 2,400: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/3c662100cd08925330312f85bdec6d377963ee86/test/test_ops_floors_budgets.jl:71
+  Expression: ≈(sum(vp(EP, inputs, "Hy")), 1200, atol = ATOL)
+   Evaluated: 1440.0 ≈ 1200 (atol=1.0e-6)
+
+--
+T3 budget: hydro 1,200 MWh, T 240 MWh, objective 2,400: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/3c662100cd08925330312f85bdec6d377963ee86/test/test_ops_floors_budgets.jl:72
+  Expression: ≈(sum(vp(EP, inputs, "TH")), 240, atol = ATOL)
+   Evaluated: 0.0 ≈ 240 (atol=1.0e-6)
+
+--
+T3m hydro maximum: key 0 objective 6,000; key 1 NSE 60, objective 65,400: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/3c662100cd08925330312f85bdec6d377963ee86/test/test_ops_floors_budgets.jl:80
+  Expression: ≈(sum(vp(EP0, inputs, "TH")), 600, atol = ATOL)
+   Evaluated: 360.0 ≈ 600 (atol=1.0e-6)
+
+--
+T3m hydro maximum: key 0 objective 6,000; key 1 NSE 60, objective 65,400: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/3c662100cd08925330312f85bdec6d377963ee86/test/test_ops_floors_budgets.jl:81
+  Expression: ≈(objective_value(EP0), 6000, atol = ATOL)
+   Evaluated: 3600.0 ≈ 6000 (atol=1.0e-6)
+
+--
+T3m hydro maximum: key 0 objective 6,000; key 1 NSE 60, objective 65,400: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/3c662100cd08925330312f85bdec6d377963ee86/test/test_ops_floors_budgets.jl:83
+  Expression: ≈(nse_mwh(EP1), 60, atol = ATOL)
+   Evaluated: 0.0 ≈ 60 (atol=1.0e-6)
+
+--
+T3m hydro maximum: key 0 objective 6,000; key 1 NSE 60, objective 65,400: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/3c662100cd08925330312f85bdec6d377963ee86/test/test_ops_floors_budgets.jl:84
+  Expression: ≈(sum(vp(EP1, inputs, "TH")), 540, atol = ATOL)
+   Evaluated: 360.0 ≈ 540 (atol=1.0e-6)
+
+--
+T3m hydro maximum: key 0 objective 6,000; key 1 NSE 60, objective 65,400: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/3c662100cd08925330312f85bdec6d377963ee86/test/test_ops_floors_budgets.jl:85
+  Expression: ≈(objective_value(EP1), 65400, atol = ATOL)
+   Evaluated: 3600.0 ≈ 65400 (atol=1.0e-6)
+
+--
+T3m hydro maximum: key 0 objective 6,000; key 1 NSE 60, objective 65,400: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/3c662100cd08925330312f85bdec6d377963ee86/test/test_ops_floors_budgets.jl:86
+  Expression: maximum(vp(EP1, inputs, "Hy")) <= 40 + ATOL
+   Evaluated: 100.0 <= 40.000001
+
+--
+T3w window: 24 h windows 3,120,000; one 48 h window 480,000: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/3c662100cd08925330312f85bdec6d377963ee86/test/test_ops_floors_budgets.jl:94
+  Expression: ≈(nse_mwh(EP24), 720, atol = ATOL)
+   Evaluated: 0.0 ≈ 720 (atol=1.0e-6)
+
+--
+T3w window: 24 h windows 3,120,000; one 48 h window 480,000: Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/3c662100cd08925330312f85bdec6d377963ee86/test/test_ops_floors_budgets.jl:95
+  Test threw exception
+  Expression: ≈(sum(value.(EP24[:vBudgetSpill])), 240, atol = ATOL)
+  KeyError: key :vBudgetSpill not found
+--
+T3w window: 24 h windows 3,120,000; one 48 h window 480,000: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/3c662100cd08925330312f85bdec6d377963ee86/test/test_ops_floors_budgets.jl:96
+  Expression: ≈(objective_value(EP24), 3120000, atol = 0.0001)
+   Evaluated: 0.0 ≈ 3120000 (atol=0.0001)
+
+--
+T3w window: 24 h windows 3,120,000; one 48 h window 480,000: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/3c662100cd08925330312f85bdec6d377963ee86/test/test_ops_floors_budgets.jl:98
+  Expression: ≈(nse_mwh(EP48), 480, atol = ATOL)
+   Evaluated: 0.0 ≈ 480 (atol=1.0e-6)
+
+--
+T3w window: 24 h windows 3,120,000; one 48 h window 480,000: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/3c662100cd08925330312f85bdec6d377963ee86/test/test_ops_floors_budgets.jl:99
+  Expression: ≈(objective_value(EP48), 480000, atol = 0.0001)
+   Evaluated: 0.0 ≈ 480000 (atol=0.0001)
+
+--
+T-spill: v = 720; variant (no upward slack) NSE 56: Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/3c662100cd08925330312f85bdec6d377963ee86/test/test_ops_floors_budgets.jl:106
+  Test threw exception
+  Expression: ≈(sum(value.(EP[:vBudgetSpill])), 720, atol = ATOL)
+  KeyError: key :vBudgetSpill not found
+--
+T-spill: v = 720; variant (no upward slack) NSE 56: Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/3c662100cd08925330312f85bdec6d377963ee86/test/test_ops_floors_budgets.jl:107
+  Test threw exception
+  Expression: ≈(value(EP[:eTotalCBudgetSpill]), 720 * 10000, atol = 0.0001)
+  KeyError: key :eTotalCBudgetSpill not found
+--
+T-spill: v = 720; variant (no upward slack) NSE 56: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/3c662100cd08925330312f85bdec6d377963ee86/test/test_ops_floors_budgets.jl:108
+  Expression: ≈(objective_value(EP), 7200000, atol = 0.0001)
+   Evaluated: 0.0 ≈ 7200000 (atol=0.0001)
+
+--
+T-spill: v = 720; variant (no upward slack) NSE 56: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/3c662100cd08925330312f85bdec6d377963ee86/test/test_ops_floors_budgets.jl:111
+  Expression: ≈(sum(vp(EPv, inputsv, "Hy")), 24, atol = ATOL)
+   Evaluated: 80.0 ≈ 24 (atol=1.0e-6)
+
+--
+T-spill: v = 720; variant (no upward slack) NSE 56: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/3c662100cd08925330312f85bdec6d377963ee86/test/test_ops_floors_budgets.jl:112
+  Expression: ≈(nse_mwh(EPv), 56, atol = ATOL)
+   Evaluated: 0.0 ≈ 56 (atol=1.0e-6)
+
+--
+T-spill: v = 720; variant (no upward slack) NSE 56: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/3c662100cd08925330312f85bdec6d377963ee86/test/test_ops_floors_budgets.jl:113
+  Expression: ≈(objective_value(EPv), 56000, atol = 0.0001)
+   Evaluated: 0.0 ≈ 56000 (atol=0.0001)
+
+--
+T4 hydro without a budget column keeps the reservoir rows: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/3c662100cd08925330312f85bdec6d377963ee86/test/test_ops_floors_budgets.jl:123
+  Expression: !(g1 in axes(EP[:cHydroReservoirInterior], 1))
+   Evaluated: !(1 in [1, 2])
+
+--
+T4 hydro without a budget column keeps the reservoir rows: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/3c662100cd08925330312f85bdec6d377963ee86/test/test_ops_floors_budgets.jl:125
+  Expression: !(g1 in axes(EP[:cHydroReservoirStart], 1))
+   Evaluated: !(1 in [1, 2])
+
+--
+T4 hydro without a budget column keeps the reservoir rows: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/3c662100cd08925330312f85bdec6d377963ee86/test/test_ops_floors_budgets.jl:127
+  Expression: ≈(objective_value(EP), 1200, atol = ATOL)
+   Evaluated: 0.0 ≈ 1200 (atol=1.0e-6)
+
+--
+T11 Benders subproblem rows of period 2 read the sliced floor and budget: Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/3c662100cd08925330312f85bdec6d377963ee86/test/test_ops_floors_budgets.jl:142
+  Test threw exception
+  Expression: all((normalized_rhs((EP2[:cHourlyPmin])[gT, t]) ≈ 60 for t = 1:24))
+  KeyError: key :cHourlyPmin not found
+--
+T11 Benders subproblem rows of period 2 read the sliced floor and budget: Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/3c662100cd08925330312f85bdec6d377963ee86/test/test_ops_floors_budgets.jl:143
+  Test threw exception
+  Expression: normalized_rhs((EP2[:cHourlyBudget])[1, gH]) ≈ 1440
+  KeyError: key :cHourlyBudget not found
+--
+T11 Benders subproblem rows of period 2 read the sliced floor and budget: Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/3c662100cd08925330312f85bdec6d377963ee86/test/test_ops_floors_budgets.jl:145
+  Test threw exception
+  Expression: normalized_rhs((EP1[:cHourlyPmin])[gT, 1]) ≈ 30
+  KeyError: key :cHourlyPmin not found
+--
+T11 Benders subproblem rows of period 2 read the sliced floor and budget: Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/3c662100cd08925330312f85bdec6d377963ee86/test/test_ops_floors_budgets.jl:146
+  Test threw exception
+  Expression: normalized_rhs((EP1[:cHourlyBudget])[1, gH]) ≈ 720
+  KeyError: key :cHourlyBudget not found
+     @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/3c662100cd08925330312f85bdec6d377963ee86/test/test_ops_floors_budgets.jl:26
+Test Summary:                                                              | Pass  Fail  Error  Total   Time
+Operational rows: floors, budgets, hydro maximum                           |   11    27     11     49  14.7s
+  T1 Pmin: T >= 30, objective 300                                          |    1     2             3   4.8s
+  T2 floor slack: u = 10, objective 100,200; hard row infeasible           |    1     2      2      5   1.1s
+  T2b tie: NSE 270 at P = 10,000 and 1,001; P = 1,000 refused              |    3     3      2      8   2.1s
+  T3 budget: hydro 1,200 MWh, T 240 MWh, objective 2,400                   |    1     3             4   0.6s
+  T3m hydro maximum: key 0 objective 6,000; key 1 NSE 60, objective 65,400 |    1     6             7   0.1s
+  T3w window: 24 h windows 3,120,000; one 48 h window 480,000              |    1     4      1      6   4.1s
+  T-spill: v = 720; variant (no upward slack) NSE 56                       |    1     4      2      7   0.3s
+  T4 hydro without a budget column keeps the reservoir rows                |    2     3             5   0.3s
+  T11 Benders subproblem rows of period 2 read the sliced floor and budget |                 4      4   1.3s
+##### src := 3c662100cd08925330312f85bdec6d377963ee86 21:24:16
+RESULT post2 tests@3c662100cd08925330312f85bdec6d377963ee86 file=test_ops_floors_budgets.jl rc=0 21:30:49
+  counts: Test Failed 0 / Error During Test 0
+[ Info: GenX: patched MacroEnergySolvers 0.2.2 solve_subproblem (infeasible-point defect: an infeasible subproblem that returns a point was taken for solved). Set GENX_DISABLE_MES_PATCH=1 to keep stock behaviour.
+Test Summary:                                    | Pass  Total   Time
+Operational rows: floors, budgets, hydro maximum |   49     49  11.8s
+RESULT pre3 tests@d7e33689812a7d926685a070892ec2de9b1ead45 file=test_ops_storage_groups.jl rc=1 21:31:08
+  counts: Test Failed 10 / Error During Test 4
+T5 group + derate: 0 without derate, NSE 15 / 15,000 with it: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/d7e33689812a7d926685a070892ec2de9b1ead45/test/test_ops_storage_groups.jl:31
+  Expression: ≈(nse_mwh(EP1), 15, atol = ATOL)
+   Evaluated: 0.0 ≈ 15 (atol=1.0e-6)
+
+--
+T5 group + derate: 0 without derate, NSE 15 / 15,000 with it: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/d7e33689812a7d926685a070892ec2de9b1ead45/test/test_ops_storage_groups.jl:32
+  Expression: ≈(objective_value(EP1), 15000, atol = ATOL)
+   Evaluated: 0.0 ≈ 15000 (atol=1.0e-6)
+
+--
+T5 group + derate: 0 without derate, NSE 15 / 15,000 with it: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/d7e33689812a7d926685a070892ec2de9b1ead45/test/test_ops_storage_groups.jl:33
+  Expression: ≈((vp(EP1, inputs, "A"))[2], 20, atol = ATOL)
+   Evaluated: 10.0 ≈ 20 (atol=1.0e-6)
+
+--
+T5 group + derate: 0 without derate, NSE 15 / 15,000 with it: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/d7e33689812a7d926685a070892ec2de9b1ead45/test/test_ops_storage_groups.jl:34
+  Expression: all(abs.(vp(EP1, inputs, "B")) .<= ATOL)
+
+--
+T5 group + derate: 0 without derate, NSE 15 / 15,000 with it: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/d7e33689812a7d926685a070892ec2de9b1ead45/test/test_ops_storage_groups.jl:36
+  Expression: all(abs.(value.((EP1[:vCHARGE])[gB, :])) .<= ATOL)
+
+--
+T5 group + derate: 0 without derate, NSE 15 / 15,000 with it: Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/d7e33689812a7d926685a070892ec2de9b1ead45/test/test_ops_storage_groups.jl:37
+  Test threw exception
+  Expression: inputs["STOR_BIN_ONLY"] == [gB]
+  KeyError: key "STOR_BIN_ONLY" not found
+--
+T5 group + derate: 0 without derate, NSE 15 / 15,000 with it: Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/d7e33689812a7d926685a070892ec2de9b1ead45/test/test_ops_storage_groups.jl:38
+  Test threw exception
+  Expression: value((EP1[:eTotalCapStorOp])[findfirst((==)("A"), inputs["RESOURCE_NAMES"])]) ≈ 40
+  KeyError: key :eTotalCapStorOp not found
+--
+T5 group + derate: 0 without derate, NSE 15 / 15,000 with it: Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/d7e33689812a7d926685a070892ec2de9b1ead45/test/test_ops_storage_groups.jl:39
+  Test threw exception
+  Expression: value((EP1[:eTotalCapEnergyStorOp])[findfirst((==)("A"), inputs["RESOURCE_NAMES"])]) ≈ 160
+  KeyError: key :eTotalCapEnergyStorOp not found
+--
+T5 ungrouped storage gets the derate too: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/d7e33689812a7d926685a070892ec2de9b1ead45/test/test_ops_storage_groups.jl:46
+  Expression: (vp(EP1, inputs, "A"))[2] <= 5 + ATOL
+   Evaluated: 10.0 <= 5.000001
+
+--
+T5 refusals: Min_Duration != Max_Duration; inconsistent members: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/d7e33689812a7d926685a070892ec2de9b1ead45/test/test_ops_storage_groups.jl:53
+  Expression: occursin("Min_Duration 3", errmsg_ops((()->begin
+                #= /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/d7e33689812a7d926685a070892ec2de9b1ead45/test/test_ops_storage_groups.jl:53 =#
+                ops_inputs(bad, ops_setup(bad))
+--
+T5 refusals: Min_Duration != Max_Duration; inconsistent members: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/d7e33689812a7d926685a070892ec2de9b1ead45/test/test_ops_storage_groups.jl:57
+  Expression: occursin("inconsistent members", errmsg_ops((()->begin
+                #= /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/d7e33689812a7d926685a070892ec2de9b1ead45/test/test_ops_storage_groups.jl:57 =#
+                ops_inputs(badeff, ops_setup(badeff))
+--
+T5 a group with LDS members is refused with Benders 1, accepted with 0: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/d7e33689812a7d926685a070892ec2de9b1ead45/test/test_ops_storage_groups.jl:66
+  Expression: occursin("not supported with Benders: 1", errmsg_ops((()->begin
+                #= /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/d7e33689812a7d926685a070892ec2de9b1ead45/test/test_ops_storage_groups.jl:67 =#
+                ops_inputs(lds, ops_setup(lds; overrides = Dict("Benders" => 1)))
+--
+StorageChargeHeadroom 0 drops one row per storage and hour: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/d7e33689812a7d926685a070892ec2de9b1ead45/test/test_ops_storage_groups.jl:83
+  Expression: ncons(EP1) - ncons(EP0) == 2 * 2
+   Evaluated: 0 == 4
+
+--
+T10 a Stor_Op_Group column of None only: the model without the column: Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/d7e33689812a7d926685a070892ec2de9b1ead45/test/test_ops_storage_groups.jl:94
+  Test threw exception
+  Expression: !(inn["STOR_GROUPS_ACTIVE"])
+  KeyError: key "STOR_GROUPS_ACTIVE" not found
+     @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/d7e33689812a7d926685a070892ec2de9b1ead45/test/test_ops_storage_groups.jl:24
+Test Summary:                                                            | Pass  Fail  Error  Total  Time
+Operational rows: storage groups, derate, charge headroom                |   15    10      4     29  8.7s
+  T5 group + derate: 0 without derate, NSE 15 / 15,000 with it           |    3     5      3     11  6.8s
+  T5 ungrouped storage gets the derate too                               |    1     1             2  0.1s
+  T5 refusals: Min_Duration != Max_Duration; inconsistent members        |    2     2             4  0.5s
+  T5 a group with LDS members is refused with Benders 1, accepted with 0 |    1     1             2  0.1s
+  T5b #836 row with groups: substituted row, NSE 0                       |    3                   3  0.0s
+  StorageChargeHeadroom 0 drops one row per storage and hour             |    1     1             2  0.8s
+  T10 a Stor_Op_Group column of None only: the model without the column  |    4            1      5  0.3s
+##### src := d7e33689812a7d926685a070892ec2de9b1ead45 21:31:09
+RESULT post3 tests@d7e33689812a7d926685a070892ec2de9b1ead45 file=test_ops_storage_groups.jl rc=0 21:35:37
+  counts: Test Failed 0 / Error During Test 0
+[ Info: GenX: patched MacroEnergySolvers 0.2.2 solve_subproblem (infeasible-point defect: an infeasible subproblem that returns a point was taken for solved). Set GENX_DISABLE_MES_PATCH=1 to keep stock behaviour.
+Test Summary:                                             | Pass  Total  Time
+Operational rows: storage groups, derate, charge headroom |   29     29  9.8s
+RESULT pre4 tests@0b7cb2648ff88a68443cb0174497421324460275 file=test_ops_hurdle.jl rc=1 21:36:02
+  counts: Test Failed 6 / Error During Test 2
+T6 forward: flow 50.0250125, hurdle 250.1250625: Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/0b7cb2648ff88a68443cb0174497421324460275/test/test_ops_hurdle.jl:37
+  Test threw exception
+  Expression: ≈(value(EP[:eTotalCHurdle]), 250.1250625, atol = 1.0e-6)
+  KeyError: key :eTotalCHurdle not found
+--
+T6 forward: flow 50.0250125, hurdle 250.1250625: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/0b7cb2648ff88a68443cb0174497421324460275/test/test_ops_hurdle.jl:38
+  Expression: ≈(objective_value(EP), 250.1250625, atol = 1.0e-6)
+   Evaluated: 0.0 ≈ 250.1250625 (atol=1.0e-6)
+
+--
+T6 reverse: hurdle 350.1750875 on the end->start flow: Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/0b7cb2648ff88a68443cb0174497421324460275/test/test_ops_hurdle.jl:44
+  Test threw exception
+  Expression: ≈(value(EP[:eTotalCHurdle]), 350.1750875, atol = 1.0e-6)
+  KeyError: key :eTotalCHurdle not found
+--
+T6 reverse: hurdle 350.1750875 on the end->start flow: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/0b7cb2648ff88a68443cb0174497421324460275/test/test_ops_hurdle.jl:45
+  Expression: ≈(objective_value(EP), 350.1750875, atol = 1.0e-6)
+   Evaluated: 0.0 ≈ 350.1750875 (atol=1.0e-6)
+
+--
+T6 refusals, each with its accepted side: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/0b7cb2648ff88a68443cb0174497421324460275/test/test_ops_hurdle.jl:56
+  Expression: occursin("must be given together", err(two_zone(1; cols = (:f,))))
+   Evaluated: occursin("must be given together", "")
+
+--
+T6 refusals, each with its accepted side: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/0b7cb2648ff88a68443cb0174497421324460275/test/test_ops_hurdle.jl:58
+  Expression: occursin("not a loss line", err(two_zone(1; loss = 0.0)))
+   Evaluated: occursin("not a loss line", "")
+
+--
+T6 refusals, each with its accepted side: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/0b7cb2648ff88a68443cb0174497421324460275/test/test_ops_hurdle.jl:60
+  Expression: occursin("Trans_Loss_Segments = 1 only", err(two_zone(1); o = Dict("Trans_Loss_Segments" => 0)))
+   Evaluated: occursin("Trans_Loss_Segments = 1 only", "")
+
+--
+T6 refusals, each with its accepted side: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/0b7cb2648ff88a68443cb0174497421324460275/test/test_ops_hurdle.jl:62
+  Expression: occursin("ParameterScale: 1", err(two_zone(1); o = Dict("ParameterScale" => 1)))
+   Evaluated: occursin("ParameterScale: 1", "")
+
+   @ /scratch/gpfs/JENKINS/gm1710/p42ra/port/tdd/t/0b7cb2648ff88a68443cb0174497421324460275/test/test_ops_hurdle.jl:33
+Test Summary:                                           | Pass  Fail  Error  Total   Time
+Operational rows: hurdle rates                          |    7     6      2     15  11.8s
+  T6 forward: flow 50.0250125, hurdle 250.1250625       |    2     1      1      4  11.0s
+  T6 reverse: hurdle 350.1750875 on the end->start flow |    1     1      1      3   0.2s
+  T6 absent columns: no hurdle term, objective 0        |    2                   2   0.1s
+  T6 refusals, each with its accepted side              |    2     4             6   0.3s
+post4 = the head runs above (src 0b7cb2648ff88a68443cb0174497421324460275, tests 0b7cb2648ff88a68443cb0174497421324460275)
+end 2026-11-25T21:36:02Z
+DONE

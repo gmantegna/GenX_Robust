@@ -152,7 +152,9 @@ function storage!(EP::Model, inputs::Dict, setup::Dict)
     StorageVirtualDischarge = setup["StorageVirtualDischarge"]
 
     if !isempty(STOR_ALL)
+        storage_operational_groups!(EP, inputs)
         storage_all!(EP, inputs, setup)
+        fix_storage_group_members!(EP, inputs, setup)
     end
 
     if !isempty(inputs["STOR_ASYMMETRIC"])
@@ -216,4 +218,52 @@ function investment_storage!(EP, inputs::Dict, setup::Dict)
     if !isempty(inputs["STOR_ASYMMETRIC"])
         investment_charge!(EP, inputs, setup)
     end
+end
+@doc raw"""
+    storage_operational_groups!(EP::Model, inputs::Dict)
+
+Storage operational groups (`Stor_Op_Group`, ported from the chair's fork). Only if a group exists:
+`eTotalCapStorOp[y]` and `eTotalCapEnergyStorOp[y]` for every storage `y`, the sum of the
+members' `eTotalCap` / `eTotalCapEnergy` for a group's representative and `y`'s own capacity
+otherwise. The storage rows that read power or energy capacity use these expressions instead
+(`stor_cap_power`, `stor_cap_energy`):
+```math
+\Theta_{\hat y,t} \leq \bar\Delta_{\hat y}, \qquad \Theta_{\hat y,t} + \Pi_{\hat y,t} \leq \bar\Delta_{\hat y}, \qquad
+\Gamma_{\hat y,t} \leq \bar\Delta^E_{\hat y}, \qquad \eta^{up}\Pi_{\hat y,t} \leq \bar\Delta^E_{\hat y} - \Gamma_{\hat y,t-1}
+```
+"""
+function storage_operational_groups!(EP::Model, inputs::Dict)
+    get(inputs, "STOR_GROUPS_ACTIVE", false) || return nothing
+    members = inputs["STOR_OP_MEMBERS"]
+    STOR_ALL = inputs["STOR_ALL"]
+    @expression(EP, eTotalCapStorOp[y in STOR_ALL],
+        sum(EP[:eTotalCap][yy] for yy in get(members, y, [y])))
+    @expression(EP, eTotalCapEnergyStorOp[y in STOR_ALL],
+        sum(EP[:eTotalCapEnergy][yy] for yy in get(members, y, [y])))
+    return nothing
+end
+
+"Storage power capacity read by the storage rows: the group expression if groups exist."
+stor_cap_power(EP::Model) = haskey(EP, :eTotalCapStorOp) ? EP[:eTotalCapStorOp] : EP[:eTotalCap]
+"Storage energy capacity read by the storage rows: the group expression if groups exist."
+stor_cap_energy(EP::Model) =
+    haskey(EP, :eTotalCapEnergyStorOp) ? EP[:eTotalCapEnergyStorOp] : EP[:eTotalCapEnergy]
+
+@doc raw"""
+    fix_storage_group_members!(EP::Model, inputs::Dict, setup::Dict)
+
+Group members other than the representative (`STOR_BIN_ONLY`) have no dispatch: their discharge,
+charge and state of charge (and, with a capacity reserve margin, their virtual charge, discharge
+and reserve state of charge) are fixed at 0. Their rows stay in the model and hold trivially.
+"""
+function fix_storage_group_members!(EP::Model, inputs::Dict, setup::Dict)
+    get(inputs, "STOR_GROUPS_ACTIVE", false) || return nothing
+    vars = [:vP, :vS, :vCHARGE]
+    if setup["CapacityReserveMargin"] > 0
+        append!(vars, [:vCAPRES_discharge, :vCAPRES_charge, :vCAPRES_socinreserve])
+    end
+    for y in inputs["STOR_BIN_ONLY"], v in vars
+        fix.(EP[v][y, :], 0.0; force = true)
+    end
+    return nothing
 end

@@ -1,0 +1,62 @@
+START 2026-11-25T23:58:34Z host=della-h16n12 job=18386426
+port tree b5bb47ccc044f9af5b56cd8bcc82dbd7e7ceb45c
+path = "/scratch/gpfs/JENKINS/gm1710/p42ra/port/fix1-head"
+PORT SOLVE START out_port_fix1_co2off StorageChargeHeadroom=0 HydroBudgetMaxProfile=0 StorageDischargeDerate=1 CO2Cap=0 2026-11-25T23:58:34Z
+  27   9.11173567e+09  9.08167842e+09  1.75e-05 7.45e-09  6.35e+01     7s
+  28   9.10378783e+09  9.08983385e+09  7.86e-06 7.45e-09  2.95e+01     7s
+  29   9.10030607e+09  9.09323550e+09  3.81e-06 7.45e-09  1.49e+01     8s
+  30   9.09894863e+09  9.09470276e+09  2.22e-06 7.45e-09  8.98e+00     8s
+  31   9.09835114e+09  9.09573097e+09  1.54e-06 7.45e-09  5.54e+00     8s
+  32   9.09773316e+09  9.09617482e+09  8.36e-07 7.45e-09  3.29e+00     8s
+  33   9.09740175e+09  9.09661126e+09  4.74e-07 7.45e-09  1.67e+00     8s
+  34   9.09725393e+09  9.09673249e+09  3.14e-07 7.45e-09  1.10e+00     9s
+  35   9.09710110e+09  9.09682888e+09  1.50e-07 3.73e-09  5.75e-01     9s
+  36   9.09702083e+09  9.09688541e+09  6.56e-08 7.45e-09  2.86e-01     9s
+  37   9.09698849e+09  9.09693054e+09  3.25e-08 7.45e-09  1.22e-01     9s
+  38   9.09696634e+09  9.09694682e+09  9.05e-07 7.45e-09  4.13e-02     9s
+  39   9.09696079e+09  9.09695175e+09  3.96e-07 7.45e-09  1.91e-02     9s
+  40   9.09695889e+09  9.09695316e+09  8.50e-07 7.45e-09  1.21e-02     9s
+  41   9.09695654e+09  9.09695535e+09  4.96e-07 7.45e-09  2.50e-03    10s
+  42   9.09695581e+09  9.09695563e+09  1.06e-06 7.45e-09  3.87e-04    10s
+  43   9.09695574e+09  9.09695566e+09  4.66e-07 7.45e-09  1.80e-04    10s
+  44   9.09695572e+09  9.09695568e+09  3.00e-07 7.45e-09  7.89e-05    11s
+  45   9.09695570e+09  9.09695569e+09  1.48e-07 7.45e-09  3.79e-05    11s
+  46   9.09695570e+09  9.09695569e+09  9.45e-08 7.45e-09  1.09e-05    11s
+  47   9.09695569e+09  9.09695569e+09  3.38e-06 7.45e-09  3.19e-06    11s
+  48   9.09695569e+09  9.09695569e+09  1.73e-06 7.45e-09  1.22e-06    11s
+  49   9.09695569e+09  9.09695569e+09  3.94e-07 7.45e-09  3.28e-07    12s
+  50   9.09695569e+09  9.09695569e+09  1.97e-08 1.12e-08  5.77e-09    12s
+Barrier solved model in 50 iterations and 11.67 seconds (6.14 work units)
+Optimal objective 9.09695569e+09
+Crossover log...
+    6514 DPushes remaining with DInf 0.0000000e+00                12s
+       0 DPushes remaining with DInf 0.0000000e+00                12s
+   31924 PPushes remaining with PInf 0.0000000e+00                12s
+       0 PPushes remaining with PInf 0.0000000e+00                13s
+  Push phase complete: Pinf 0.0000000e+00, Dinf 1.2881585e-03     13s
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+   36033    9.0969557e+09   0.000000e+00   0.000000e+00     13s
+   36033    9.0969557e+09   0.000000e+00   0.000000e+00     15s
+Solved in 36033 iterations and 14.51 seconds (7.42 work units)
+Optimal objective  9.096955692e+09
+User-callback calls 39413, time in user-callback 0.03 sec
+GATE termination OPTIMAL primal FEASIBLE_POINT objective 9.096955692124744e9 solve_s 14.602321226
+GATE DUMP OK /scratch/gpfs/JENKINS/gm1710/p42ra/port/gate/cfix/out_port_fix1_co2off
+PORT SOLVE END 2026-11-26T00:02:22Z wall=228
+--- d58 CO2-off (predecessor's job 18377941, read from file):
+objective_value,9.09695569212475e9
+--- port CO2-off at 0b7cb264 (job 18377941):
+objective_value,9.096955692124744e9
+--- port CO2-off at this head:
+objective_value,9.096955692124744e9
+name,value,name,value
+eObj,9.09695569212521e9,eObj,9.09695569212521e9
+eTotalCFix,1.1309247150899998e10,eTotalCFix,1.1309247150899998e10
+eTotalCFuelOut,4.765486277537414e9,eTotalCFuelOut,4.765486277537414e9
+eTotalCFuelStart,0.0,eTotalCFuelStart,0.0
+eTotalCHurdle,1.412718972878803e9,eTotalCHurdle,1.412718972878803e9
+eTotalCNSE,0.0,eTotalCNSE,0.0
+eTotalCVarIn,0.0,eTotalCVarIn,0.0
+eTotalCVarOut,-8.390496709191343e9,eTotalCVarOut,-8.390496709191343e9
+END 2026-11-26T00:02:23Z
+DONE

@@ -1,0 +1,225 @@
+host=della-h14n3 job=18386423 start=2026-11-25T23:58:16Z head=b5bb47ccc044f9af5b56cd8bcc82dbd7e7ceb45c
+path = "/scratch/gpfs/JENKINS/gm1710/p42ra/port/fixmut-18386423/work"
+----- MUTANT 1 r05_slack_no_omega: src/model/core/resolve_operations.jl :: sed 's/sum(P \* omega\[t\] \* vFloorSlack\[g, t\]/sum(P * vFloorSlack[g, t]/'   23:59:17
+-                sum(P * omega[t] * vFloorSlack[g, t] for g in PMIN, t in 1:T))
++                sum(P * vFloorSlack[g, t] for g in PMIN, t in 1:T))
+RESULT r05_slack_no_omega file=test_ops_floors_budgets.jl rc=1  Test Failed 4 / Error During Test 0
+W1 two periods of unequal weight, hourly-varying Pmin and hydro maximum: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/fixmut-18386423/work/test/test_ops_floors_budgets.jl:176
+  Expression: ≈(coefficient(obj, (EP[:vFloorSlack])[gT, 2]), 4000, atol = ATOL)
+   Evaluated: 2000.0 ≈ 4000 (atol=1.0e-6)
+
+--
+W1 two periods of unequal weight, hourly-varying Pmin and hydro maximum: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/fixmut-18386423/work/test/test_ops_floors_budgets.jl:177
+  Expression: ≈(coefficient(obj, (EP[:vFloorSlack])[gT, 4]), 12000, atol = ATOL)
+   Evaluated: 2000.0 ≈ 12000 (atol=1.0e-6)
+
+--
+W1 two periods of unequal weight, hourly-varying Pmin and hydro maximum: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/fixmut-18386423/work/test/test_ops_floors_budgets.jl:190
+  Expression: ≈(value(EP[:eTotalCFloorSlack]), 180000, atol = 0.0001)
+   Evaluated: 30000.0 ≈ 180000 (atol=0.0001)
+
+--
+W1 two periods of unequal weight, hourly-varying Pmin and hydro maximum: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/fixmut-18386423/work/test/test_ops_floors_budgets.jl:204
+  Expression: ≈(objective_value(EP), 3900 + 180000 + (5 * 790) / 0.9995, atol = 0.0001)
+   Evaluated: 37851.975987993996 ≈ 187851.975987994 (atol=0.0001)
+
+Test Summary:                                                              | Pass  Fail  Total   Time
+Operational rows: floors, budgets, hydro maximum                           |   69     4     73  16.1s
+  T1 Pmin: T >= 30, objective 300                                          |    3            3   3.9s
+  T2 floor slack: u = 10, objective 100,200; hard row infeasible           |    5            5   0.4s
+  T2b tie: NSE 270 at P = 10,000 and 1,001; P = 1,000 refused              |    8            8   2.2s
+  T3 budget: hydro 1,200 MWh, T 240 MWh, objective 2,400                   |    4            4   0.6s
+  T3m hydro maximum: key 0 objective 6,000; key 1 NSE 60, objective 65,400 |    7            7   0.1s
+  T3w window: 24 h windows 3,120,000; one 48 h window 480,000              |    6            6   4.5s
+  T-spill: v = 720; variant (no upward slack) NSE 56                       |    7            7   0.0s
+  T4 hydro without a budget column keeps the reservoir rows                |    5            5   0.4s
+  W1 two periods of unequal weight, hourly-varying Pmin and hydro maximum  |   20     4     24   2.9s
+  T11 Benders subproblem rows of period 2 read the sliced floor and budget |    4            4   1.0s
+restored: work src = head src
+----- MUTANT 2 r11_hurdle_no_omega: src/model/core/transmission/transmission.jl :: sed 's/inputs\["omega"\]\[t\] \* (inputs\["Hurdle_Rate_Forward"\]/(inputs["Hurdle_Rate_Forward"]/'   00:02:51
+-            inputs["omega"][t] * (inputs["Hurdle_Rate_Forward"][l] * EP[:vTAUX_POS][l, t] +
++            (inputs["Hurdle_Rate_Forward"][l] * EP[:vTAUX_POS][l, t] +
+RESULT r11_hurdle_no_omega file=test_ops_floors_budgets.jl rc=1  Test Failed 5 / Error During Test 0
+W1 two periods of unequal weight, hourly-varying Pmin and hydro maximum: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/fixmut-18386423/work/test/test_ops_floors_budgets.jl:178
+  Expression: ≈(coefficient(obj, (EP[:vTAUX_POS])[1, 2]), 10, atol = ATOL)
+   Evaluated: 5.0 ≈ 10 (atol=1.0e-6)
+
+--
+W1 two periods of unequal weight, hourly-varying Pmin and hydro maximum: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/fixmut-18386423/work/test/test_ops_floors_budgets.jl:179
+  Expression: ≈(coefficient(obj, (EP[:vTAUX_POS])[1, 3]), 30, atol = ATOL)
+   Evaluated: 5.0 ≈ 30 (atol=1.0e-6)
+
+--
+W1 two periods of unequal weight, hourly-varying Pmin and hydro maximum: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/fixmut-18386423/work/test/test_ops_floors_budgets.jl:180
+  Expression: ≈(coefficient(obj, (EP[:vTAUX_NEG])[1, 3]), 42, atol = ATOL)
+   Evaluated: 7.0 ≈ 42 (atol=1.0e-6)
+
+--
+W1 two periods of unequal weight, hourly-varying Pmin and hydro maximum: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/fixmut-18386423/work/test/test_ops_floors_budgets.jl:201
+  Expression: ≈(value(EP[:eTotalCHurdle]), (5 * 790) / 0.9995, atol = 1.0e-6)
+   Evaluated: 1025.512756378189 ≈ 3951.9759879939966 (atol=1.0e-6)
+
+--
+W1 two periods of unequal weight, hourly-varying Pmin and hydro maximum: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/fixmut-18386423/work/test/test_ops_floors_budgets.jl:204
+  Expression: ≈(objective_value(EP), 3900 + 180000 + (5 * 790) / 0.9995, atol = 0.0001)
+   Evaluated: 184925.5127563782 ≈ 187851.975987994 (atol=0.0001)
+
+Test Summary:                                                              | Pass  Fail  Total   Time
+Operational rows: floors, budgets, hydro maximum                           |   68     5     73  22.4s
+  T1 Pmin: T >= 30, objective 300                                          |    3            3   5.5s
+  T2 floor slack: u = 10, objective 100,200; hard row infeasible           |    5            5   0.5s
+  T2b tie: NSE 270 at P = 10,000 and 1,001; P = 1,000 refused              |    8            8   3.1s
+  T3 budget: hydro 1,200 MWh, T 240 MWh, objective 2,400                   |    4            4   0.7s
+  T3m hydro maximum: key 0 objective 6,000; key 1 NSE 60, objective 65,400 |    7            7   0.2s
+  T3w window: 24 h windows 3,120,000; one 48 h window 480,000              |    6            6   6.3s
+  T-spill: v = 720; variant (no upward slack) NSE 56                       |    7            7   0.1s
+  T4 hydro without a budget column keeps the reservoir rows                |    5            5   0.5s
+  W1 two periods of unequal weight, hourly-varying Pmin and hydro maximum  |   19     5     24   4.1s
+  T11 Benders subproblem rows of period 2 read the sliced floor and budget |    4            4   1.3s
+restored: work src = head src
+----- MUTANT 3 r06_pmin_hour1: src/model/core/resolve_operations.jl :: sed 's/pmin\[g, t\] \* eTotalCap\[g\]/pmin[g, 1] * eTotalCap[g]/g'   00:06:48
+-                vP[g, t] + vFloorSlack[g, t]>=pmin[g, t] * eTotalCap[g])
++                vP[g, t] + vFloorSlack[g, t]>=pmin[g, 1] * eTotalCap[g])
+-                vP[g, t]>=pmin[g, t] * eTotalCap[g])
++                vP[g, t]>=pmin[g, 1] * eTotalCap[g])
+RESULT r06_pmin_hour1 file=test_ops_floors_budgets.jl rc=1  Test Failed 9 / Error During Test 0
+W1 two periods of unequal weight, hourly-varying Pmin and hydro maximum: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/fixmut-18386423/work/test/test_ops_floors_budgets.jl:164
+  Expression: ≈(normalized_rhs((EP[:cHourlyPmin])[gT, 2]), 20, atol = ATOL)
+   Evaluated: 10.0 ≈ 20 (atol=1.0e-6)
+
+--
+W1 two periods of unequal weight, hourly-varying Pmin and hydro maximum: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/fixmut-18386423/work/test/test_ops_floors_budgets.jl:165
+  Expression: ≈(normalized_rhs((EP[:cHourlyPmin])[gT, 3]), 30, atol = ATOL)
+   Evaluated: 10.0 ≈ 30 (atol=1.0e-6)
+
+--
+W1 two periods of unequal weight, hourly-varying Pmin and hydro maximum: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/fixmut-18386423/work/test/test_ops_floors_budgets.jl:166
+  Expression: ≈(normalized_rhs((EP[:cHourlyPmin])[gT, 4]), 40, atol = ATOL)
+   Evaluated: 10.0 ≈ 40 (atol=1.0e-6)
+
+--
+W1 two periods of unequal weight, hourly-varying Pmin and hydro maximum: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/fixmut-18386423/work/test/test_ops_floors_budgets.jl:185
+  Expression: ≈(vp(EP, inputs, "TH"), [10, 20, 30, 25], atol = ATOL)
+   Evaluated: [10.0, 10.0, 10.0, 10.0] ≈ [10, 20, 30, 25] (atol=1.0e-6)
+
+--
+W1 two periods of unequal weight, hourly-varying Pmin and hydro maximum: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/fixmut-18386423/work/test/test_ops_floors_budgets.jl:186
+  Expression: ≈(value((EP[:vFloorSlack])[gT, 4]), 15, atol = ATOL)
+   Evaluated: 0.0 ≈ 15 (atol=1.0e-6)
+
+--
+W1 two periods of unequal weight, hourly-varying Pmin and hydro maximum: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/fixmut-18386423/work/test/test_ops_floors_budgets.jl:187
+  Expression: ≈(sum(value.(EP[:vFloorSlack])), 15, atol = ATOL)
+   Evaluated: 0.0 ≈ 15 (atol=1.0e-6)
+
+--
+W1 two periods of unequal weight, hourly-varying Pmin and hydro maximum: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/fixmut-18386423/work/test/test_ops_floors_budgets.jl:190
+  Expression: ≈(value(EP[:eTotalCFloorSlack]), 180000, atol = 0.0001)
+   Evaluated: 0.0 ≈ 180000 (atol=0.0001)
+
+--
+W1 two periods of unequal weight, hourly-varying Pmin and hydro maximum: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/fixmut-18386423/work/test/test_ops_floors_budgets.jl:201
+  Expression: ≈(value(EP[:eTotalCHurdle]), (5 * 790) / 0.9995, atol = 1.0e-6)
+   Evaluated: 5102.551275637818 ≈ 3951.9759879939966 (atol=1.0e-6)
+
+--
+Test Summary:                                                              | Pass  Fail  Total   Time
+Operational rows: floors, budgets, hydro maximum                           |   64     9     73  18.0s
+  T1 Pmin: T >= 30, objective 300                                          |    3            3   5.0s
+  T2 floor slack: u = 10, objective 100,200; hard row infeasible           |    5            5   0.4s
+  T2b tie: NSE 270 at P = 10,000 and 1,001; P = 1,000 refused              |    8            8   2.5s
+  T3 budget: hydro 1,200 MWh, T 240 MWh, objective 2,400                   |    4            4   0.6s
+  T3m hydro maximum: key 0 objective 6,000; key 1 NSE 60, objective 65,400 |    7            7   0.1s
+  T3w window: 24 h windows 3,120,000; one 48 h window 480,000              |    6            6   4.7s
+  T-spill: v = 720; variant (no upward slack) NSE 56                       |    7            7   0.0s
+  T4 hydro without a budget column keeps the reservoir rows                |    5            5   0.4s
+  W1 two periods of unequal weight, hourly-varying Pmin and hydro maximum  |   15     9     24   3.1s
+  T11 Benders subproblem rows of period 2 read the sliced floor and budget |    4            4   1.0s
+restored: work src = head src
+----- MUTANT 4 r16_hydromax_hour1: src/model/core/resolve_operations.jl :: sed 's/vP\[g, t\]<=inputs\["pP_Max"\]\[g, t\] \* eTotalCap\[g\])/vP[g, t]<=inputs["pP_Max"][g, 1] * eTotalCap[g])/'   00:10:29
+-                vP[g, t]<=inputs["pP_Max"][g, t] * eTotalCap[g])
++                vP[g, t]<=inputs["pP_Max"][g, 1] * eTotalCap[g])
+RESULT r16_hydromax_hour1 file=test_ops_floors_budgets.jl rc=1  Test Failed 4 / Error During Test 0
+W1 two periods of unequal weight, hourly-varying Pmin and hydro maximum: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/fixmut-18386423/work/test/test_ops_floors_budgets.jl:169
+  Expression: ≈(normalized_rhs((EP[:cHydroBudgetMaxProfile])[gH, 2]), 20, atol = ATOL)
+   Evaluated: 50.0 ≈ 20 (atol=1.0e-6)
+
+--
+W1 two periods of unequal weight, hourly-varying Pmin and hydro maximum: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/fixmut-18386423/work/test/test_ops_floors_budgets.jl:170
+  Expression: ≈(normalized_rhs((EP[:cHydroBudgetMaxProfile])[gH, 3]), 40, atol = ATOL)
+   Evaluated: 50.0 ≈ 40 (atol=1.0e-6)
+
+--
+W1 two periods of unequal weight, hourly-varying Pmin and hydro maximum: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/fixmut-18386423/work/test/test_ops_floors_budgets.jl:171
+  Expression: ≈(normalized_rhs((EP[:cHydroBudgetMaxProfile])[gH, 4]), 10, atol = ATOL)
+   Evaluated: 50.0 ≈ 10 (atol=1.0e-6)
+
+--
+W1 two periods of unequal weight, hourly-varying Pmin and hydro maximum: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/fixmut-18386423/work/test/test_ops_floors_budgets.jl:193
+  Expression: ≈((vp(EP, inputs, "Hy"))[3:4], [40, 10], atol = ATOL)
+   Evaluated: [50.0, 0.0] ≈ [40, 10] (atol=1.0e-6)
+
+Test Summary:                                                              | Pass  Fail  Total   Time
+Operational rows: floors, budgets, hydro maximum                           |   69     4     73  21.8s
+  T1 Pmin: T >= 30, objective 300                                          |    3            3   5.3s
+  T2 floor slack: u = 10, objective 100,200; hard row infeasible           |    5            5   0.5s
+  T2b tie: NSE 270 at P = 10,000 and 1,001; P = 1,000 refused              |    8            8   3.1s
+  T3 budget: hydro 1,200 MWh, T 240 MWh, objective 2,400                   |    4            4   0.7s
+  T3m hydro maximum: key 0 objective 6,000; key 1 NSE 60, objective 65,400 |    7            7   0.2s
+  T3w window: 24 h windows 3,120,000; one 48 h window 480,000              |    6            6   6.2s
+  T-spill: v = 720; variant (no upward slack) NSE 56                       |    7            7   0.0s
+  T4 hydro without a budget column keeps the reservoir rows                |    5            5   0.5s
+  W1 two periods of unequal weight, hourly-varying Pmin and hydro maximum  |   20     4     24   3.8s
+  T11 Benders subproblem rows of period 2 read the sliced floor and budget |    4            4   1.4s
+restored: work src = head src
+----- MUTANT 5 f1_nse_refusal_off: src/load_inputs/load_operational_rows.jl :: sed 's/get(setup, "NSEBudget", 0) == 1 \&\&/get(setup, "NSEBudget", 0) == 2 \&\&/'   00:14:12
+-        get(setup, "NSEBudget", 0) == 1 &&
++        get(setup, "NSEBudget", 0) == 2 &&
+RESULT f1_nse_refusal_off file=test_ops_loaders.jl rc=1  Test Failed 1 / Error During Test 0
+L10 OperationalFloorPenalty refused with NSEBudget 1, accepted with NSEBudget 0: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/fixmut-18386423/work/test/test_ops_loaders.jl:130
+  Expression: occursin("NSE-budget runs must use hard floors and budgets", load_err(dir; overrides = merge(nse1, Dict("OperationalFloorPenalty" => 2000))))
+   Evaluated: occursin("NSE-budget runs must use hard floors and budgets", "")
+
+Test Summary:                                                                     | Pass  Fail  Total   Time
+Operational rows: loaders, keys, refusals, slicing                                |   49     1     50  15.7s
+  L1 absent inputs: nothing stored, defaults                                      |    9            9   3.0s
+  L2 Generators_Pmin.csv read with Hourly_Pmin 1; missing column = 0              |    4            4   0.6s
+  L3 Hourly_Pmin 1 needs the file                                                 |    2            2   0.1s
+  L4 Hourly_energy_budget.csv read when present                                   |    3            3   0.1s
+  L5 Fixed_Dispatch 1 refused, 0 accepted                                         |    3            3   0.0s
+  L6 ParameterScale 1 refused with these inputs, accepted without                 |    4            4   0.0s
+  L7 OperationalFloorPenalty must exceed VoLL (1000)                              |    4            4   0.2s
+  L7b VoLL is the largest segment cost (two segments: 1000 and 1500)              |    2            2   4.0s
+  L8 EnergyBudgetWindowHours divides the subperiod (H = 48)                       |    5            5   0.0s
+  L9 budgeted hydro with LDS 1 refused, LDS 0 accepted                            |    2            2   5.3s
+  L10 OperationalFloorPenalty refused with NSEBudget 1, accepted with NSEBudget 0 |    2     1      3   1.6s
+  L11 HydroBudgetMaxProfile 1 refused without Hourly_energy_budget.csv            |    4            4   0.1s
+  T11 slicing of pP_Min and pBudget into Benders subperiods                       |    5            5   0.6s
+restored: work src = head src
+----- MUTANT 6 f2_hmax_refusal_off: src/load_inputs/load_operational_rows.jl :: sed 's/get(setup, "HydroBudgetMaxProfile", 0) == 1 \&\& !haskey(inputs, "pBudget")/get(setup, "HydroBudgetMaxProfile", 0) == 2 \&\& !haskey(inputs, "pBudget")/'   00:18:18
+-    if get(setup, "HydroBudgetMaxProfile", 0) == 1 && !haskey(inputs, "pBudget")
++    if get(setup, "HydroBudgetMaxProfile", 0) == 2 && !haskey(inputs, "pBudget")
+RESULT f2_hmax_refusal_off file=test_ops_loaders.jl rc=1  Test Failed 1 / Error During Test 0
+L11 HydroBudgetMaxProfile 1 refused without Hourly_energy_budget.csv: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/fixmut-18386423/work/test/test_ops_loaders.jl:142
+  Expression: occursin("HydroBudgetMaxProfile: 1 needs Hourly_energy_budget.csv", load_err(dir0; overrides = Dict("HydroBudgetMaxProfile" => 1)))
+   Evaluated: occursin("HydroBudgetMaxProfile: 1 needs Hourly_energy_budget.csv", "")
+
+Test Summary:                                                                     | Pass  Fail  Total   Time
+Operational rows: loaders, keys, refusals, slicing                                |   49     1     50  16.6s
+  L1 absent inputs: nothing stored, defaults                                      |    9            9   3.0s
+  L2 Generators_Pmin.csv read with Hourly_Pmin 1; missing column = 0              |    4            4   0.6s
+  L3 Hourly_Pmin 1 needs the file                                                 |    2            2   0.1s
+  L4 Hourly_energy_budget.csv read when present                                   |    3            3   0.2s
+  L5 Fixed_Dispatch 1 refused, 0 accepted                                         |    3            3   0.0s
+  L6 ParameterScale 1 refused with these inputs, accepted without                 |    4            4   0.0s
+  L7 OperationalFloorPenalty must exceed VoLL (1000)                              |    4            4   0.2s
+  L7b VoLL is the largest segment cost (two segments: 1000 and 1500)              |    2            2   4.7s
+  L8 EnergyBudgetWindowHours divides the subperiod (H = 48)                       |    5            5   0.0s
+  L9 budgeted hydro with LDS 1 refused, LDS 0 accepted                            |    2            2   5.6s
+  L10 OperationalFloorPenalty refused with NSEBudget 1, accepted with NSEBudget 0 |    3            3   0.4s
+  L11 HydroBudgetMaxProfile 1 refused without Hourly_energy_budget.csv            |    3     1      4   1.4s
+  T11 slicing of pP_Min and pBudget into Benders subperiods                       |    5            5   0.5s
+restored: work src = head src
+final: work src restored = head src
+end 2026-11-26T00:21:55Z
+DONE

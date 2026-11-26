@@ -167,6 +167,17 @@ function transmission!(EP::Model, inputs::Dict, setup::Dict)
         end
     end
 
+    # Optional hurdle rates (Network.csv Hurdle_Rate_Forward/Hurdle_Rate_Reverse, $/MWh; absent =
+    # no term), on loss lines, ported from the chair's fork
+    if haskey(inputs, "Hurdle_Rate_Forward")
+        @expression(EP, eCHurdle[l in LOSS_LINES, t = 1:T],
+            inputs["omega"][t] * (inputs["Hurdle_Rate_Forward"][l] * EP[:vTAUX_POS][l, t] +
+                                  inputs["Hurdle_Rate_Reverse"][l] * EP[:vTAUX_NEG][l, t]))
+        @expression(EP, eTotalCHurdleT[t = 1:T], sum(eCHurdle[l, t] for l in LOSS_LINES))
+        @expression(EP, eTotalCHurdle, sum(eTotalCHurdleT[t] for t in 1:T))
+        add_to_expression!(EP[:eObj], eTotalCHurdle)
+    end
+
     ### Constraints ###
 
     ## Power flow and transmission (between zone) loss related constraints

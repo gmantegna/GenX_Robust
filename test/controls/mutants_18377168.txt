@@ -1,0 +1,309 @@
+host=della-h14n3 job=18377168 start=2026-11-25T21:23:55Z head=0b7cb2648ff88a68443cb0174497421324460275 range=1-13
+path = "/scratch/gpfs/JENKINS/gm1710/p42ra/port/mut-1/work"
+----- MUTANT 1 m_pmin_key: src/load_inputs/load_operational_rows.jl :: sed 's/get(setup, "Hourly_Pmin", 0) == 1 || return nothing/get(setup, "Hourly_Pmin", 0) == 2 || return nothing/'   21:24:00
+-    get(setup, "Hourly_Pmin", 0) == 1 || return nothing
++    get(setup, "Hourly_Pmin", 0) == 2 || return nothing
+RESULT m_pmin_key file=test_ops_loaders.jl rc=1  Test Failed 2 / Error During Test 6
+L2 Generators_Pmin.csv read with Hourly_Pmin 1; missing column = 0: Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/mut-1/work/test/test_ops_loaders.jl:38
+  Test threw exception
+  Expression: (inputs["pP_Min"])[gT, 1] == 0.3
+  KeyError: key "pP_Min" not found
+--
+L2 Generators_Pmin.csv read with Hourly_Pmin 1; missing column = 0: Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/mut-1/work/test/test_ops_loaders.jl:39
+  Test threw exception
+  Expression: (inputs["pP_Min"])[gG, 1] == 0.0
+  KeyError: key "pP_Min" not found
+--
+L2 Generators_Pmin.csv read with Hourly_Pmin 1; missing column = 0: Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/mut-1/work/test/test_ops_loaders.jl:40
+  Test threw exception
+Test Summary:                                                        | Pass  Fail  Error  Total   Time
+Operational rows: loaders, keys, refusals, slicing                   |   35     2      6     43  11.1s
+  L1 absent inputs: nothing stored, defaults                         |    9                   9   1.9s
+  L2 Generators_Pmin.csv read with Hourly_Pmin 1; missing column = 0 |    1            3      4   1.2s
+  L3 Hourly_Pmin 1 needs the file                                    |    1     1             2   0.8s
+  L4 Hourly_energy_budget.csv read when present                      |    3                   3   0.2s
+  L5 Fixed_Dispatch 1 refused, 0 accepted                            |    3                   3   0.0s
+  L6 ParameterScale 1 refused with these inputs, accepted without    |    3     1             4   0.0s
+  L7 OperationalFloorPenalty must exceed VoLL (1000)                 |    4                   4   0.1s
+  L7b VoLL is the largest segment cost (two segments: 1000 and 1500) |    2                   2   2.9s
+  L8 EnergyBudgetWindowHours divides the subperiod (H = 48)          |    5                   5   0.0s
+  L9 budgeted hydro with LDS 1 refused, LDS 0 accepted               |    2                   2   3.4s
+  T11 slicing of pP_Min and pBudget into Benders subperiods          |    2            3      5   0.5s
+----- MUTANT 2 m_budget_switch: src/load_inputs/load_operational_rows.jl :: sed 's/"Hourly_energy_budget.csv")) || return nothing/"Hourly_energy_budget.csv")) \&\& return nothing/'   21:24:29
+-    isfile(joinpath(path, setup["SystemFolder"], "Hourly_energy_budget.csv")) || return nothing
++    isfile(joinpath(path, setup["SystemFolder"], "Hourly_energy_budget.csv")) && return nothing
+RESULT m_budget_switch file=test_ops_loaders.jl rc=1  Test Failed 0 / Error During Test 0
+----- MUTANT 3 m_profile_index: src/load_inputs/load_operational_rows.jl :: sed 's/M\[g, :\] = Float64/M[1, :] = Float64/'   21:25:22
+-            M[g, :] = Float64.(df[1:T, r])
++            M[1, :] = Float64.(df[1:T, r])
+RESULT m_profile_index file=test_ops_loaders.jl rc=1  Test Failed 4 / Error During Test 0
+L4 Hourly_energy_budget.csv read when present: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/mut-1/work/test/test_ops_loaders.jl:58
+  Expression: (inputs["pBudget"])[gG, 1] == 0.5
+   Evaluated: 0.0 == 0.5
+
+--
+L4 Hourly_energy_budget.csv read when present: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/mut-1/work/test/test_ops_loaders.jl:59
+  Expression: (inputs["pBudget"])[gT, 1] == 0.0
+   Evaluated: 0.5 == 0.0
+
+--
+T11 slicing of pP_Min and pBudget into Benders subperiods: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/mut-1/work/test/test_ops_loaders.jl:136
+  Expression: all(((parts[2])["pP_Min"])[gT, :] .* 100 .≈ 60)
+Test Summary:                                                        | Pass  Fail  Total   Time
+Operational rows: loaders, keys, refusals, slicing                   |   39     4     43  10.2s
+  L1 absent inputs: nothing stored, defaults                         |    9            9   1.9s
+  L2 Generators_Pmin.csv read with Hourly_Pmin 1; missing column = 0 |    4            4   0.4s
+  L3 Hourly_Pmin 1 needs the file                                    |    2            2   0.0s
+  L4 Hourly_energy_budget.csv read when present                      |    1     2      3   1.0s
+  L5 Fixed_Dispatch 1 refused, 0 accepted                            |    3            3   0.0s
+  L6 ParameterScale 1 refused with these inputs, accepted without    |    4            4   0.0s
+  L7 OperationalFloorPenalty must exceed VoLL (1000)                 |    4            4   0.1s
+  L7b VoLL is the largest segment cost (two segments: 1000 and 1500) |    2            2   2.9s
+  L8 EnergyBudgetWindowHours divides the subperiod (H = 48)          |    5            5   0.0s
+  L9 budgeted hydro with LDS 1 refused, LDS 0 accepted               |    2            2   3.4s
+  T11 slicing of pP_Min and pBudget into Benders subperiods          |    3     2      5   0.4s
+----- MUTANT 4 m_voll_max: src/load_inputs/load_operational_rows.jl :: sed 's/= maximum(inputs\["pC_D_Curtail"\])/= minimum(inputs["pC_D_Curtail"])/'   21:27:54
+-operational_rows_voll(inputs::Dict) = maximum(inputs["pC_D_Curtail"])
++operational_rows_voll(inputs::Dict) = minimum(inputs["pC_D_Curtail"])
+RESULT m_voll_max file=test_ops_loaders.jl rc=1  Test Failed 1 / Error During Test 0
+L7b VoLL is the largest segment cost (two segments: 1000 and 1500): Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/mut-1/work/test/test_ops_loaders.jl:101
+  Expression: occursin("above VoLL = 1500", load_err(dir; overrides = Dict("OperationalFloorPenalty" => 1200)))
+   Evaluated: occursin("above VoLL = 1500", "")
+
+Test Summary:                                                        | Pass  Fail  Total   Time
+Operational rows: loaders, keys, refusals, slicing                   |   42     1     43  11.5s
+  L1 absent inputs: nothing stored, defaults                         |    9            9   2.0s
+  L2 Generators_Pmin.csv read with Hourly_Pmin 1; missing column = 0 |    4            4   0.4s
+  L3 Hourly_Pmin 1 needs the file                                    |    2            2   0.1s
+  L4 Hourly_energy_budget.csv read when present                      |    3            3   0.1s
+  L5 Fixed_Dispatch 1 refused, 0 accepted                            |    3            3   0.0s
+  L6 ParameterScale 1 refused with these inputs, accepted without    |    4            4   0.0s
+  L7 OperationalFloorPenalty must exceed VoLL (1000)                 |    4            4   0.2s
+  L7b VoLL is the largest segment cost (two segments: 1000 and 1500) |    1     1      2   4.3s
+  L8 EnergyBudgetWindowHours divides the subperiod (H = 48)          |    5            5   0.0s
+  L9 budgeted hydro with LDS 1 refused, LDS 0 accepted               |    2            2   3.9s
+  T11 slicing of pP_Min and pBudget into Benders subperiods          |    5            5   0.4s
+----- MUTANT 5 m_penalty_bound: src/load_inputs/load_operational_rows.jl :: sed 's/P > voll)/P >= voll)/'   21:30:28
+-        (P isa Real && isfinite(P) && P > voll) ||
++        (P isa Real && isfinite(P) && P >= voll) ||
+RESULT m_penalty_bound file=test_ops_loaders.jl rc=1  Test Failed 1 / Error During Test 0
+L7 OperationalFloorPenalty must exceed VoLL (1000): Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/mut-1/work/test/test_ops_loaders.jl:85
+  Expression: occursin("must be a number above VoLL", load_err(dir; overrides = Dict("OperationalFloorPenalty" => 1000)))
+   Evaluated: occursin("must be a number above VoLL", "")
+
+Test Summary:                                                        | Pass  Fail  Total   Time
+Operational rows: loaders, keys, refusals, slicing                   |   42     1     43  19.5s
+  L1 absent inputs: nothing stored, defaults                         |    9            9   2.1s
+  L2 Generators_Pmin.csv read with Hourly_Pmin 1; missing column = 0 |    4            4   0.4s
+  L3 Hourly_Pmin 1 needs the file                                    |    2            2   0.0s
+  L4 Hourly_energy_budget.csv read when present                      |    3            3   0.1s
+  L5 Fixed_Dispatch 1 refused, 0 accepted                            |    3            3   0.0s
+  L6 ParameterScale 1 refused with these inputs, accepted without    |    4            4   5.4s
+  L7 OperationalFloorPenalty must exceed VoLL (1000)                 |    3     1      4   3.6s
+  L7b VoLL is the largest segment cost (two segments: 1000 and 1500) |    2            2   3.3s
+  L8 EnergyBudgetWindowHours divides the subperiod (H = 48)          |    5            5   0.0s
+  L9 budgeted hydro with LDS 1 refused, LDS 0 accepted               |    2            2   4.1s
+  T11 slicing of pP_Min and pBudget into Benders subperiods          |    5            5   0.4s
+----- MUTANT 6 m_ps_refusal: src/load_inputs/load_operational_rows.jl :: sed 's/if in_use \&\& setup\["ParameterScale"\] == 1/if in_use \&\& setup["ParameterScale"] == 2/'   21:33:28
+-    if in_use && setup["ParameterScale"] == 1
++    if in_use && setup["ParameterScale"] == 2
+RESULT m_ps_refusal file=test_ops_loaders.jl rc=1  Test Failed 2 / Error During Test 0
+L6 ParameterScale 1 refused with these inputs, accepted without: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/mut-1/work/test/test_ops_loaders.jl:74
+  Expression: occursin("ParameterScale: 1 is not supported", load_err(dir; overrides = Dict("Hourly_Pmin" => 1, "ParameterScale" => 1)))
+   Evaluated: occursin("ParameterScale: 1 is not supported", "")
+
+--
+L6 ParameterScale 1 refused with these inputs, accepted without: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/mut-1/work/test/test_ops_loaders.jl:79
+  Expression: occursin("ParameterScale: 1 is not supported", load_err(dirb; overrides = Dict("ParameterScale" => 1)))
+   Evaluated: occursin("ParameterScale: 1 is not supported", "")
+
+Test Summary:                                                        | Pass  Fail  Total   Time
+Operational rows: loaders, keys, refusals, slicing                   |   41     2     43  26.0s
+  L1 absent inputs: nothing stored, defaults                         |    9            9   8.8s
+  L2 Generators_Pmin.csv read with Hourly_Pmin 1; missing column = 0 |    4            4   8.2s
+  L3 Hourly_Pmin 1 needs the file                                    |    2            2   0.1s
+  L4 Hourly_energy_budget.csv read when present                      |    3            3   0.1s
+  L5 Fixed_Dispatch 1 refused, 0 accepted                            |    3            3   0.0s
+  L6 ParameterScale 1 refused with these inputs, accepted without    |    2     2      4   1.0s
+  L7 OperationalFloorPenalty must exceed VoLL (1000)                 |    4            4   0.2s
+  L7b VoLL is the largest segment cost (two segments: 1000 and 1500) |    2            2   3.3s
+  L8 EnergyBudgetWindowHours divides the subperiod (H = 48)          |    5            5   0.0s
+  L9 budgeted hydro with LDS 1 refused, LDS 0 accepted               |    2            2   3.9s
+  T11 slicing of pP_Min and pBudget into Benders subperiods          |    5            5   0.4s
+----- MUTANT 7 m_slice_pmin: src/benders/benders_utility.jl :: sed 's/inputs_all\[w\]\["pP_Min"\] = inputs\["pP_Min"\]\[:, Tw\]/inputs_all[w]["pP_Min"] = inputs["pP_Min"][:, 1:hours_per_subperiod]/'   21:36:38
+-            inputs_all[w]["pP_Min"] = inputs["pP_Min"][:, Tw]
++            inputs_all[w]["pP_Min"] = inputs["pP_Min"][:, 1:hours_per_subperiod]
+RESULT m_slice_pmin file=test_ops_loaders.jl rc=1  Test Failed 1 / Error During Test 0
+T11 slicing of pP_Min and pBudget into Benders subperiods: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/mut-1/work/test/test_ops_loaders.jl:136
+  Expression: all(((parts[2])["pP_Min"])[gT, :] .* 100 .≈ 60)
+
+Test Summary:                                                        | Pass  Fail  Total   Time
+Operational rows: loaders, keys, refusals, slicing                   |   42     1     43  10.2s
+  L1 absent inputs: nothing stored, defaults                         |    9            9   1.9s
+  L2 Generators_Pmin.csv read with Hourly_Pmin 1; missing column = 0 |    4            4   0.4s
+  L3 Hourly_Pmin 1 needs the file                                    |    2            2   0.0s
+  L4 Hourly_energy_budget.csv read when present                      |    3            3   0.1s
+  L5 Fixed_Dispatch 1 refused, 0 accepted                            |    3            3   0.0s
+  L6 ParameterScale 1 refused with these inputs, accepted without    |    4            4   0.0s
+  L7 OperationalFloorPenalty must exceed VoLL (1000)                 |    4            4   0.1s
+  L7b VoLL is the largest segment cost (two segments: 1000 and 1500) |    2            2   2.9s
+  L8 EnergyBudgetWindowHours divides the subperiod (H = 48)          |    5            5   0.0s
+  L9 budgeted hydro with LDS 1 refused, LDS 0 accepted               |    2            2   3.4s
+  T11 slicing of pP_Min and pBudget into Benders subperiods          |    4     1      5   1.2s
+----- MUTANT 8 m_window_default: src/load_inputs/load_operational_rows.jl :: sed 's/get(setup, "EnergyBudgetWindowHours", inputs\["hours_per_subperiod"\])/get(setup, "EnergyBudgetWindowHours", 24)/'   21:39:12
+-    get(setup, "EnergyBudgetWindowHours", inputs["hours_per_subperiod"])
++    get(setup, "EnergyBudgetWindowHours", 24)
+RESULT m_window_default file=test_ops_floors_budgets.jl rc=1  Test Failed 2 / Error During Test 0
+T3w window: 24 h windows 3,120,000; one 48 h window 480,000: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/mut-1/work/test/test_ops_floors_budgets.jl:98
+  Expression: ≈(nse_mwh(EP48), 480, atol = ATOL)
+   Evaluated: 719.9999999999998 ≈ 480 (atol=1.0e-6)
+
+--
+T3w window: 24 h windows 3,120,000; one 48 h window 480,000: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/mut-1/work/test/test_ops_floors_budgets.jl:99
+  Expression: ≈(objective_value(EP48), 480000, atol = 0.0001)
+   Evaluated: 3.1199999999999953e6 ≈ 480000 (atol=0.0001)
+
+Test Summary:                                                              | Pass  Fail  Total   Time
+Operational rows: floors, budgets, hydro maximum                           |   47     2     49  12.2s
+  T1 Pmin: T >= 30, objective 300                                          |    3            3   3.3s
+  T2 floor slack: u = 10, objective 100,200; hard row infeasible           |    5            5   0.3s
+  T2b tie: NSE 270 at P = 10,000 and 1,001; P = 1,000 refused              |    8            8   1.9s
+  T3 budget: hydro 1,200 MWh, T 240 MWh, objective 2,400                   |    4            4   0.6s
+  T3m hydro maximum: key 0 objective 6,000; key 1 NSE 60, objective 65,400 |    7            7   0.1s
+  T3w window: 24 h windows 3,120,000; one 48 h window 480,000              |    4     2      6   4.8s
+  T-spill: v = 720; variant (no upward slack) NSE 56                       |    7            7   0.0s
+  T4 hydro without a budget column keeps the reservoir rows                |    5            5   0.3s
+  T11 Benders subproblem rows of period 2 read the sliced floor and budget |    4            4   0.8s
+----- MUTANT 9 m_window_offset: src/model/core/resolve_operations.jl :: sed 's/WSTART = \[s + k \* W for/WSTART = [s + 1 + k * W for/'   21:41:48
+-        WSTART = [s + k * W for s in inputs["START_SUBPERIODS"] for k in 0:(div(H, W) - 1)]
++        WSTART = [s + 1 + k * W for s in inputs["START_SUBPERIODS"] for k in 0:(div(H, W) - 1)]
+RESULT m_window_offset file=test_ops_floors_budgets.jl rc=1  Test Failed 0 / Error During Test 7
+T2b tie: NSE 270 at P = 10,000 and 1,001; P = 1,000 refused: Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/mut-1/work/test/test_ops_floors_budgets.jl:46
+  Got exception outside of a @test
+  BoundsError: attempt to access 2×24 Matrix{JuMP.VariableRef} at index [1, 25]
+--
+T3 budget: hydro 1,200 MWh, T 240 MWh, objective 2,400: Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/mut-1/work/test/test_ops_floors_budgets.jl:66
+  Got exception outside of a @test
+  BoundsError: attempt to access 2×24 Matrix{JuMP.VariableRef} at index [1, 25]
+--
+T3m hydro maximum: key 0 objective 6,000; key 1 NSE 60, objective 65,400: Error During Test at /scratch/gpfs/JENKINS/gm1710/p42ra/port/mut-1/work/test/test_ops_floors_budgets.jl:75
+  Got exception outside of a @test
+  BoundsError: attempt to access 2×24 Matrix{JuMP.VariableRef} at index [1, 25]
+--
+Test Summary:                                                              | Pass  Error  Total   Time
+Operational rows: floors, budgets, hydro maximum                           |    8      7     15  35.3s
+  T1 Pmin: T >= 30, objective 300                                          |    3             3   3.3s
+  T2 floor slack: u = 10, objective 100,200; hard row infeasible           |    5             5   0.3s
+  T2b tie: NSE 270 at P = 10,000 and 1,001; P = 1,000 refused              |           1      1   2.6s
+  T3 budget: hydro 1,200 MWh, T 240 MWh, objective 2,400                   |           1      1   0.6s
+  T3m hydro maximum: key 0 objective 6,000; key 1 NSE 60, objective 65,400 |           1      1   0.1s
+  T3w window: 24 h windows 3,120,000; one 48 h window 480,000              |           1      1  15.8s
+  T-spill: v = 720; variant (no upward slack) NSE 56                       |           1      1   0.1s
+  T4 hydro without a budget column keeps the reservoir rows                |           1      1  11.7s
+  T11 Benders subproblem rows of period 2 read the sliced floor and budget |           1      1   0.8s
+----- MUTANT 10 m_floor_slack: src/model/core/resolve_operations.jl :: sed 's/vP\[g, t\] + vFloorSlack\[g, t\]>=/vP[g, t] - vFloorSlack[g, t]>=/'   21:44:47
+-                vP[g, t] + vFloorSlack[g, t]>=pmin[g, t] * eTotalCap[g])
++                vP[g, t] - vFloorSlack[g, t]>=pmin[g, t] * eTotalCap[g])
+RESULT m_floor_slack file=test_ops_floors_budgets.jl rc=1  Test Failed 4 / Error During Test 0
+T2 floor slack: u = 10, objective 100,200; hard row infeasible: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/mut-1/work/test/test_ops_floors_budgets.jl:38
+  Expression: termination_status(EP) == MOI.OPTIMAL
+   Evaluated: MathOptInterface.INFEASIBLE == MathOptInterface.OPTIMAL
+
+--
+T2 floor slack: u = 10, objective 100,200; hard row infeasible: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/mut-1/work/test/test_ops_floors_budgets.jl:39
+  Expression: ≈(objective_value(EP), 100200, atol = ATOL)
+   Evaluated: 0.0 ≈ 100200 (atol=1.0e-6)
+
+--
+T2 floor slack: u = 10, objective 100,200; hard row infeasible: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/mut-1/work/test/test_ops_floors_budgets.jl:40
+  Expression: ≈(sum(value.(EP[:vFloorSlack])), 10, atol = ATOL)
+Test Summary:                                                              | Pass  Fail  Total   Time
+Operational rows: floors, budgets, hydro maximum                           |   45     4     49  40.6s
+  T1 Pmin: T >= 30, objective 300                                          |    3            3   5.5s
+  T2 floor slack: u = 10, objective 100,200; hard row infeasible           |    1     4      5   1.8s
+  T2b tie: NSE 270 at P = 10,000 and 1,001; P = 1,000 refused              |    8            8   3.0s
+  T3 budget: hydro 1,200 MWh, T 240 MWh, objective 2,400                   |    4            4   7.9s
+  T3m hydro maximum: key 0 objective 6,000; key 1 NSE 60, objective 65,400 |    7            7   0.1s
+  T3w window: 24 h windows 3,120,000; one 48 h window 480,000              |    6            6   7.1s
+  T-spill: v = 720; variant (no upward slack) NSE 56                       |    7            7  14.2s
+  T4 hydro without a budget column keeps the reservoir rows                |    5            5   0.3s
+  T11 Benders subproblem rows of period 2 read the sliced floor and budget |    4            4   0.8s
+----- MUTANT 11 m_hydro_max: src/model/core/resolve_operations.jl :: sed 's/vP\[g, t\]<=inputs\["pP_Max"\]\[g, t\] \* eTotalCap\[g\])/vP[g, t]<=eTotalCap[g])/'   21:47:51
+-                vP[g, t]<=inputs["pP_Max"][g, t] * eTotalCap[g])
++                vP[g, t]<=eTotalCap[g])
+RESULT m_hydro_max file=test_ops_floors_budgets.jl rc=1  Test Failed 4 / Error During Test 0
+T3m hydro maximum: key 0 objective 6,000; key 1 NSE 60, objective 65,400: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/mut-1/work/test/test_ops_floors_budgets.jl:83
+  Expression: ≈(nse_mwh(EP1), 60, atol = ATOL)
+   Evaluated: 0.0 ≈ 60 (atol=1.0e-6)
+
+--
+T3m hydro maximum: key 0 objective 6,000; key 1 NSE 60, objective 65,400: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/mut-1/work/test/test_ops_floors_budgets.jl:84
+  Expression: ≈(sum(vp(EP1, inputs, "TH")), 540, atol = ATOL)
+   Evaluated: 600.0000000000002 ≈ 540 (atol=1.0e-6)
+
+--
+T3m hydro maximum: key 0 objective 6,000; key 1 NSE 60, objective 65,400: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/mut-1/work/test/test_ops_floors_budgets.jl:85
+  Expression: ≈(objective_value(EP1), 65400, atol = ATOL)
+Test Summary:                                                              | Pass  Fail  Total   Time
+Operational rows: floors, budgets, hydro maximum                           |   45     4     49  14.9s
+  T1 Pmin: T >= 30, objective 300                                          |    3            3   4.0s
+  T2 floor slack: u = 10, objective 100,200; hard row infeasible           |    5            5   0.4s
+  T2b tie: NSE 270 at P = 10,000 and 1,001; P = 1,000 refused              |    8            8   2.3s
+  T3 budget: hydro 1,200 MWh, T 240 MWh, objective 2,400                   |    4            4   0.6s
+  T3m hydro maximum: key 0 objective 6,000; key 1 NSE 60, objective 65,400 |    3     4      7   1.2s
+  T3w window: 24 h windows 3,120,000; one 48 h window 480,000              |    6            6   4.9s
+  T-spill: v = 720; variant (no upward slack) NSE 56                       |    7            7   0.0s
+  T4 hydro without a budget column keeps the reservoir rows                |    5            5   0.4s
+  T11 Benders subproblem rows of period 2 read the sliced floor and budget |    4            4   1.0s
+----- MUTANT 12 m_budgeted_hydro: src/model/core/resolve_operations.jl :: sed 's/haskey(inputs, "BUDGET_RIDS") ? intersect/haskey(inputs, "PMIN_RIDS") ? intersect/'   21:50:41
+-    haskey(inputs, "BUDGET_RIDS") ? intersect(inputs["HYDRO_RES"], inputs["BUDGET_RIDS"]) : Int[]
++    haskey(inputs, "PMIN_RIDS") ? intersect(inputs["HYDRO_RES"], inputs["BUDGET_RIDS"]) : Int[]
+RESULT m_budgeted_hydro file=test_ops_floors_budgets.jl rc=1  Test Failed 2 / Error During Test 0
+T4 hydro without a budget column keeps the reservoir rows: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/mut-1/work/test/test_ops_floors_budgets.jl:123
+  Expression: !(g1 in axes(EP[:cHydroReservoirInterior], 1))
+   Evaluated: !(1 in [1, 2])
+
+--
+T4 hydro without a budget column keeps the reservoir rows: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/mut-1/work/test/test_ops_floors_budgets.jl:125
+  Expression: !(g1 in axes(EP[:cHydroReservoirStart], 1))
+   Evaluated: !(1 in [1, 2])
+
+Test Summary:                                                              | Pass  Fail  Total   Time
+Operational rows: floors, budgets, hydro maximum                           |   47     2     49  15.4s
+  T1 Pmin: T >= 30, objective 300                                          |    3            3   4.2s
+  T2 floor slack: u = 10, objective 100,200; hard row infeasible           |    5            5   0.4s
+  T2b tie: NSE 270 at P = 10,000 and 1,001; P = 1,000 refused              |    8            8   2.4s
+  T3 budget: hydro 1,200 MWh, T 240 MWh, objective 2,400                   |    4            4   0.7s
+  T3m hydro maximum: key 0 objective 6,000; key 1 NSE 60, objective 65,400 |    7            7   0.1s
+  T3w window: 24 h windows 3,120,000; one 48 h window 480,000              |    6            6   5.1s
+  T-spill: v = 720; variant (no upward slack) NSE 56                       |    7            7   0.0s
+  T4 hydro without a budget column keeps the reservoir rows                |    3     2      5   1.4s
+  T11 Benders subproblem rows of period 2 read the sliced floor and budget |    4            4   1.0s
+----- MUTANT 13 m_group_rep: src/load_inputs/load_resources_data.jl :: sed 's/        rep = members\[1\]/        rep = members[end]/'   21:53:53
+-        rep = members[1]
++        rep = members[end]
+RESULT m_group_rep file=test_ops_storage_groups.jl rc=1  Test Failed 9 / Error During Test 0
+T5 group + derate: 0 without derate, NSE 15 / 15,000 with it: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/mut-1/work/test/test_ops_storage_groups.jl:28
+  Expression: ≈(objective_value(EP0), 0, atol = ATOL)
+   Evaluated: 25000.0 ≈ 0 (atol=1.0e-6)
+
+--
+T5 group + derate: 0 without derate, NSE 15 / 15,000 with it: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/mut-1/work/test/test_ops_storage_groups.jl:29
+  Expression: ≈(nse_mwh(EP0), 0, atol = ATOL)
+   Evaluated: 25.0 ≈ 0 (atol=1.0e-6)
+
+--
+T5 group + derate: 0 without derate, NSE 15 / 15,000 with it: Test Failed at /scratch/gpfs/JENKINS/gm1710/p42ra/port/mut-1/work/test/test_ops_storage_groups.jl:31
+  Expression: ≈(nse_mwh(EP1), 15, atol = ATOL)
+Test Summary:                                                            | Pass  Fail  Total  Time
+Operational rows: storage groups, derate, charge headroom                |   20     9     29  9.1s
+  T5 group + derate: 0 without derate, NSE 15 / 15,000 with it           |    4     7     11  6.9s
+  T5 ungrouped storage gets the derate too                               |    2            2  0.3s
+  T5 refusals: Min_Duration != Max_Duration; inconsistent members        |    4            4  0.6s
+  T5 a group with LDS members is refused with Benders 1, accepted with 0 |    2            2  0.1s
+  T5b #836 row with groups: substituted row, NSE 0                       |    1     2      3  0.0s
+  StorageChargeHeadroom 0 drops one row per storage and hour             |    2            2  0.9s
+  T10 a Stor_Op_Group column of None only: the model without the column  |    5            5  0.3s
+work src restored = head src
+end 2026-11-25T21:57:04Z
+DONE

@@ -114,7 +114,7 @@ function long_duration_storage!(EP::Model, inputs::Dict, setup::Dict)
     REP_PERIODS_INDEX = MODELED_PERIODS_INDEX[dfPeriodMap[!, :Rep_Period] .== MODELED_PERIODS_INDEX]
     NON_REP_PERIODS_INDEX = setdiff(MODELED_PERIODS_INDEX, REP_PERIODS_INDEX)
 
-    eTotalCapEnergy = EP[:eTotalCapEnergy]
+    eTotalCapEnergy = stor_cap_energy(EP)   # group energy capacity if operational groups exist
     vCHARGE = EP[:vCHARGE]
     vS = EP[:vS]
     vP = EP[:vP]

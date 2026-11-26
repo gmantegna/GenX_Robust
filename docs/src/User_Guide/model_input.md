@@ -895,3 +895,17 @@ A simultaneous-flow row bounds the sum of the listed directional flow components
 |limit\_MW | The group's limit in MW (the same on every row of the group); divided by the ParameterScale factor, as `Line_Max_Flow_MW` is. Refused: a negative or non-finite value.|
 
 The file is refused if one of the columns `Simultaneous Flow Group`, `Line_Number`, `Direction`, `limit_MW` is missing, or if `Trans_Loss_Segments` is not 1.
+
+### 2.11 Generators\_Pmin.csv and Hourly\_energy\_budget.csv (hourly minimum output, energy budgets)
+
+Optional files in the same folder as `Generators_variability.csv`, with the same layout (`Time_Index`, then one column per resource name, at least T rows). `Generators_Pmin.csv` is read only with `Hourly_Pmin: 1` and is then required; a value is the hour's minimum output as a fraction of the resource's total capacity. `Hourly_energy_budget.csv` is read whenever it exists in the `system` folder; a value is the hour's energy budget as a fraction of total capacity (MWh per MW per hour). A resource without a column gets 0. Both are refused with `ParameterScale: 1`; a hydro resource with a budget column and `LDS: 1` is refused.
+
+Rows (`resolve_operations!`, also in each Benders subproblem): `cHourlyPmin[g,t]`: output >= Pmin value x total capacity, for every resource with a Pmin column; `cHourlyBudget[w,g]`: the sum of output over window w = total capacity x the sum of the budget values over w, for every resource with a budget column (no upward slack). A hydro resource with a budget column gets these rows instead of its reservoir rows; its `Generators_variability.csv` column is then not read as inflow (it is read as the hourly maximum with `HydroBudgetMaxProfile: 1`).
+
+### 2.12 Stor\_Op\_Group column of Storage.csv (storage operational groups)
+
+Optional column. Storage resources with the same value other than `None` or empty form a group. The member with the lowest R\_ID (the representative) carries the group's discharge, charge and state of charge, bounded by the sum of the members' power and energy capacities; the other members keep their own capacity variables and costs and have no dispatch. The members must share zone, `Min_Duration`, `Max_Duration`, `Eff_Up`, `Eff_Down`, `Self_Disch` and LDS flag, must be symmetric, and must have `Min_Duration` = `Max_Duration`; a group with LDS members is refused with `Benders: 1`. Costs and reserve fractions of the members are not compared; the representative's apply to the group's dispatch. With `StorageDischargeDerate: 1` the representative's `Generators_variability.csv` column applies to the group; the other members' columns are not read.
+
+### 2.13 Hurdle\_Rate\_Forward and Hurdle\_Rate\_Reverse columns of Network.csv
+
+Optional columns, given together, one value per line in $/MWh: the cost of flow from the line's start zone to its end zone (`vTAUX_POS`) and from end to start (`vTAUX_NEG`), weighted by the hour's weight and added to the objective as `eTotalCHurdle`. A nonzero rate is refused on a line with `Line_Loss_Percentage` 0, and the columns are refused unless `Trans_Loss_Segments` is 1 and `ParameterScale` is 0. `costs.csv` has no hurdle row.

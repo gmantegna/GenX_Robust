@@ -31,12 +31,11 @@ charge and storage variables (#760 and #763).
 ### Fixed
 - `write_reserve_margin_revenue` with storage operational groups (`Stor_Op_Group`): the storage derate
 was taken over all storage rows (`gen.Storage`) while the dispatch was over `STOR_OPERATIONAL`, a
-`DimensionMismatch` (lab issue #204); it is now `gen[STOR_OPERATIONAL]`. `write_capacity_value`: `vP` is a `DenseAxisArray` over the non-generic
-resources, so its hourly slice is taken with `.data` before it is broadcast against plain arrays (it raised a
-`MethodError` in `axistype` on the toy case of the test). Not made consistent with the
+`DimensionMismatch` (lab issue #204); it is now `gen[STOR_OPERATIONAL]`. Not made consistent with the
 row under groups, and named here: the group's storage revenue is reported on the representative's row
 only (members 0), and `CapacityValue.csv` divides a representative's contribution by the
 representative's own `eTotalCap`, not the group's `eTotalCapStorOp` that the row uses.
+- `write_capacity_value` with `CapacityReserveMargin: 1`, with or without storage operational groups: `vP` is a `DenseAxisArray` over the non-generic resources, so its hourly slice is taken with `.data` before it is broadcast against plain arrays. Before this change the writer raised a `MethodError` on `test/three_zones` with one capacity reserve margin requirement and no storage groups (lab issue #204).
 - Add constraint to ensure that electricity charged from the grid cannot exceed 
 the charging capacity of the storage component in VRE_STOR (#770).
 - Update `getproperty` function for vectors of resources to ensure compatibility 

@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 
 ### Added
+- Setting `CapResThermalHourlyAvailability` (default 0, lab issue #204): at 1 the thermal term of the
+capacity reserve margin row is derate x `pP_Max[y,t]` x capacity (`eCapResMarBalanceThermal`,
+`thermal.jl`); at 0 or absent the existing expression derate x capacity is built unchanged. Refused
+(error) together with thermal maintenance or fusion resources, whose reserve-margin adjustments assume
+the scalar term. `ReserveMarginRevenue.csv` and `CapacityValue.csv` follow the setting for thermal
+resources (`thermal_plant_effective_capacity`, keyword `hourly_availability`). Test:
+`test/test_capres_thermal_hourly.jl` (not in `runtests.jl`).
 - Fusion plant optional features for thermal plants (#743).
 - Support for reusing the same Gurobi environment for multiple solves when 
 number of concurrent Gurobi uses is limited (#783).
@@ -22,6 +29,14 @@ charge and storage variables (#760 and #763).
 - Removed the `CapRes_*` columns from `Network.csv` since they were not being used (#784).
 
 ### Fixed
+- `write_reserve_margin_revenue` with storage operational groups (`Stor_Op_Group`): the storage derate
+was taken over all storage rows (`gen.Storage`) while the dispatch was over `STOR_OPERATIONAL`, a
+`DimensionMismatch` (lab issue #204); it is now `gen[STOR_OPERATIONAL]`. `write_capacity_value`: `vP` is a `DenseAxisArray` over the non-generic
+resources, so its hourly slice is taken with `.data` before it is broadcast against plain arrays (it raised a
+`MethodError` in `axistype` on the toy case of the test). Not made consistent with the
+row under groups, and named here: the group's storage revenue is reported on the representative's row
+only (members 0), and `CapacityValue.csv` divides a representative's contribution by the
+representative's own `eTotalCap`, not the group's `eTotalCapStorOp` that the row uses.
 - Add constraint to ensure that electricity charged from the grid cannot exceed 
 the charging capacity of the storage component in VRE_STOR (#770).
 - Update `getproperty` function for vectors of resources to ensure compatibility 

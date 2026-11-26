@@ -31,9 +31,20 @@ function thermal!(EP::AbstractModel, inputs::Dict, setup::Dict)
     # Capacity Reserves Margin policy
     if setup["CapacityReserveMargin"] > 0
         ncapres = inputs["NCapacityReserveMargin"]
-        @expression(EP, eCapResMarBalanceThermal[capres in 1:ncapres, t in 1:T],
-            sum(derating_factor(gen[y], tag = capres) * EP[:eTotalCap][y]
-            for y in THERM_ALL))
+        if get(setup, "CapResThermalHourlyAvailability", 0) == 1
+            # derate x hourly availability (pP_Max, Generators_variability.csv) x capacity
+            if !isempty(intersect(MAINT, THERM_COMMIT)) || !isempty(intersect(FUSION, THERM_COMMIT))
+                error("CapResThermalHourlyAvailability = 1 is not supported with thermal maintenance or fusion resources: their reserve-margin adjustments assume the scalar term derate x capacity")
+            end
+            @expression(EP, eCapResMarBalanceThermal[capres in 1:ncapres, t in 1:T],
+                sum(derating_factor(gen[y], tag = capres) * inputs["pP_Max"][y, t] *
+                    EP[:eTotalCap][y]
+                for y in THERM_ALL))
+        else
+            @expression(EP, eCapResMarBalanceThermal[capres in 1:ncapres, t in 1:T],
+                sum(derating_factor(gen[y], tag = capres) * EP[:eTotalCap][y]
+                for y in THERM_ALL))
+        end
         add_similar_to_expression!(EP[:eCapResMarBalance], eCapResMarBalanceThermal)
 
         if !isempty(intersect(MAINT, THERM_COMMIT))

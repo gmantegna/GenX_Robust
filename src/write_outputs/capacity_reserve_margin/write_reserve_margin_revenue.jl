@@ -49,7 +49,9 @@ function write_reserve_margin_revenue(path::AbstractString,
         tempresrev[THERM_ALL] = thermal_plant_effective_capacity(EP,
             inputs,
             THERM_ALL,
-            i)' * weighted_price
+            i;
+            hourly_availability = get(setup, "CapResThermalHourlyAvailability", 0) == 1)' *
+                                weighted_price
         tempresrev[VRE] = derating_factor.(gen.Vre, tag = i) .*
                           (value.(EP[:eTotalCap][VRE])) .*
                           (inputs["pP_Max"][VRE, :] * weighted_price)
@@ -59,7 +61,7 @@ function write_reserve_margin_revenue(path::AbstractString,
         tempresrev[HYDRO_RES] = derating_factor.(gen.Hydro, tag = i) .*
                                 (value.(EP[:vP][HYDRO_RES, :]).data * weighted_price)
         if !isempty(STOR_ALL)
-            tempresrev[STOR_ALL] = derating_factor.(gen.Storage, tag = i) .*
+            tempresrev[STOR_ALL] = derating_factor.(gen[STOR_ALL], tag = i) .*
                                    ((value.(EP[:vP][STOR_ALL, :]).data -
                                      value.(EP[:vCHARGE][STOR_ALL, :]).data +
                                      value.(EP[:vCAPRES_discharge][STOR_ALL, :]).data -

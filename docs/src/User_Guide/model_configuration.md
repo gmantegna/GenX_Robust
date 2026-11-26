@@ -75,6 +75,9 @@ The following tables summarize the model settings parameters and their default/p
 |CapacityReserveMargin | Flag for Capacity Reserve Margin constraints. |
 || Default = 0 (No Capacity Reserve Margin constraints)|
 || 1 = activate Capacity Reserve Margin related constraints |
+|CapResThermalHourlyAvailability | Flag for the thermal term of the Capacity Reserve Margin constraints. |
+||0 = derating factor x capacity (default). |
+||1 = derating factor x hourly availability (`Generators_variability.csv`) x capacity. Not with thermal maintenance or fusion. |
 |MinCapReq | Minimum technology carve out requirement constraints.|
 || 1 = if one or more minimum technology capacity constraints are specified|
 || 0 = otherwise|
